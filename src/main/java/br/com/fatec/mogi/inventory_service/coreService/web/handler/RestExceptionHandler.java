@@ -1,4 +1,4 @@
-package br.com.fatec.mogi.inventory_service.authService.web.handler;
+package br.com.fatec.mogi.inventory_service.coreService.web.handler;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
 import org.springframework.http.HttpStatus;
@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class RestExceptionHandler {
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> tratarIllegalArgumentException(IllegalArgumentException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	}
+
 	@ExceptionHandler(UsuarioNaoAutenticadoException.class)
 	public ResponseEntity<String> tratarUsuarioNaoAutenticado(UsuarioNaoAutenticadoException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
@@ -16,11 +21,6 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<String> tratarRuntimeException(RuntimeException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-	}
-
-	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<String> tratarIllegalArgumentException(IllegalArgumentException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 	}
 
