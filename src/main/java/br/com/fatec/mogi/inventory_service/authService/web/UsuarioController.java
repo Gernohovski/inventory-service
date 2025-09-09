@@ -22,9 +22,9 @@ public record UsuarioController(UsuarioService usuarioService) {
 	public ResponseEntity<CadastrarUsuarioResponseDTO> cadastrarUsuario(@RequestBody CadastrarUsuarioRequestDTO dto) {
 		var usuario = usuarioService.cadastrarUsuario(dto);
 		CadastrarUsuarioResponseDTO responseDTO = CadastrarUsuarioResponseDTO.builder()
-				.email(usuario.getEmail().getEmail())
-				.nome(usuario.getNome())
-				.build();
+			.email(usuario.getEmail().getEmail())
+			.nome(usuario.getNome())
+			.build();
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
 	}
 

@@ -17,7 +17,7 @@ public record AutorizacaoController(AutorizacaoService autorizacaoService) {
 
 	@PostMapping
 	public ResponseEntity<AutorizarUsuarioResponseDTO> autorizar(@RequestBody AutorizarUsuarioRequestDTO dto,
-																 @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var autorizado = autorizacaoService.autorizar(dto, accessToken);
 		return ResponseEntity.status(HttpStatus.OK).body(new AutorizarUsuarioResponseDTO(autorizado));
 	}

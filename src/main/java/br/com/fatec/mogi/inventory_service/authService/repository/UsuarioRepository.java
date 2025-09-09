@@ -1,6 +1,5 @@
 package br.com.fatec.mogi.inventory_service.authService.repository;
 
-
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.valueObjects.Email;
 import org.springframework.data.jpa.repository.JpaRepository;

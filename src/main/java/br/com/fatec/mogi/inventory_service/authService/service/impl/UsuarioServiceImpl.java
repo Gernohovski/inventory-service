@@ -52,11 +52,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public Usuario cadastrarUsuario(CadastrarUsuarioRequestDTO dto) {
 		Funcao funcao = funcaoRepository.findById(dto.getFuncaoId())
-				.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
+			.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
 		Usuario usuario;
 		if (dto.getAdministradorVinculado() != null) {
 			Usuario administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
-					.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+				.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
 			usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
 
 		}
@@ -83,7 +83,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public boolean solicitarResetSenha(SolicitarResetSenhaRequestDTO dto) {
 		var usuario = usuarioRepository.findByEmail(new Email(dto.getEmail()))
-				.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
 		var administradorVinculado = usuario.getAdministradorVinculado();
 		return emailService.enviarEmailResetSenha(usuario, Objects.requireNonNullElse(administradorVinculado, usuario));
 	}
