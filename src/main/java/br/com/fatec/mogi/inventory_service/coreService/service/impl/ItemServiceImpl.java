@@ -19,6 +19,8 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItem
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -41,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
 			.funcionalidade(FuncionalidadesEnum.CADASTRO_ITEM.toString())
 			.build();
 		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
-		if (!itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
+		if (itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
 			throw new ItemJaCadastradoException();
 		}
 		var categoria = categoriaItemRepository.findById(dto.getCategoriaItemId())
@@ -63,6 +65,8 @@ public class ItemServiceImpl implements ItemService {
 			.tipoEntrada(tipoEntrada)
 			.statusItem(statusItem)
 			.localizacao(localizacao)
+			.dataCadastro(LocalDateTime.now())
+			.dataAlteracao(LocalDateTime.now())
 			.build();
 		itemRepository.save(item);
 	}
