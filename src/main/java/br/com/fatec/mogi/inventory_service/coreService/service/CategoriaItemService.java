@@ -5,8 +5,8 @@ import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCatego
 
 public interface CategoriaItemService {
 
-	BuscarCategoriasResponseDTO buscar();
+	BuscarCategoriasResponseDTO buscar(String accessToken);
 
-	void cadastrar(CadastrarCategoriaItemRequestDTO dto);
+	void cadastrar(CadastrarCategoriaItemRequestDTO dto, String accessToken);
 
 }
