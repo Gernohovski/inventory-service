@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public record ItemController(ItemService itemService) {
 
 	@PostMapping
-	public ResponseEntity<Void> cadastrarItem(@RequestBody CadastrarItemRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+	public ResponseEntity<Void> cadastrarItem(@RequestBody CadastrarItemRequestDTO dto,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		itemService.cadastrarItem(dto, accessToken);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
