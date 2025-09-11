@@ -7,15 +7,14 @@ import br.com.fatec.mogi.inventory_service.coreService.domain.exception.Localiza
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoEncontradoException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.TipoEntradaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
-import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.service.impl.ItemServiceImpl;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -192,7 +191,8 @@ public class ItemServiceTest {
 			.build();
 		itemService.cadastrarItem(dto1, "token");
 		itemService.cadastrarItem(dto2, "token");
-		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().build(), PageRequest.of(0, 10), "token");
+		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().build(), PageRequest.of(0, 10),
+				"token");
 		assertTrue(resposta.getTotalElements() >= 2);
 	}
 
@@ -212,17 +212,15 @@ public class ItemServiceTest {
 			.tipoEntradaId(1L)
 			.build();
 		itemService.cadastrarItem(dto, "token");
-		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().nomeItem("tec").build(), PageRequest.of(0, 10), "token");
+		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().nomeItem("tec").build(),
+				PageRequest.of(0, 10), "token");
 		assertTrue(resposta.getContent().stream().anyMatch(i -> i.getNomeItem().toUpperCase().contains("TEC")));
 	}
 
 	@Test
 	@DisplayName("Deve filtrar itens combinando filtros de categoria e status")
 	void deveFiltrarCombinandoFiltros() {
-		var filtros = ConsultarItemRequestDTO.builder()
-			.categoriaItemId(1L)
-			.statusItemId(1L)
-			.build();
+		var filtros = ConsultarItemRequestDTO.builder().categoriaItemId(1L).statusItemId(1L).build();
 		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10), "token");
 		assertTrue(resposta.getContent().stream().allMatch(i -> i.getCategoriaItem().getId().equals(1L)));
 	}
@@ -251,4 +249,5 @@ public class ItemServiceTest {
 		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10), "token");
 		assertTrue(resposta.getTotalElements() > 0);
 	}
+
 }

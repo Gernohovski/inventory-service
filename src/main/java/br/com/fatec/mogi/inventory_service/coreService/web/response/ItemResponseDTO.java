@@ -4,8 +4,6 @@ import br.com.fatec.mogi.inventory_service.coreService.domain.model.CategoriaIte
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Localizacao;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.TipoEntrada;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
