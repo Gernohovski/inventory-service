@@ -4,6 +4,6 @@ import br.com.fatec.mogi.inventory_service.authService.web.dto.request.Autorizar
 
 public interface AutorizacaoService {
 
-	boolean autorizar(AutorizarUsuarioRequestDTO dto, String accessToken);
+	void autorizar(AutorizarUsuarioRequestDTO dto, String accessToken);
 
 }
