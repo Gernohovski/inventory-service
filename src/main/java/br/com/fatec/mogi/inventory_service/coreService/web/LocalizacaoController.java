@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocali
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 public record LocalizacaoController(LocalizacaoService localizacaoService) {
 
 	@GetMapping
-	ResponseEntity<BuscarLocalizacaoResponseDTO> buscar() {
-		var localizacoes = localizacaoService.buscar();
+	ResponseEntity<BuscarLocalizacaoResponseDTO> buscar(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var localizacoes = localizacaoService.buscar(accessToken);
 		return ResponseEntity.status(HttpStatus.OK).body(localizacoes);
 	}
 

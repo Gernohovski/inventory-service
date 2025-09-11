@@ -4,6 +4,6 @@ import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocali
 
 public interface LocalizacaoService {
 
-	BuscarLocalizacaoResponseDTO buscar();
+	BuscarLocalizacaoResponseDTO buscar(String accessToken);
 
 }
