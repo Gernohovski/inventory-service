@@ -35,6 +35,10 @@ public class Item extends EntidadeDominio {
 	@JoinColumn(name = "categoria_item_id")
 	private CategoriaItem categoriaItem;
 
+	@ManyToOne
+	@JoinColumn(name = "tipo_entrada_id")
+	private TipoEntrada tipoEntrada;
+
 	private String codigoItem;
 
 	private LocalDateTime dataCadastro;
@@ -44,5 +48,7 @@ public class Item extends EntidadeDominio {
 	@ManyToOne
 	@JoinColumn(name = "localizacao_id")
 	private Localizacao localizacao;
+
+	private String notaFiscal;
 
 }
