@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.authService.service;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncaoNaoEncontrada;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncionalidadeNaoMapeadaException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncaoRepository;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.CadastrarUsuarioRequestDTO;
@@ -16,9 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -27,43 +27,43 @@ public class AutorizacaoServiceTest {
 	@Autowired
 	private FuncaoRepository funcaoRepository;
 
-	@Autowired
-	private UsuarioService usuarioService;
+    @Autowired
+    private UsuarioService usuarioService;
 
-	@Autowired
-	private AutorizacaoService autorizacaoService;
+    @Autowired
+    private AutorizacaoService autorizacaoService;
 
-	@Test
-	@DisplayName("Deve autorizar usuário com sucesso")
-	void deveAutorizarUsuarioComSucesso() {
-		String email = UUID.randomUUID().toString().concat("@gmail.com");
-		String senha = "Senha123";
-		cadastrarUsuario(email, senha, "ADMIN");
-		var tokens = fazerLogin(email, senha);
-		var autorizado = autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
-				tokens.getAccessToken());
-		assertTrue(autorizado);
-	}
+    @Test
+    @DisplayName("Deve autorizar usuário com sucesso")
+    void deveAutorizarUsuarioComSucesso() {
+        String email = UUID.randomUUID().toString().concat("@gmail.com");
+        String senha = "Senha123";
+        cadastrarUsuario(email, senha, "ADMIN");
+        var tokens = fazerLogin(email, senha);
+        assertDoesNotThrow(() ->
+            autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"), tokens.getAccessToken())
+        );
+    }
 
-	@Test
-	@DisplayName("Não deve autorizar usuário para funcionalidade que ele não tem autorização")
-	void naoDeveAutorizarUsuarioFuncionalidadeSemAutorizacao() {
-		String email = UUID.randomUUID().toString().concat("@gmail.com");
-		String senha = "Senha123";
-		cadastrarUsuario(email, senha, "ESTOQUISTA");
-		var tokens = fazerLogin(email, senha);
-		var autorizado = autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
-				tokens.getAccessToken());
-		assertFalse(autorizado);
-	}
+    @Test
+    @DisplayName("Não deve autorizar usuário para funcionalidade que ele não tem autorização")
+    void naoDeveAutorizarUsuarioFuncionalidadeSemAutorizacao() {
+        String email = UUID.randomUUID().toString().concat("@gmail.com");
+        String senha = "Senha123";
+        cadastrarUsuario(email, senha, "ESTOQUISTA");
+        var tokens = fazerLogin(email, senha);
+        assertThrows(UsuarioNaoAutorizadoException.class, () -> {
+            autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"), tokens.getAccessToken());
+        });
+    }
 
-	@Test
-	@DisplayName("Deve lançar exceção ao tentar obter autorização funcionalidade inexistente")
-	void deveLancarExcecaoTentarObterAutorizacaoFuncionalidadeInexistente() {
-		assertThrows(FuncionalidadeNaoMapeadaException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido"), UUID.randomUUID().toString());
-		});
-	}
+    @Test
+    @DisplayName("Deve lançar exceção ao tentar obter autorização funcionalidade inexistente")
+    void deveLancarExcecaoTentarObterAutorizacaoFuncionalidadeInexistente() {
+        assertThrows(FuncionalidadeNaoMapeadaException.class, () -> {
+            autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido"), UUID.randomUUID().toString());
+        });
+    }
 
 	@Test
 	@DisplayName("Deve lançar exceção ao tentar obter autorização usuário não autenticado")
