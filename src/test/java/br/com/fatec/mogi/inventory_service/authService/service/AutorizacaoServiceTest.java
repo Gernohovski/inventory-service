@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.authService.service;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncaoNaoEncontrada;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncionalidadeNaoMapeadaException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncaoRepository;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.CadastrarUsuarioRequestDTO;
@@ -16,9 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -40,9 +40,8 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		var tokens = fazerLogin(email, senha);
-		var autorizado = autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
-				tokens.getAccessToken());
-		assertTrue(autorizado);
+		assertDoesNotThrow(() -> autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
+				tokens.getAccessToken()));
 	}
 
 	@Test
@@ -52,9 +51,9 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ESTOQUISTA");
 		var tokens = fazerLogin(email, senha);
-		var autorizado = autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
-				tokens.getAccessToken());
-		assertFalse(autorizado);
+		assertThrows(UsuarioNaoAutorizadoException.class, () -> {
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"), tokens.getAccessToken());
+		});
 	}
 
 	@Test

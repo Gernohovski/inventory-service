@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.authService.service.impl;
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncionalidadeNaoMapeadaException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncionalidadeRepository;
 import br.com.fatec.mogi.inventory_service.authService.repository.UsuarioRepository;
@@ -23,14 +24,16 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 	private final RedisService redisService;
 
 	@Override
-	public boolean autorizar(AutorizarUsuarioRequestDTO dto, String accessToken) {
+	public void autorizar(AutorizarUsuarioRequestDTO dto, String accessToken) {
 		funcionalidadeRepository.findByFuncionalidade(dto.getFuncionalidade())
 			.orElseThrow(FuncionalidadeNaoMapeadaException::new);
 		var usuario = (Usuario) redisService.buscar(TipoCache.SESSAO_USUARIO, accessToken);
 		if (usuario == null) {
 			throw new UsuarioNaoAutenticadoException();
 		}
-		return usuarioRepository.possuiFuncionalidade(usuario.getId(), dto.getFuncionalidade());
+		if (!usuarioRepository.possuiFuncionalidade(usuario.getId(), dto.getFuncionalidade())) {
+			throw new UsuarioNaoAutorizadoException();
+		}
 	}
 
 }

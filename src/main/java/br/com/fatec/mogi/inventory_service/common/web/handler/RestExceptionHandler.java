@@ -1,6 +1,7 @@
-package br.com.fatec.mogi.inventory_service.coreService.web.handler;
+package br.com.fatec.mogi.inventory_service.common.web.handler;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,11 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler(UsuarioNaoAutenticadoException.class)
 	public ResponseEntity<String> tratarUsuarioNaoAutenticado(UsuarioNaoAutenticadoException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+	}
+
+	@ExceptionHandler(UsuarioNaoAutorizadoException.class)
+	public ResponseEntity<String> tratarUsuarioNaoAutorizado(UsuarioNaoAutorizadoException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
 	}
 
