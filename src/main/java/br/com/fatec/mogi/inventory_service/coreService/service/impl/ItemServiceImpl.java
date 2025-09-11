@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
+import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.ItemJaCadastradoException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoEncontradaException;
@@ -16,7 +17,10 @@ import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepo
 import br.com.fatec.mogi.inventory_service.coreService.repository.TipoEntradaRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -69,6 +73,25 @@ public class ItemServiceImpl implements ItemService {
 			.dataAlteracao(LocalDateTime.now())
 			.build();
 		itemRepository.save(item);
+	}
+
+	@Override
+	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable,
+			String accessToken) {
+		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
+			.funcionalidade(FuncionalidadesEnum.LISTAR_ITEM.toString())
+			.build();
+		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
+		var pagina = itemRepository.filtrar(dto.getDataCadastroInicio(), dto.getDataCadastroFim(),
+				dto.getCategoriaItemId(), dto.getLocalizacaoId(), dto.getStatusItemId(), dto.getTipoEntradaId(),
+				dto.getNomeItem(), dto.getCodigoItem(), dto.getNumeroSerie(), dto.getNotaFiscal(), pageable);
+		return CustomPageResponseDTO.<ItemResponseDTO>builder()
+			.content(pagina.getContent())
+			.size(pagina.getSize())
+			.page(pagina.getNumber())
+			.totalElements(pagina.getTotalElements())
+			.totalPages(pagina.getTotalPages())
+			.build();
 	}
 
 }
