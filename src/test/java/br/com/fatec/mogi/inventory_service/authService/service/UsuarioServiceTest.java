@@ -1,14 +1,7 @@
 package br.com.fatec.mogi.inventory_service.authService.service;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.EmailInvalidoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.EmailJaUtilizadoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncaoNaoEncontrada;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.LoginInvalidoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.SenhaInvalidaException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.SolicitacaoExpiradaExpcetion;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoEncontradoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuariosDivergentesException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.valueObjects.Email;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncaoRepository;
@@ -32,10 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest

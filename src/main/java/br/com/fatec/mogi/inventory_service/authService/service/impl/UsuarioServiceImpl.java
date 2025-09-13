@@ -1,12 +1,7 @@
 package br.com.fatec.mogi.inventory_service.authService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.EmailJaUtilizadoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncaoNaoEncontrada;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.LoginInvalidoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.SolicitacaoExpiradaExpcetion;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoEncontradoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuariosDivergentesException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Funcao;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.UsuarioFuncao;
