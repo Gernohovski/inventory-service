@@ -54,15 +54,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Funcao funcao = funcaoRepository.findById(dto.getFuncaoId())
 			.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
 		Usuario usuario;
-		if (dto.getAdministradorVinculado() != null) {
-			Usuario administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
-				.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
-			usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
-
-		}
-		else {
-			usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail());
-		}
+		Usuario administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+		usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
 		usuarioRepository.findByEmail(usuario.getEmail()).ifPresent(u -> {
 			throw new EmailJaUtilizadoException("E-mail já utilizado.");
 		});
