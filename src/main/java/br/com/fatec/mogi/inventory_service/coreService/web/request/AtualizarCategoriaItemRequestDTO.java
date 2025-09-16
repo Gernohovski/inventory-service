@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AtualizarCategoriaItemRequestDTO {
 
-    private String nome;
+	private String nome;
 
 }

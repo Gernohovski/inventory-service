@@ -192,15 +192,16 @@ public class CategoriaItemControllerTest {
 			.body()
 			.as(BuscarCategoriasResponseDTO.class);
 
-		var categoriaParaAtualizar = responseDTO.getCategorias().stream()
+		var categoriaParaAtualizar = responseDTO.getCategorias()
+			.stream()
 			.filter(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_UPDATE"))
 			.findFirst()
 			.orElseThrow();
 
 		var atualizarDto = AtualizarCategoriaItemRequestDTO.builder().nome("CATEGORIA_ATUALIZADA_TESTE").build();
 		RestAssured.given()
-				.header("X-ACCESS-TOKEN", "token")
-				.port(port)
+			.header("X-ACCESS-TOKEN", "token")
+			.port(port)
 			.contentType(ContentType.JSON)
 			.log()
 			.all()
@@ -222,9 +223,11 @@ public class CategoriaItemControllerTest {
 			.body()
 			.as(BuscarCategoriasResponseDTO.class);
 
-		assertTrue(responseAposAtualizar.getCategorias().stream()
+		assertTrue(responseAposAtualizar.getCategorias()
+			.stream()
 			.anyMatch(categoria -> categoria.getNome().equals("CATEGORIA_ATUALIZADA_TESTE")));
-		assertTrue(responseAposAtualizar.getCategorias().stream()
+		assertTrue(responseAposAtualizar.getCategorias()
+			.stream()
 			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_UPDATE")));
 	}
 
@@ -234,8 +237,8 @@ public class CategoriaItemControllerTest {
 		Long idInexistente = 999999L;
 		var atualizarDto = AtualizarCategoriaItemRequestDTO.builder().nome("CATEGORIA_INEXISTENTE").build();
 		RestAssured.given()
-				.header("X-ACCESS-TOKEN", "token")
-				.port(port)
+			.header("X-ACCESS-TOKEN", "token")
+			.port(port)
 			.contentType(ContentType.JSON)
 			.log()
 			.all()

@@ -88,22 +88,25 @@ class CategoriaItemServiceTest {
 			.nome("CATEGORIA_PARA_ATUALIZAR")
 			.build();
 		categoriaItemService.cadastrar(cadastrarCategoriaItemRequestDTO);
-		
+
 		var categorias = categoriaItemService.buscar();
-		var categoriaParaAtualizar = categorias.getCategorias().stream()
+		var categoriaParaAtualizar = categorias.getCategorias()
+			.stream()
 			.filter(categoria -> categoria.getNome().equals("CATEGORIA_PARA_ATUALIZAR"))
 			.findFirst()
 			.orElseThrow();
-		
+
 		var atualizarCategoriaItemRequestDTO = AtualizarCategoriaItemRequestDTO.builder()
 			.nome("CATEGORIA_ATUALIZADA")
 			.build();
 		categoriaItemService.atualizar(atualizarCategoriaItemRequestDTO, categoriaParaAtualizar.getId());
-		
+
 		var categoriasAposAtualizar = categoriaItemService.buscar();
-		assertTrue(categoriasAposAtualizar.getCategorias().stream()
+		assertTrue(categoriasAposAtualizar.getCategorias()
+			.stream()
 			.anyMatch(categoria -> categoria.getNome().equals("CATEGORIA_ATUALIZADA")));
-		assertTrue(categoriasAposAtualizar.getCategorias().stream()
+		assertTrue(categoriasAposAtualizar.getCategorias()
+			.stream()
 			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_PARA_ATUALIZAR")));
 	}
 
