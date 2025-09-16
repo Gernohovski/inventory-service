@@ -94,6 +94,7 @@ public class CategoriaItemControllerTest {
 	void deveDeletarCategoriaComSucesso() {
 		var dto = CadastrarCategoriaItemRequestDTO.builder().nome("CATEGORIA_TESTE_DELETE").build();
 		RestAssured.given()
+			.header("X-ACCESS-TOKEN", "token")
 			.port(port)
 			.contentType(ContentType.JSON)
 			.body(dto)
@@ -103,6 +104,7 @@ public class CategoriaItemControllerTest {
 			.statusCode(201);
 
 		var responseDTO = RestAssured.given()
+			.header("X-ACCESS-TOKEN", "token")
 			.port(port)
 			.contentType(ContentType.JSON)
 			.when()
@@ -113,13 +115,15 @@ public class CategoriaItemControllerTest {
 			.body()
 			.as(BuscarCategoriasResponseDTO.class);
 
-		var categoriaParaDeletar = responseDTO.getCategorias().stream()
+		var categoriaParaDeletar = responseDTO.getCategorias()
+			.stream()
 			.filter(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_DELETE"))
 			.findFirst()
 			.orElseThrow();
 
 		RestAssured.given()
 			.port(port)
+			.header("X-ACCESS-TOKEN", "token")
 			.contentType(ContentType.JSON)
 			.log()
 			.all()
@@ -130,6 +134,7 @@ public class CategoriaItemControllerTest {
 
 		var responseAposDeletar = RestAssured.given()
 			.port(port)
+			.header("X-ACCESS-TOKEN", "token")
 			.contentType(ContentType.JSON)
 			.when()
 			.get("/core-service/v1/categorias")
@@ -139,7 +144,8 @@ public class CategoriaItemControllerTest {
 			.body()
 			.as(BuscarCategoriasResponseDTO.class);
 
-		assertTrue(responseAposDeletar.getCategorias().stream()
+		assertTrue(responseAposDeletar.getCategorias()
+			.stream()
 			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_DELETE")));
 	}
 
@@ -149,6 +155,7 @@ public class CategoriaItemControllerTest {
 		Long idInexistente = 999999L;
 		RestAssured.given()
 			.port(port)
+			.header("X-ACCESS-TOKEN", "token")
 			.contentType(ContentType.JSON)
 			.log()
 			.all()

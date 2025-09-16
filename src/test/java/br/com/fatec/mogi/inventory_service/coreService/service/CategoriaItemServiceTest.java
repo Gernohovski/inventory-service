@@ -55,17 +55,19 @@ class CategoriaItemServiceTest {
 			.nome("CATEGORIA_PARA_DELETAR")
 			.build();
 		categoriaItemService.cadastrar(cadastrarCategoriaItemRequestDTO);
-		
+
 		var categorias = categoriaItemService.buscar();
-		var categoriaParaDeletar = categorias.getCategorias().stream()
+		var categoriaParaDeletar = categorias.getCategorias()
+			.stream()
 			.filter(categoria -> categoria.getNome().equals("CATEGORIA_PARA_DELETAR"))
 			.findFirst()
 			.orElseThrow();
-		
+
 		categoriaItemService.deletar(categoriaParaDeletar.getId());
-		
+
 		var categoriasAposDeletar = categoriaItemService.buscar();
-		assertTrue(categoriasAposDeletar.getCategorias().stream()
+		assertTrue(categoriasAposDeletar.getCategorias()
+			.stream()
 			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_PARA_DELETAR")));
 	}
 
