@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 public record CategoriaItemController(CategoriaItemService categoriaItemService) {
 
 	@GetMapping
-	public ResponseEntity<BuscarCategoriasResponseDTO> buscar() {
+	public ResponseEntity<BuscarCategoriasResponseDTO> buscar(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var categorias = categoriaItemService.buscar();
 		return ResponseEntity.status(HttpStatus.OK).body(categorias);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> cadastrar(@RequestBody CadastrarCategoriaItemRequestDTO dto) {
+	public ResponseEntity<?> cadastrar(@RequestBody CadastrarCategoriaItemRequestDTO dto,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		categoriaItemService.cadastrar(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

@@ -1,12 +1,7 @@
 package br.com.fatec.mogi.inventory_service.authService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.EmailJaUtilizadoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncaoNaoEncontrada;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.LoginInvalidoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.SolicitacaoExpiradaExpcetion;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoEncontradoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuariosDivergentesException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Funcao;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.UsuarioFuncao;
@@ -54,15 +49,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Funcao funcao = funcaoRepository.findById(dto.getFuncaoId())
 			.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
 		Usuario usuario;
+		Usuario administradorVinculado = null;
 		if (dto.getAdministradorVinculado() != null) {
-			Usuario administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
+			administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
 				.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
-			usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
-
 		}
-		else {
-			usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail());
-		}
+		usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
 		usuarioRepository.findByEmail(usuario.getEmail()).ifPresent(u -> {
 			throw new EmailJaUtilizadoException("E-mail já utilizado.");
 		});

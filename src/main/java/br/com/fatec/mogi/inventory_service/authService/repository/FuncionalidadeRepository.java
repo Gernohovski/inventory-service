@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface FuncionalidadeRepository extends JpaRepository<Funcionalidade, Long> {
 
-	Optional<Funcionalidade> findByFuncionalidade(String funcionalidade);
+	Optional<Funcionalidade> findByEndpointAndHttpMethod(String endpoint, String httpMethod);
 
 }

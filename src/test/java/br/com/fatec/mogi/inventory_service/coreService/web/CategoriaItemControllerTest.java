@@ -1,23 +1,37 @@
 package br.com.fatec.mogi.inventory_service.coreService.web;
 
+import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
+import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class CategoriaItemControllerTest {
 
 	@LocalServerPort
 	private int port;
+
+	@MockitoBean
+	AutorizacaoService autorizacaoService;
+
+	@BeforeEach
+	void setUp() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+	}
 
 	@Test
 	@DisplayName("Deve buscar por categorias com sucesso")
@@ -27,6 +41,7 @@ public class CategoriaItemControllerTest {
 			.contentType(ContentType.JSON)
 			.log()
 			.all()
+			.header("X-ACCESS-TOKEN", "token")
 			.when()
 			.get("/core-service/v1/categorias")
 			.then()
@@ -50,6 +65,7 @@ public class CategoriaItemControllerTest {
 			.log()
 			.all()
 			.body(dto)
+			.header("X-ACCESS-TOKEN", "token")
 			.when()
 			.post("/core-service/v1/categorias")
 			.then()
@@ -66,6 +82,7 @@ public class CategoriaItemControllerTest {
 			.log()
 			.all()
 			.body(dto)
+			.header("X-ACCESS-TOKEN", "token")
 			.when()
 			.post("/core-service/v1/categorias")
 			.then()

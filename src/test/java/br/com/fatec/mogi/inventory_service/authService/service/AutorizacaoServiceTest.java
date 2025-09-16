@@ -40,8 +40,8 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		var tokens = fazerLogin(email, senha);
-		assertDoesNotThrow(() -> autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"),
-				tokens.getAccessToken()));
+		assertDoesNotThrow(() -> autorizacaoService
+			.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"), tokens.getAccessToken()));
 	}
 
 	@Test
@@ -49,10 +49,11 @@ public class AutorizacaoServiceTest {
 	void naoDeveAutorizarUsuarioFuncionalidadeSemAutorizacao() {
 		String email = UUID.randomUUID().toString().concat("@gmail.com");
 		String senha = "Senha123";
-		cadastrarUsuario(email, senha, "ESTOQUISTA");
+		cadastrarUsuario(email, senha, "OPERADOR");
 		var tokens = fazerLogin(email, senha);
 		assertThrows(UsuarioNaoAutorizadoException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"), tokens.getAccessToken());
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"),
+					tokens.getAccessToken());
 		});
 	}
 
@@ -60,7 +61,8 @@ public class AutorizacaoServiceTest {
 	@DisplayName("Deve lançar exceção ao tentar obter autorização funcionalidade inexistente")
 	void deveLancarExcecaoTentarObterAutorizacaoFuncionalidadeInexistente() {
 		assertThrows(FuncionalidadeNaoMapeadaException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido"), UUID.randomUUID().toString());
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido", "GET"),
+					UUID.randomUUID().toString());
 		});
 	}
 
@@ -71,7 +73,8 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		assertThrows(UsuarioNaoAutenticadoException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/excluir-bem"), UUID.randomUUID().toString());
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"),
+					UUID.randomUUID().toString());
 		});
 	}
 

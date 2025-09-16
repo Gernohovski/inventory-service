@@ -1,20 +1,10 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.ItemJaCadastradoException;
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoEncontradaException;
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoEncontradoException;
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.TipoEntradaNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
-import br.com.fatec.mogi.inventory_service.coreService.repository.CategoriaItemRepository;
-import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
-import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRepository;
-import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepository;
-import br.com.fatec.mogi.inventory_service.coreService.repository.TipoEntradaRepository;
+import br.com.fatec.mogi.inventory_service.coreService.repository.*;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
@@ -42,11 +32,7 @@ public class ItemServiceImpl implements ItemService {
 	private final LocalizacaoRepository localizacaoRepository;
 
 	@Override
-	public void cadastrarItem(CadastrarItemRequestDTO dto, String accessToken) {
-		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
-			.funcionalidade(FuncionalidadesEnum.CADASTRO_ITEM.toString())
-			.build();
-		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
+	public void cadastrarItem(CadastrarItemRequestDTO dto) {
 		if (itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
 			throw new ItemJaCadastradoException();
 		}
@@ -76,12 +62,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable,
-			String accessToken) {
-		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
-			.funcionalidade(FuncionalidadesEnum.LISTAR_ITEM.toString())
-			.build();
-		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
+	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable) {
 		var pagina = itemRepository.filtrar(dto.getDataCadastroInicio(), dto.getDataCadastroFim(),
 				dto.getCategoriaItemId(), dto.getLocalizacaoId(), dto.getStatusItemId(), dto.getTipoEntradaId(),
 				dto.getNomeItem(), dto.getCodigoItem(), dto.getNumeroSerie(), dto.getNotaFiscal(), pageable);
