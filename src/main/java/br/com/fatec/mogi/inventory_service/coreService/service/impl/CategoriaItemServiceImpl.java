@@ -1,6 +1,7 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaJaCadastradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.CategoriaItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.CategoriaItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
@@ -27,6 +28,12 @@ public class CategoriaItemServiceImpl implements CategoriaItemService {
 		}
 		CategoriaItem categoriaSalvar = CategoriaItem.builder().nome(dto.getNome()).build();
 		categoriaItemRepository.save(categoriaSalvar);
+	}
+
+	@Override
+	public void deletar(Long id) {
+		categoriaItemRepository.findById(id).orElseThrow(CategoriaNaoEncontradaException::new);
+		categoriaItemRepository.deleteById(id);
 	}
 
 }
