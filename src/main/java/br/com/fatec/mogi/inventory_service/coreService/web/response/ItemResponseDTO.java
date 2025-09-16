@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ItemResponseDTO {
 
+	private Long id;
+
 	private String nomeItem;
 
 	private String numeroSerie;
