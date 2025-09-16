@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -39,7 +40,6 @@ public class LocalizacaoControllerTest {
 			.port(port)
 			.contentType(ContentType.JSON)
 			.header("X-ACCESS-TOKEN", "token")
-
 			.log()
 			.all()
 			.when()
@@ -53,6 +53,24 @@ public class LocalizacaoControllerTest {
 		assertTrue(responseDTO.getLocalizacao().toString().contains("LAB01"));
 		assertTrue(responseDTO.getLocalizacao().toString().contains("LAB02"));
 		assertTrue(responseDTO.getLocalizacao().toString().contains("LAB03"));
+	}
+
+	@Test
+	@DisplayName("Deve cadastrar localização com sucesso")
+	void deveCadastrarLocalizacaoComSucesso() {
+		var dto = CadastrarLocalizacaoRequestDTO.builder().andar("1").nomeSala("SALA ABC").build();
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.log()
+			.all()
+			.when()
+			.body(dto)
+			.post("/core-service/v1/localizacao")
+			.then()
+			.statusCode(201);
 	}
 
 }
