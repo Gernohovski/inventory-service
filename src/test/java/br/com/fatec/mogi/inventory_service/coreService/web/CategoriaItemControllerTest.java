@@ -72,4 +72,73 @@ public class CategoriaItemControllerTest {
 			.statusCode(400);
 	}
 
+	@Test
+	@DisplayName("Deve deletar categoria com sucesso")
+	void deveDeletarCategoriaComSucesso() {
+		var dto = CadastrarCategoriaItemRequestDTO.builder().nome("CATEGORIA_TESTE_DELETE").build();
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.body(dto)
+			.when()
+			.post("/core-service/v1/categorias")
+			.then()
+			.statusCode(201);
+
+		var responseDTO = RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.when()
+			.get("/core-service/v1/categorias")
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(BuscarCategoriasResponseDTO.class);
+
+		var categoriaParaDeletar = responseDTO.getCategorias().stream()
+			.filter(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_DELETE"))
+			.findFirst()
+			.orElseThrow();
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.log()
+			.all()
+			.when()
+			.delete("/core-service/v1/categorias/" + categoriaParaDeletar.getId())
+			.then()
+			.statusCode(204);
+
+		var responseAposDeletar = RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.when()
+			.get("/core-service/v1/categorias")
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(BuscarCategoriasResponseDTO.class);
+
+		assertTrue(responseAposDeletar.getCategorias().stream()
+			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_DELETE")));
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao tentar deletar categoria inexistente")
+	void deveRetornarErroDeletarCategoriaInexistente() {
+		Long idInexistente = 999999L;
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.log()
+			.all()
+			.when()
+			.delete("/core-service/v1/categorias/" + idInexistente)
+			.then()
+			.statusCode(400);
+	}
+
 }
