@@ -2,7 +2,6 @@ package br.com.fatec.mogi.inventory_service.common.filter;
 
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,6 +41,7 @@ public class HttpAuthorizationFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		String requestPath = httpRequest.getRequestURI();
+
 		String method = httpRequest.getMethod();
 
 		if ("OPTIONS".equals(method) || isExcludedPath(requestPath)) {
@@ -56,14 +56,9 @@ public class HttpAuthorizationFilter implements Filter {
 				return;
 			}
 
-			FuncionalidadesEnum funcionalidade = FuncionalidadesEnum.getByEndpoint(requestPath);
-			if (funcionalidade == null) {
-				sendUnauthorizedResponse(httpResponse, "Rota não mapeada.");
-				return;
-			}
-
 			var autorizacaoRequestDto = AutorizarUsuarioRequestDTO.builder()
-				.funcionalidade(funcionalidade.toString())
+				.endpoint(requestPath)
+				.httpMethod(httpRequest.getMethod())
 				.build();
 
 			autorizacaoService.autorizar(autorizacaoRequestDto, accessToken);

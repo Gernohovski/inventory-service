@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AutorizarUsuarioRequestDTO {
 
-	private String funcionalidade;
+	private String endpoint;
+
+	private String httpMethod;
 
 }

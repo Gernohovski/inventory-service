@@ -9,7 +9,6 @@ import br.com.fatec.mogi.inventory_service.authService.web.dto.request.Autorizar
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.CadastrarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.LoginRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.LoginResponseDTO;
-import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +40,8 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		var tokens = fazerLogin(email, senha);
-		assertDoesNotThrow(() -> autorizacaoService.autorizar(
-				new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
-				tokens.getAccessToken()));
+		assertDoesNotThrow(() -> autorizacaoService
+			.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"), tokens.getAccessToken()));
 	}
 
 	@Test
@@ -54,8 +52,7 @@ public class AutorizacaoServiceTest {
 		cadastrarUsuario(email, senha, "OPERADOR");
 		var tokens = fazerLogin(email, senha);
 		assertThrows(UsuarioNaoAutorizadoException.class, () -> {
-			autorizacaoService.autorizar(
-					new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"),
 					tokens.getAccessToken());
 		});
 	}
@@ -64,7 +61,8 @@ public class AutorizacaoServiceTest {
 	@DisplayName("Deve lançar exceção ao tentar obter autorização funcionalidade inexistente")
 	void deveLancarExcecaoTentarObterAutorizacaoFuncionalidadeInexistente() {
 		assertThrows(FuncionalidadeNaoMapeadaException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido"), UUID.randomUUID().toString());
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("invalido", "GET"),
+					UUID.randomUUID().toString());
 		});
 	}
 
@@ -75,8 +73,7 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		assertThrows(UsuarioNaoAutenticadoException.class, () -> {
-			autorizacaoService.autorizar(
-					new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
+			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO("/core-service/v1/categorias", "POST"),
 					UUID.randomUUID().toString());
 		});
 	}
