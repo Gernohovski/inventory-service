@@ -1,15 +1,20 @@
 package br.com.fatec.mogi.inventory_service.coreService.service;
 
+import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaJaCadastradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.CategoriaItemResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -120,6 +125,20 @@ class CategoriaItemServiceTest {
 		assertThrows(CategoriaNaoEncontradaException.class, () -> {
 			categoriaItemService.atualizar(atualizarCategoriaItemRequestDTO, idInexistente);
 		});
+	}
+
+	@Test
+	@DisplayName("Deve retornar página com categorias quando existirem dados")
+	void deveRetornarPaginaComCategorias() {
+		Pageable pageable = PageRequest.of(0, 10);
+		CustomPageResponseDTO<CategoriaItemResponseDTO> resultado = categoriaItemService.buscarPaginado(pageable);
+		assertThat(resultado).isNotNull();
+		assertThat(resultado.getPage()).isEqualTo(0);
+		assertThat(resultado.getSize()).isEqualTo(10);
+		assertThat(resultado.getTotalPages()).isEqualTo(1);
+		assertThat(resultado.getContent().toString().contains("CADEIRA"));
+		assertThat(resultado.getContent().toString().contains("MESA"));
+		assertThat(resultado.getContent().toString().contains("COMPUTADOR"));
 	}
 
 }
