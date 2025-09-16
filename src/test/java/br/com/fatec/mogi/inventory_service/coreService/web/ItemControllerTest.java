@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.web;
 
+import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
@@ -17,7 +18,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = InventoryServiceApplication.class,
+		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class ItemControllerTest {
 

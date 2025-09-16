@@ -34,11 +34,7 @@ public class ItemServiceImpl implements ItemService {
 	private final LocalizacaoRepository localizacaoRepository;
 
 	@Override
-	public void cadastrarItem(CadastrarItemRequestDTO dto, String accessToken) {
-		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
-			.funcionalidade(FuncionalidadesEnum.CADASTRO_ITEM.toString())
-			.build();
-		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
+	public void cadastrarItem(CadastrarItemRequestDTO dto) {
 		if (itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
 			throw new ItemJaCadastradoException();
 		}
@@ -68,12 +64,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable,
-			String accessToken) {
-		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
-			.funcionalidade(FuncionalidadesEnum.LISTAR_ITEM.toString())
-			.build();
-		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
+	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable) {
 		var pagina = itemRepository.filtrar(dto.getDataCadastroInicio(), dto.getDataCadastroFim(),
 				dto.getCategoriaItemId(), dto.getLocalizacaoId(), dto.getStatusItemId(), dto.getTipoEntradaId(),
 				dto.getNomeItem(), dto.getCodigoItem(), dto.getNumeroSerie(), dto.getNotaFiscal(), pageable);
