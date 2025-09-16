@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.domain.exception.Categori
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.CategoriaItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.CategoriaItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class CategoriaItemServiceImpl implements CategoriaItemService {
 	public void deletar(Long id) {
 		categoriaItemRepository.findById(id).orElseThrow(CategoriaNaoEncontradaException::new);
 		categoriaItemRepository.deleteById(id);
+	}
+
+	@Override
+	public void atualizar(AtualizarCategoriaItemRequestDTO dto, Long id) {
+		var categoria = categoriaItemRepository.findById(id).orElseThrow(CategoriaNaoEncontradaException::new);
+		categoria.setNome(dto.getNome());
+		categoriaItemRepository.save(categoria);
 	}
 
 }
