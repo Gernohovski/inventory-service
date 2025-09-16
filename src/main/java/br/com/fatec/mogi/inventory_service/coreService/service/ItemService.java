@@ -8,9 +8,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface ItemService {
 
-	void cadastrarItem(CadastrarItemRequestDTO dto, String accessToken);
+	void cadastrarItem(CadastrarItemRequestDTO dto);
 
-	CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable,
-			String accessToken);
+	CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable);
 
 }

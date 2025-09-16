@@ -22,4 +22,8 @@ public class Funcionalidade {
 
 	private String funcionalidade;
 
+	private String endpoint;
+
+	private String httpMethod;
+
 }

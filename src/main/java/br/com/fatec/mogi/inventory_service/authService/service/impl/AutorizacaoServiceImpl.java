@@ -25,13 +25,14 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 
 	@Override
 	public void autorizar(AutorizarUsuarioRequestDTO dto, String accessToken) {
-		funcionalidadeRepository.findByFuncionalidade(dto.getFuncionalidade())
+		var funcionalidade = funcionalidadeRepository
+			.findByEndpointAndHttpMethod(dto.getEndpoint(), dto.getHttpMethod())
 			.orElseThrow(FuncionalidadeNaoMapeadaException::new);
 		var usuario = (Usuario) redisService.buscar(TipoCache.SESSAO_USUARIO, accessToken);
 		if (usuario == null) {
 			throw new UsuarioNaoAutenticadoException();
 		}
-		if (!usuarioRepository.possuiFuncionalidade(usuario.getId(), dto.getFuncionalidade())) {
+		if (!usuarioRepository.possuiFuncionalidade(usuario.getId(), funcionalidade.getFuncionalidade())) {
 			throw new UsuarioNaoAutorizadoException();
 		}
 	}
