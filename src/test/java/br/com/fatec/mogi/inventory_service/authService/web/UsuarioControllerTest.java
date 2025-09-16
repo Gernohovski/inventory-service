@@ -26,8 +26,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = InventoryServiceApplication.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class UsuarioControllerTest {
 
@@ -57,9 +56,9 @@ public class UsuarioControllerTest {
 		var errorMessage = RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.body(dto)
+			.body(dto)
 			.log()
 			.all()
 			.when()
@@ -85,9 +84,9 @@ public class UsuarioControllerTest {
 		var errorMessage = RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.body(dto)
+			.body(dto)
 			.log()
 			.all()
 			.when()
@@ -113,9 +112,9 @@ public class UsuarioControllerTest {
 		RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.body(dto)
+			.body(dto)
 			.log()
 			.all()
 			.when()
@@ -126,9 +125,9 @@ public class UsuarioControllerTest {
 		var errorMessage = RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.body(dto)
+			.body(dto)
 			.log()
 			.all()
 			.when()
@@ -268,9 +267,9 @@ public class UsuarioControllerTest {
 			.port(port)
 			.contentType(ContentType.JSON)
 			.body(cadastrarUsuarioRequestDTO)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.log()
+			.log()
 			.all()
 			.when()
 			.post("/auth-service/v1/usuarios")

@@ -17,8 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = InventoryServiceApplication.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class LocalizacaoControllerTest {
 
@@ -39,9 +38,9 @@ public class LocalizacaoControllerTest {
 		var responseDTO = RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
+			.header("X-ACCESS-TOKEN", "token")
 
-				.log()
+			.log()
 			.all()
 			.when()
 			.get("/core-service/v1/localizacao")

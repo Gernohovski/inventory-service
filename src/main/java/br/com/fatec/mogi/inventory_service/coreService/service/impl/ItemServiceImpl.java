@@ -1,8 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;

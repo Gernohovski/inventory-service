@@ -23,8 +23,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = InventoryServiceApplication.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class AutenticacaoControllerTest {
 
@@ -124,8 +123,8 @@ public class AutenticacaoControllerTest {
 			.port(port)
 			.contentType(ContentType.JSON)
 			.body(dto)
-				.header("X-ACCESS-TOKEN", "token")
-				.log()
+			.header("X-ACCESS-TOKEN", "token")
+			.log()
 			.all()
 			.when()
 			.put("/auth-service/v1/autenticacao/refresh")
@@ -147,8 +146,8 @@ public class AutenticacaoControllerTest {
 			.port(port)
 			.contentType(ContentType.JSON)
 			.body(new RefreshTokenRequestDTO(UUID.randomUUID().toString()))
-				.header("X-ACCESS-TOKEN", "token")
-				.log()
+			.header("X-ACCESS-TOKEN", "token")
+			.log()
 			.all()
 			.when()
 			.put("/auth-service/v1/autenticacao/refresh")
@@ -208,8 +207,8 @@ public class AutenticacaoControllerTest {
 		RestAssured.given()
 			.port(port)
 			.contentType(ContentType.JSON)
-				.header("X-ACCESS-TOKEN", "token")
-				.body(cadastrarUsuarioRequestDTO)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(cadastrarUsuarioRequestDTO)
 			.log()
 			.all()
 			.when()

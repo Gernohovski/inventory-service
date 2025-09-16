@@ -41,7 +41,8 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		var tokens = fazerLogin(email, senha);
-		assertDoesNotThrow(() -> autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
+		assertDoesNotThrow(() -> autorizacaoService.autorizar(
+				new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
 				tokens.getAccessToken()));
 	}
 
@@ -53,7 +54,9 @@ public class AutorizacaoServiceTest {
 		cadastrarUsuario(email, senha, "OPERADOR");
 		var tokens = fazerLogin(email, senha);
 		assertThrows(UsuarioNaoAutorizadoException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()), tokens.getAccessToken());
+			autorizacaoService.autorizar(
+					new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
+					tokens.getAccessToken());
 		});
 	}
 
@@ -72,7 +75,9 @@ public class AutorizacaoServiceTest {
 		String senha = "Senha123";
 		cadastrarUsuario(email, senha, "ADMIN");
 		assertThrows(UsuarioNaoAutenticadoException.class, () -> {
-			autorizacaoService.autorizar(new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()), UUID.randomUUID().toString());
+			autorizacaoService.autorizar(
+					new AutorizarUsuarioRequestDTO(FuncionalidadesEnum.BUSCAR_LOCALIZACAO.toString()),
+					UUID.randomUUID().toString());
 		});
 	}
 
