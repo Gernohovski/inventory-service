@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.coreService.service;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaJaCadastradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,47 @@ class CategoriaItemServiceTest {
 		Long idInexistente = 999999L;
 		assertThrows(CategoriaNaoEncontradaException.class, () -> {
 			categoriaItemService.deletar(idInexistente);
+		});
+	}
+
+	@Test
+	@DisplayName("Deve atualizar categoria com sucesso")
+	void deveAtualizarCategoriaComSucesso() {
+		var cadastrarCategoriaItemRequestDTO = CadastrarCategoriaItemRequestDTO.builder()
+			.nome("CATEGORIA_PARA_ATUALIZAR")
+			.build();
+		categoriaItemService.cadastrar(cadastrarCategoriaItemRequestDTO);
+
+		var categorias = categoriaItemService.buscar();
+		var categoriaParaAtualizar = categorias.getCategorias()
+			.stream()
+			.filter(categoria -> categoria.getNome().equals("CATEGORIA_PARA_ATUALIZAR"))
+			.findFirst()
+			.orElseThrow();
+
+		var atualizarCategoriaItemRequestDTO = AtualizarCategoriaItemRequestDTO.builder()
+			.nome("CATEGORIA_ATUALIZADA")
+			.build();
+		categoriaItemService.atualizar(atualizarCategoriaItemRequestDTO, categoriaParaAtualizar.getId());
+
+		var categoriasAposAtualizar = categoriaItemService.buscar();
+		assertTrue(categoriasAposAtualizar.getCategorias()
+			.stream()
+			.anyMatch(categoria -> categoria.getNome().equals("CATEGORIA_ATUALIZADA")));
+		assertTrue(categoriasAposAtualizar.getCategorias()
+			.stream()
+			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_PARA_ATUALIZAR")));
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao tentar atualizar categoria inexistente")
+	void deveRetornarErroAtualizarCategoriaInexistente() {
+		Long idInexistente = 999999L;
+		var atualizarCategoriaItemRequestDTO = AtualizarCategoriaItemRequestDTO.builder()
+			.nome("CATEGORIA_INEXISTENTE")
+			.build();
+		assertThrows(CategoriaNaoEncontradaException.class, () -> {
+			categoriaItemService.atualizar(atualizarCategoriaItemRequestDTO, idInexistente);
 		});
 	}
 

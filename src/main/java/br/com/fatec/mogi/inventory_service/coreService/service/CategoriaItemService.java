@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.service;
 
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 
@@ -10,5 +11,7 @@ public interface CategoriaItemService {
 	void cadastrar(CadastrarCategoriaItemRequestDTO dto);
 
 	void deletar(Long id);
+
+	void atualizar(AtualizarCategoriaItemRequestDTO dto, Long id);
 
 }

@@ -1,6 +1,7 @@
 package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import org.springframework.http.HttpStatus;
@@ -24,10 +25,16 @@ public record CategoriaItemController(CategoriaItemService categoriaItemService)
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@DeleteMapping("{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deletar(@PathVariable("id") Long id) {
 		categoriaItemService.deletar(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> atualizar(@RequestBody AtualizarCategoriaItemRequestDTO dto, @PathVariable("id") Long id) {
+		categoriaItemService.atualizar(dto, id);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 }
