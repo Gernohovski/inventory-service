@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import io.restassured.RestAssured;
@@ -161,6 +162,86 @@ public class CategoriaItemControllerTest {
 			.all()
 			.when()
 			.delete("/core-service/v1/categorias/" + idInexistente)
+			.then()
+			.statusCode(400);
+	}
+
+	@Test
+	@DisplayName("Deve atualizar categoria com sucesso")
+	void deveAtualizarCategoriaComSucesso() {
+		var cadastrarDto = CadastrarCategoriaItemRequestDTO.builder().nome("CATEGORIA_TESTE_UPDATE").build();
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.body(cadastrarDto)
+			.header("X-ACCESS-TOKEN", "token")
+			.when()
+			.post("/core-service/v1/categorias")
+			.then()
+			.statusCode(201);
+
+		var responseDTO = RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.when()
+			.get("/core-service/v1/categorias")
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(BuscarCategoriasResponseDTO.class);
+
+		var categoriaParaAtualizar = responseDTO.getCategorias().stream()
+			.filter(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_UPDATE"))
+			.findFirst()
+			.orElseThrow();
+
+		var atualizarDto = AtualizarCategoriaItemRequestDTO.builder().nome("CATEGORIA_ATUALIZADA_TESTE").build();
+		RestAssured.given()
+				.header("X-ACCESS-TOKEN", "token")
+				.port(port)
+			.contentType(ContentType.JSON)
+			.log()
+			.all()
+			.body(atualizarDto)
+			.when()
+			.put("/core-service/v1/categorias/" + categoriaParaAtualizar.getId())
+			.then()
+			.statusCode(200);
+
+		var responseAposAtualizar = RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.when()
+			.get("/core-service/v1/categorias")
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(BuscarCategoriasResponseDTO.class);
+
+		assertTrue(responseAposAtualizar.getCategorias().stream()
+			.anyMatch(categoria -> categoria.getNome().equals("CATEGORIA_ATUALIZADA_TESTE")));
+		assertTrue(responseAposAtualizar.getCategorias().stream()
+			.noneMatch(categoria -> categoria.getNome().equals("CATEGORIA_TESTE_UPDATE")));
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao tentar atualizar categoria inexistente")
+	void deveRetornarErroAtualizarCategoriaInexistente() {
+		Long idInexistente = 999999L;
+		var atualizarDto = AtualizarCategoriaItemRequestDTO.builder().nome("CATEGORIA_INEXISTENTE").build();
+		RestAssured.given()
+				.header("X-ACCESS-TOKEN", "token")
+				.port(port)
+			.contentType(ContentType.JSON)
+			.log()
+			.all()
+			.body(atualizarDto)
+			.when()
+			.put("/core-service/v1/categorias/" + idInexistente)
 			.then()
 			.statusCode(400);
 	}
