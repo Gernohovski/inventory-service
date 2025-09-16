@@ -24,4 +24,10 @@ public record CategoriaItemController(CategoriaItemService categoriaItemService)
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
+	@DeleteMapping("{id}")
+	public ResponseEntity<?> deletar(@PathVariable("id") Long id) {
+		categoriaItemService.deletar(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }

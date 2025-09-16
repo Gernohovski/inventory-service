@@ -9,4 +9,6 @@ public interface CategoriaItemService {
 
 	void cadastrar(CadastrarCategoriaItemRequestDTO dto);
 
+	void deletar(Long id);
+
 }
