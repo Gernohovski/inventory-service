@@ -33,6 +33,14 @@ CREATE TABLE IF NOT EXISTS usuario (
     FOREIGN KEY (administrador_id) REFERENCES usuario(id)
 );
 
+CREATE TABLE IF NOT EXISTS usuario_funcao (
+    usuario_id BIGINT NOT NULL,
+    funcao_id BIGINT NOT NULL,
+    PRIMARY KEY (usuario_id, funcao_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (funcao_id) REFERENCES funcao(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS categoria_item (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
