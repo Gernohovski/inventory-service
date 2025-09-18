@@ -38,5 +38,3 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
             mkdir -p inventory-service-jar
-            pkill -f "java -jar" || true
-            nohup java -jar inventory-service-jar/target/*.jar > inventory-service-jar/inventory.log 2>&1 &
