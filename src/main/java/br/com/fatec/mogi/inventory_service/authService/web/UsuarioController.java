@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public record UsuarioController(UsuarioService usuarioService) {
 
 	@PostMapping
-	public ResponseEntity<CadastrarUsuarioResponseDTO> cadastrarUsuario(@RequestBody CadastrarUsuarioRequestDTO dto) {
+	public ResponseEntity<CadastrarUsuarioResponseDTO> cadastrarUsuario(@RequestBody CadastrarUsuarioRequestDTO dto,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var usuario = usuarioService.cadastrarUsuario(dto);
 		CadastrarUsuarioResponseDTO responseDTO = CadastrarUsuarioResponseDTO.builder()
 			.email(usuario.getEmail().getEmail())

@@ -14,6 +14,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	@Query(value = """
 			    select new br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO(
+			    	i.id,
 			        i.nomeItem,
 			        i.numeroSerie,
 			        i.statusItem,

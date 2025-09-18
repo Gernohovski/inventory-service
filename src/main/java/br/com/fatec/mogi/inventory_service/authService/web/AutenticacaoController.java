@@ -22,7 +22,8 @@ public record AutenticacaoController(UsuarioService usuarioService, Autenticacao
 	}
 
 	@PutMapping("/refresh")
-	public ResponseEntity<RefreshTokenResponseDTO> refresh(@RequestBody RefreshTokenRequestDTO dto) {
+	public ResponseEntity<RefreshTokenResponseDTO> refresh(@RequestBody RefreshTokenRequestDTO dto,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var tokensDto = autenticacaoService.gerarAutenticacao(dto);
 		return ResponseEntity.status(HttpStatus.OK).body(tokensDto);
 	}

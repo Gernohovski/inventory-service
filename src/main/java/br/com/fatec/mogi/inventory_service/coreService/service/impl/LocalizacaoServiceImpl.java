@@ -1,10 +1,9 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
-import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.common.domain.enums.FuncionalidadesEnum;
+import br.com.fatec.mogi.inventory_service.coreService.domain.model.Localizacao;
 import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.LocalizacaoService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,15 +14,15 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
 	private final LocalizacaoRepository localizacaoRepository;
 
-	private final AutorizacaoService autorizacaoService;
+	@Override
+	public BuscarLocalizacaoResponseDTO buscar() {
+		return new BuscarLocalizacaoResponseDTO(localizacaoRepository.findAll());
+	}
 
 	@Override
-	public BuscarLocalizacaoResponseDTO buscar(String accessToken) {
-		AutorizarUsuarioRequestDTO autorizarUsuarioRequestDTO = AutorizarUsuarioRequestDTO.builder()
-			.funcionalidade(FuncionalidadesEnum.LISTAR_LOCALIZCAO.toString())
-			.build();
-		autorizacaoService.autorizar(autorizarUsuarioRequestDTO, accessToken);
-		return new BuscarLocalizacaoResponseDTO(localizacaoRepository.findAll());
+	public void cadastrar(CadastrarLocalizacaoRequestDTO dto) {
+		Localizacao localizacao = Localizacao.builder().andar(dto.getAndar()).nomeSala(dto.getNomeSala()).build();
+		localizacaoRepository.save(localizacao);
 	}
 
 }

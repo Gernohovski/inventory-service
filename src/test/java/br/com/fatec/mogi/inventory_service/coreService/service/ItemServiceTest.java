@@ -1,6 +1,5 @@
 package br.com.fatec.mogi.inventory_service.coreService.service;
 
-import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.impl.ItemServiceImpl;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,9 +24,6 @@ public class ItemServiceTest {
 
 	@Autowired
 	private ItemRepository itemRepository;
-
-	@MockitoBean
-	private AutorizacaoService autorizacaoService;
 
 	@Test
 	@DisplayName("Deve cadastrar item com sucesso")
@@ -46,7 +41,7 @@ public class ItemServiceTest {
 			.tipoEntradaId(1L)
 			.build();
 
-		itemService.cadastrarItem(dto, "token");
+		itemService.cadastrarItem(dto);
 
 		assertTrue(itemRepository.existsByCodigoItem("COD-UNICO-1"));
 	}
@@ -67,10 +62,10 @@ public class ItemServiceTest {
 			.tipoEntradaId(1L)
 			.build();
 
-		itemService.cadastrarItem(dto, "token");
+		itemService.cadastrarItem(dto);
 
 		assertThrows(ItemJaCadastradoException.class, () -> {
-			itemService.cadastrarItem(dto, "token");
+			itemService.cadastrarItem(dto);
 		});
 	}
 
@@ -91,7 +86,7 @@ public class ItemServiceTest {
 			.build();
 
 		assertThrows(CategoriaNaoEncontradaException.class, () -> {
-			itemService.cadastrarItem(dto, "token");
+			itemService.cadastrarItem(dto);
 		});
 	}
 
@@ -112,7 +107,7 @@ public class ItemServiceTest {
 			.build();
 
 		assertThrows(TipoEntradaNaoEncontradaException.class, () -> {
-			itemService.cadastrarItem(dto, "token");
+			itemService.cadastrarItem(dto);
 		});
 	}
 
@@ -133,7 +128,7 @@ public class ItemServiceTest {
 			.build();
 
 		assertThrows(StatusItemNaoEncontradoException.class, () -> {
-			itemService.cadastrarItem(dto, "token");
+			itemService.cadastrarItem(dto);
 		});
 	}
 
@@ -154,7 +149,7 @@ public class ItemServiceTest {
 			.build();
 
 		assertThrows(LocalizacaoNaoEncontradaException.class, () -> {
-			itemService.cadastrarItem(dto, "token");
+			itemService.cadastrarItem(dto);
 		});
 	}
 
@@ -185,10 +180,9 @@ public class ItemServiceTest {
 			.statusItemId(2L)
 			.tipoEntradaId(2L)
 			.build();
-		itemService.cadastrarItem(dto1, "token");
-		itemService.cadastrarItem(dto2, "token");
-		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().build(), PageRequest.of(0, 10),
-				"token");
+		itemService.cadastrarItem(dto1);
+		itemService.cadastrarItem(dto2);
+		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().build(), PageRequest.of(0, 10));
 		assertTrue(resposta.getTotalElements() >= 2);
 	}
 
@@ -207,9 +201,9 @@ public class ItemServiceTest {
 			.statusItemId(1L)
 			.tipoEntradaId(1L)
 			.build();
-		itemService.cadastrarItem(dto, "token");
+		itemService.cadastrarItem(dto);
 		var resposta = itemService.filtrarItems(ConsultarItemRequestDTO.builder().nomeItem("tec").build(),
-				PageRequest.of(0, 10), "token");
+				PageRequest.of(0, 10));
 		assertTrue(resposta.getContent().stream().anyMatch(i -> i.getNomeItem().toUpperCase().contains("TEC")));
 	}
 
@@ -217,7 +211,7 @@ public class ItemServiceTest {
 	@DisplayName("Deve filtrar itens combinando filtros de categoria e status")
 	void deveFiltrarCombinandoFiltros() {
 		var filtros = ConsultarItemRequestDTO.builder().categoriaItemId(1L).statusItemId(1L).build();
-		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10), "token");
+		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10));
 		assertTrue(resposta.getContent().stream().allMatch(i -> i.getCategoriaItem().getId().equals(1L)));
 	}
 
@@ -236,13 +230,13 @@ public class ItemServiceTest {
 			.statusItemId(1L)
 			.tipoEntradaId(1L)
 			.build();
-		itemService.cadastrarItem(dto, "token");
+		itemService.cadastrarItem(dto);
 		var agora = java.time.LocalDateTime.now();
 		var filtros = ConsultarItemRequestDTO.builder()
 			.dataCadastroInicio(agora.minusMinutes(5))
 			.dataCadastroFim(agora.plusMinutes(5))
 			.build();
-		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10), "token");
+		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10));
 		assertTrue(resposta.getTotalElements() > 0);
 	}
 

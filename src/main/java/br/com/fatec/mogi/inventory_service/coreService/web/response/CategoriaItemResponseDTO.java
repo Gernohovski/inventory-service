@@ -1,4 +1,4 @@
-package br.com.fatec.mogi.inventory_service.authService.web.dto.request;
+package br.com.fatec.mogi.inventory_service.coreService.web.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AutorizarUsuarioRequestDTO {
+public class CategoriaItemResponseDTO {
 
-	private String endpoint;
+	private Long id;
 
-	private String httpMethod;
+	private String nome;
 
 }
