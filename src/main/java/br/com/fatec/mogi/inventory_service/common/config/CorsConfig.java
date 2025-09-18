@@ -13,10 +13,19 @@ public class CorsConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.addAllowedOriginPattern("*");
-		configuration.addAllowedMethod("*");
+		configuration.addAllowedOrigin("https://fatecinventory.web.app");
+
+		configuration.addAllowedMethod("GET");
+		configuration.addAllowedMethod("POST");
+		configuration.addAllowedMethod("PUT");
+		configuration.addAllowedMethod("DELETE");
+		configuration.addAllowedMethod("PATCH");
+		configuration.addAllowedMethod("OPTIONS");
+
 		configuration.addAllowedHeader("*");
+
 		configuration.setAllowCredentials(true);
+
 		configuration.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

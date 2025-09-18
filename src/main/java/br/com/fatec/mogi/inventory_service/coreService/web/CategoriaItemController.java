@@ -30,13 +30,14 @@ public record CategoriaItemController(CategoriaItemService categoriaItemService)
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deletar(@PathVariable("id") Long id) {
+	public ResponseEntity<?> deletar(@PathVariable("id") Long id, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		categoriaItemService.deletar(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@RequestBody AtualizarCategoriaItemRequestDTO dto, @PathVariable("id") Long id) {
+	public ResponseEntity<?> atualizar(@RequestBody AtualizarCategoriaItemRequestDTO dto, @PathVariable("id") Long id,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		categoriaItemService.atualizar(dto, id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
