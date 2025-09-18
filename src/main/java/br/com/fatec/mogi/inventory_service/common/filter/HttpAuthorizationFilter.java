@@ -41,10 +41,19 @@ public class HttpAuthorizationFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		String requestPath = httpRequest.getRequestURI();
-
 		String method = httpRequest.getMethod();
 
-		if ("OPTIONS".equals(method) || isExcludedPath(requestPath)) {
+		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+		httpResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+		httpResponse.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,X-ACCESS-TOKEN");
+		httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
+
+		if ("OPTIONS".equalsIgnoreCase(method)) {
+			httpResponse.setStatus(HttpServletResponse.SC_OK);
+			return;
+		}
+
+		if (isExcludedPath(requestPath)) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -58,7 +67,7 @@ public class HttpAuthorizationFilter implements Filter {
 
 			var autorizacaoRequestDto = AutorizarUsuarioRequestDTO.builder()
 				.endpoint(requestPath)
-				.httpMethod(httpRequest.getMethod())
+				.httpMethod(method)
 				.build();
 
 			autorizacaoService.autorizar(autorizacaoRequestDto, accessToken);
@@ -67,7 +76,6 @@ public class HttpAuthorizationFilter implements Filter {
 		catch (Exception e) {
 			sendUnauthorizedResponse(httpResponse, "Erro de autenticação.");
 		}
-
 	}
 
 	private boolean isExcludedPath(String requestPath) {
