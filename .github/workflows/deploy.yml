@@ -28,7 +28,7 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
           source: "target/*.jar"
-          target: "/inventory-service-jar"
+          target: "inventory-service-jar"
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -37,6 +37,6 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            mkdir -p /inventory-service-jar
+            mkdir -p inventory-service-jar
             pkill -f "java -jar" || true
-            nohup java -jar /inventory-service-jar/*.jar > /inventory-service-jar/inventory.log 2>&1 &
+            nohup java -jar inventory-service-jar/*.jar > inventory-service-jar/inventory.log 2>&1 &
