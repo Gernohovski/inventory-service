@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.authService.web.dto.request.Autorizar
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,8 @@ import java.util.List;
 @Component
 @Order(1)
 public class HttpAuthorizationFilter implements Filter {
+
+	private static final Logger LOG = Logger.getLogger(HttpAuthorizationFilter.class.getName());
 
 	@Autowired
 	private AutorizacaoService autorizacaoService;
@@ -42,6 +45,10 @@ public class HttpAuthorizationFilter implements Filter {
 
 		String requestPath = httpRequest.getRequestURI();
 		String method = httpRequest.getMethod();
+
+		LOG.info("Requisição recebida: " + httpRequest);
+		LOG.info("Request PATH: " + requestPath);
+		LOG.info("Request Method " + method);
 
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 		httpResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");

@@ -37,4 +37,4 @@ jobs:
           username: ${{ secrets.DO_USER }}
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            mkdir -p inventory-service-jar
+            sh execute-inventoryservice.sh
