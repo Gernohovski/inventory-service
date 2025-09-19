@@ -14,6 +14,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 @Order(1)
@@ -26,6 +27,8 @@ public class HttpAuthorizationFilter implements Filter {
 
 	private static final List<String> EXCLUDED_PATHS = Arrays.asList("/auth-service/v1/autenticacao/login",
 			"/auth-service/v1/usuarios/solicitar-redefinicao-senha", "/auth-service/v1/usuarios/alterar-senha");
+	
+	private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -44,10 +47,12 @@ public class HttpAuthorizationFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		String requestPath = httpRequest.getRequestURI();
+		String normalizedPath = normalizePath(requestPath);
 		String method = httpRequest.getMethod();
 
 		LOG.info("Requisição recebida: " + httpRequest);
-		LOG.info("Request PATH: " + requestPath);
+		LOG.info("Request PATH original: " + requestPath);
+		LOG.info("Request PATH normalizado: " + normalizedPath);
 		LOG.info("Request Method " + method);
 
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
@@ -60,7 +65,7 @@ public class HttpAuthorizationFilter implements Filter {
 			return;
 		}
 
-		if (isExcludedPath(requestPath)) {
+		if (isExcludedPath(normalizedPath)) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -73,7 +78,7 @@ public class HttpAuthorizationFilter implements Filter {
 			}
 
 			var autorizacaoRequestDto = AutorizarUsuarioRequestDTO.builder()
-				.endpoint(requestPath)
+				.endpoint(normalizedPath)
 				.httpMethod(method)
 				.build();
 
@@ -88,6 +93,18 @@ public class HttpAuthorizationFilter implements Filter {
 
 	private boolean isExcludedPath(String requestPath) {
 		return EXCLUDED_PATHS.contains(requestPath);
+	}
+
+	private String normalizePath(String requestPath) {
+		if (requestPath == null || requestPath.isEmpty()) {
+			return requestPath;
+		}
+		String normalizedPath = PATH_VARIABLE_PATTERN.matcher(requestPath).replaceAll("");
+		normalizedPath = normalizedPath.replaceAll("//+", "/");
+		if (normalizedPath.length() > 1 && normalizedPath.endsWith("/")) {
+			normalizedPath = normalizedPath.substring(0, normalizedPath.length() - 1);
+		}
+		return normalizedPath;
 	}
 
 	private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
