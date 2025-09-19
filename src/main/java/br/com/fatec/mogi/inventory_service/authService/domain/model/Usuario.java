@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.authService.domain.model;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.model.valueObjects.Email;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.valueObjects.Senha;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,8 +30,10 @@ public class Usuario {
 
 	private boolean ativo;
 
+	@JsonIgnore
 	private LocalDateTime dataCriacao;
 
+	@JsonIgnore
 	private LocalDateTime dataAlteracao;
 
 	@ManyToOne
