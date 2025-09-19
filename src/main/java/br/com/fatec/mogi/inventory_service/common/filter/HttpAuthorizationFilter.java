@@ -81,6 +81,7 @@ public class HttpAuthorizationFilter implements Filter {
 			chain.doFilter(request, response);
 		}
 		catch (Exception e) {
+			LOG.info(e.getMessage());
 			sendUnauthorizedResponse(httpResponse, "Erro de autenticação.");
 		}
 	}
