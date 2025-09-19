@@ -44,6 +44,7 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 			LOG.info("Usuário não possui autorização");
 			throw new UsuarioNaoAutorizadoException();
 		}
+		LOG.info("Usuário autorizado!");
 	}
 
 }
