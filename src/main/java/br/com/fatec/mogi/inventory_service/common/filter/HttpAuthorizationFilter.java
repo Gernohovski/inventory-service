@@ -26,7 +26,7 @@ public class HttpAuthorizationFilter implements Filter {
 	private AutorizacaoService autorizacaoService;
 
 	private static final List<String> EXCLUDED_PATHS = Arrays.asList("/auth-service/v1/autenticacao/login",
-			"/auth-service/v1/usuarios/solicitar-redefinicao-senha", "/auth-service/v1/usuarios/alterar-senha");
+			"/auth-service/v1/usuarios/solicitar-redefinicao-senha", "/auth-service/v1/usuarios/alterar-senha", "/auth-service/v1/autenticacao/refresh");
 	
 	private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
 
