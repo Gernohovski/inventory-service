@@ -2,10 +2,14 @@ package br.com.fatec.mogi.inventory_service.common.filter;
 
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
-import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -14,6 +18,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @Component
@@ -26,9 +31,11 @@ public class HttpAuthorizationFilter implements Filter {
 	private AutorizacaoService autorizacaoService;
 
 	private static final List<String> EXCLUDED_PATHS = Arrays.asList("/auth-service/v1/autenticacao/login",
-			"/auth-service/v1/usuarios/solicitar-redefinicao-senha", "/auth-service/v1/usuarios/alterar-senha", "/auth-service/v1/autenticacao/refresh");
-	
-	private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
+			"/auth-service/v1/usuarios/solicitar-redefinicao-senha", "/auth-service/v1/usuarios/alterar-senha",
+			"/auth-service/v1/autenticacao/refresh");
+
+	private static final Pattern PATH_VARIABLE_PATTERN = Pattern
+		.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {

@@ -1,6 +1,10 @@
 package br.com.fatec.mogi.inventory_service.coreService.service;
 
-import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.ItemJaCadastradoException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoEncontradoException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.TipoEntradaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.impl.ItemServiceImpl;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
