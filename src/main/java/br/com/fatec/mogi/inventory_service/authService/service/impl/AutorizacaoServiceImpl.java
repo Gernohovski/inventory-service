@@ -34,11 +34,14 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 		var funcionalidade = funcionalidadeRepository
 			.findByEndpointAndHttpMethod(dto.getEndpoint(), dto.getHttpMethod())
 			.orElseThrow(FuncionalidadeNaoMapeadaException::new);
+		LOG.info("Buscando cache da sessão do usuário " + accessToken);
 		var usuario = (Usuario) redisService.buscar(TipoCache.SESSAO_USUARIO, accessToken);
 		if (usuario == null) {
+			LOG.info("Usuário não encontrado!");
 			throw new UsuarioNaoAutenticadoException();
 		}
 		if (!usuarioRepository.possuiFuncionalidade(usuario.getId(), funcionalidade.getFuncionalidade())) {
+			LOG.info("Usuário não possui autorização");
 			throw new UsuarioNaoAutorizadoException();
 		}
 	}
