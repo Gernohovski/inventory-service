@@ -9,7 +9,12 @@ import br.com.fatec.mogi.inventory_service.authService.web.dto.response.LoginRes
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.RefreshTokenResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth-service/v1/autenticacao")
@@ -22,8 +27,7 @@ public record AutenticacaoController(UsuarioService usuarioService, Autenticacao
 	}
 
 	@PutMapping("/refresh")
-	public ResponseEntity<RefreshTokenResponseDTO> refresh(@RequestBody RefreshTokenRequestDTO dto,
-			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+	public ResponseEntity<RefreshTokenResponseDTO> refresh(@RequestBody RefreshTokenRequestDTO dto) {
 		var tokensDto = autenticacaoService.gerarAutenticacao(dto);
 		return ResponseEntity.status(HttpStatus.OK).body(tokensDto);
 	}
