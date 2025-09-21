@@ -12,30 +12,30 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	boolean existsByCodigoItem(String codigo);
 
-	@Query(value = """
-			    select new br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO(
-			    	i.id,
-			        i.nomeItem,
-			        i.numeroSerie,
-			        i.statusItem,
-			        i.categoriaItem,
-			        i.tipoEntrada,
-			        i.codigoItem,
-			        i.dataCadastro,
-			        i.localizacao,
-			        i.notaFiscal
-			    )
-			    from Item i
-			    where (:dataCadastroInicio is null or i.dataCadastro >= :dataCadastroInicio)
-			      and (:dataCadastroFim    is null or i.dataCadastro <= :dataCadastroFim)
-			      and (:categoriaItemId   is null or i.categoriaItem.id = :categoriaItemId)
-			      and (:localizacaoId     is null or i.localizacao.id   = :localizacaoId)
-			      and (:statusItemId      is null or i.statusItem.id    = :statusItemId)
-			      and (:tipoEntradaId     is null or i.tipoEntrada.id   = :tipoEntradaId)
-			      and (:nomeItem          is null or upper(i.nomeItem)   like concat('%', upper(:nomeItem), '%'))
-			      and (:codigoItem        is null or upper(i.codigoItem) like concat('%', upper(:codigoItem), '%'))
-			      and (:numeroSerie       is null or upper(i.numeroSerie) like concat('%', upper(:numeroSerie), '%'))
-			      and (:notaFiscal        is null or upper(i.notaFiscal) like concat('%', upper(:notaFiscal), '%'))
+	@Query("""
+			SELECT new br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO(
+				i.id,
+				i.nomeItem,
+				i.numeroSerie,
+				i.statusItem,
+				i.categoriaItem,
+				i.tipoEntrada,
+				i.codigoItem,
+				i.dataCadastro,
+				i.localizacao,
+				i.notaFiscal
+			)
+			FROM Item i
+			WHERE i.dataCadastro >= COALESCE(:dataCadastroInicio, i.dataCadastro)
+			  and i.dataCadastro <= COALESCE(:dataCadastroFim, i.dataCadastro)
+			  and i.categoriaItem.id = COALESCE(:categoriaItemId, i.categoriaItem.id)
+			  and i.localizacao.id   = COALESCE(:localizacaoId, i.localizacao.id)
+			  and i.statusItem.id    = COALESCE(:statusItemId, i.statusItem.id)
+			  and i.tipoEntrada.id   = COALESCE(:tipoEntradaId, i.tipoEntrada.id)
+			  and upper(i.nomeItem)   like COALESCE(concat('%', upper(:nomeItem), '%'), upper(i.nomeItem))
+			  and upper(i.codigoItem) like COALESCE(concat('%', upper(:codigoItem), '%'), upper(i.codigoItem))
+			  and upper(i.numeroSerie) like COALESCE(concat('%', upper(:numeroSerie), '%'), upper(i.numeroSerie))
+			  and upper(i.notaFiscal) like COALESCE(concat('%', upper(:notaFiscal), '%'), upper(i.notaFiscal))
 			""")
 	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
 			@Param("dataCadastroFim") java.time.LocalDateTime dataCadastroFim,
