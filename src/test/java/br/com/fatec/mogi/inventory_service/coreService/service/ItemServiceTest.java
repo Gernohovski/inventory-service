@@ -13,8 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -534,6 +535,25 @@ public class ItemServiceTest {
 
 		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
 		assertTrue(itemAtualizado.getDataAlteracao().isAfter(dataAlteracaoOriginal));
+	}
+
+	@Test
+	@DisplayName("Deve excluir item com sucesso")
+	void deveExcluirItemComSucesso() {
+		var item = CadastrarItemRequestDTO.builder()
+				.nomeItem("Item Teste Tipo Entrada")
+				.codigoItem(UUID.randomUUID().toString())
+				.categoriaItemId(1L)
+				.localizacaoId(1L)
+				.statusItemId(1L)
+				.tipoEntradaId(1L)
+				.build();
+
+		var itemSalvo = itemService.cadastrarItem(item);
+
+		itemService.deletar(itemSalvo.getId());
+
+		assertFalse(itemRepository.findById(itemSalvo.getId()).isPresent());
 	}
 
 }

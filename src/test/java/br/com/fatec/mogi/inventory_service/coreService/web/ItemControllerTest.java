@@ -18,6 +18,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -511,6 +514,43 @@ public class ItemControllerTest {
 			.put("/core-service/v1/itens/" + itemId)
 			.then()
 			.statusCode(400);
+	}
+
+	@Test
+	@DisplayName("Deve deletar um item com sucesso")
+	void deveDeletarUmItemComSucesso() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+				.nomeItem("Item Teste Entidades")
+				.codigoItem(UUID.randomUUID().toString())
+				.categoriaItemId(1L)
+				.localizacaoId(1L)
+				.statusItemId(1L)
+				.tipoEntradaId(1L)
+				.build();
+
+		var itemCriado = RestAssured.given()
+				.port(porta)
+				.contentType(ContentType.JSON)
+				.header("X-ACCESS-TOKEN", "token")
+				.body(dtoOriginal)
+				.post("/core-service/v1/itens")
+				.then()
+				.statusCode(201)
+				.extract()
+				.body()
+				.as(ItemResponseDTO.class);
+
+		RestAssured.given()
+				.port(porta)
+				.contentType(ContentType.JSON)
+				.header("X-ACCESS-TOKEN", "token")
+				.delete("/core-service/v1/itens/" + itemCriado.getId())
+				.then()
+				.statusCode(204);
+
+		assertFalse(itemRepository.findById(itemCriado.getId()).isPresent());
 	}
 
 }
