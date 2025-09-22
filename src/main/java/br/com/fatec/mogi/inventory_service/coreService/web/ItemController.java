@@ -32,7 +32,8 @@ public record ItemController(ItemService itemService) {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ItemResponseDTO> atualizarItem(@PathVariable Long id, @RequestBody AtualizarItemRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+	public ResponseEntity<ItemResponseDTO> atualizarItem(@PathVariable Long id,
+			@RequestBody AtualizarItemRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var item = itemService.atualizar(dto, id);
 		return ResponseEntity.status(HttpStatus.OK).body(item);
 	}

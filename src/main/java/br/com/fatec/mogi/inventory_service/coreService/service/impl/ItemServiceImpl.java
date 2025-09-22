@@ -38,14 +38,10 @@ public class ItemServiceImpl implements ItemService {
 		if (itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
 			throw new ItemJaCadastradoException();
 		}
-		categoriaItemRepository.findById(dto.getCategoriaItemId())
-			.orElseThrow(CategoriaNaoEncontradaException::new);
-		tipoEntradaRepository.findById(dto.getTipoEntradaId())
-			.orElseThrow(TipoEntradaNaoEncontradaException::new);
-		statusItemRepository.findById(dto.getStatusItemId())
-			.orElseThrow(StatusItemNaoEncontradoException::new);
-		localizacaoRepository.findById(dto.getLocalizacaoId())
-			.orElseThrow(LocalizacaoNaoEncontradaException::new);
+		categoriaItemRepository.findById(dto.getCategoriaItemId()).orElseThrow(CategoriaNaoEncontradaException::new);
+		tipoEntradaRepository.findById(dto.getTipoEntradaId()).orElseThrow(TipoEntradaNaoEncontradaException::new);
+		statusItemRepository.findById(dto.getStatusItemId()).orElseThrow(StatusItemNaoEncontradoException::new);
+		localizacaoRepository.findById(dto.getLocalizacaoId()).orElseThrow(LocalizacaoNaoEncontradaException::new);
 		Item item = itemMapper.from(dto);
 		item.setDataAlteracao(LocalDateTime.now());
 		item.setDataCadastro(LocalDateTime.now());
@@ -72,25 +68,25 @@ public class ItemServiceImpl implements ItemService {
 		var codigoItemSalvo = item.getCodigoItem();
 		if (dto.getCategoriaItemId() != null) {
 			var categoria = categoriaItemRepository.findById(dto.getCategoriaItemId())
-					.orElseThrow(CategoriaNaoEncontradaException::new);
+				.orElseThrow(CategoriaNaoEncontradaException::new);
 			item.setCategoriaItem(categoria);
 		}
 		if (dto.getTipoEntradaId() != null) {
 			var tipoEntrada = tipoEntradaRepository.findById(dto.getTipoEntradaId())
-					.orElseThrow(TipoEntradaNaoEncontradaException::new);
+				.orElseThrow(TipoEntradaNaoEncontradaException::new);
 			item.setTipoEntrada(tipoEntrada);
 		}
 		if (dto.getStatusItemId() != null) {
 			var status = statusItemRepository.findById(dto.getStatusItemId())
-					.orElseThrow(StatusItemNaoEncontradoException::new);
+				.orElseThrow(StatusItemNaoEncontradoException::new);
 			item.setStatusItem(status);
 		}
 		if (dto.getLocalizacaoId() != null) {
 			var localizacao = localizacaoRepository.findById(dto.getLocalizacaoId())
-					.orElseThrow(LocalizacaoNaoEncontradaException::new);
+				.orElseThrow(LocalizacaoNaoEncontradaException::new);
 			item.setLocalizacao(localizacao);
 		}
-		itemMapper.update(dto ,item);
+		itemMapper.update(dto, item);
 		if (!Objects.equals(item.getCodigoItem(), codigoItemSalvo)) {
 			if (itemRepository.existsByCodigoItem(item.getCodigoItem())) {
 				throw new ItemJaCadastradoException();
