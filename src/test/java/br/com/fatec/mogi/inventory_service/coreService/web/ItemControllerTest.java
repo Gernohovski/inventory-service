@@ -3,7 +3,9 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -232,6 +234,283 @@ public class ItemControllerTest {
 			.extract()
 			.path("content.size()");
 		assertTrue(((Number) totalPagina).intValue() <= 1);
+	}
+
+	@Test
+	@DisplayName("Deve atualizar item com sucesso")
+	void deveAtualizarItemComSucesso() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Original")
+			.descricaoCurta("Descrição original")
+			.descricaoDetalhada("Descrição detalhada original")
+			.numeroSerie("SN-ORIGINAL")
+			.codigoItem("COD-UPDATE-1")
+			.notaFiscal("NF-ORIGINAL")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemCriado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoOriginal)
+			.when()
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		Long itemId =  itemCriado.getId();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Atualizado")
+			.descricaoCurta("Descrição atualizada")
+			.descricaoDetalhada("Descrição detalhada atualizada")
+			.numeroSerie("SN-ATUALIZADO")
+			.notaFiscal("NF-ATUALIZADA")
+			.categoriaItemId(1L)
+			.localizacaoId(2L)
+			.statusItemId(2L)
+			.tipoEntradaId(2L)
+			.build();
+
+		var itemAtualizado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoAtualizacao)
+			.when()
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		assertTrue(itemAtualizado.getNomeItem().equals("Item Atualizado"));
+		assertTrue(itemAtualizado.getNumeroSerie().equals("SN-ATUALIZADO"));
+	}
+
+	@Test
+	@DisplayName("Deve atualizar apenas campos fornecidos (atualização parcial)")
+	void deveAtualizarApenasCamposFornecidos() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Parcial")
+			.descricaoCurta("Descrição original")
+			.descricaoDetalhada("Detalhes originais")
+			.numeroSerie("SN-PARCIAL")
+			.codigoItem("COD-PARCIAL-1")
+			.notaFiscal("NF-PARCIAL")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemCriado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoOriginal)
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		Long itemId = itemCriado.getId();
+
+		var dtoAtualizacaoParcial = AtualizarItemRequestDTO.builder()
+			.nomeItem("Nome Atualizado")
+			.localizacaoId(2L)
+			.build();
+
+		var itemAtualizado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoAtualizacaoParcial)
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		assertTrue(itemAtualizado.getNomeItem().equals("Nome Atualizado"));
+		assertTrue(itemAtualizado.getLocalizacao().getId().longValue() == 2L);
+
+		assertTrue(itemAtualizado.getNumeroSerie().equals("SN-PARCIAL"));
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao tentar atualizar item inexistente")
+	void deveRetornarErroItemInexistente() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Inexistente")
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoAtualizacao)
+			.when()
+			.put("/core-service/v1/itens/99999")
+			.then()
+			.statusCode(400);
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao atualizar com código já existente")
+	void deveRetornarErroCodigoJaExistente() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dto1 = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item 1")
+			.codigoItem("COD-EXISTENTE-1")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dto1)
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201);
+
+		var dto2 = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item 2")
+			.codigoItem("COD-EXISTENTE-2")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemCriado2 = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dto2)
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		Long item2Id = itemCriado2.getId();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.codigoItem("COD-EXISTENTE-1")
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoAtualizacao)
+			.put("/core-service/v1/itens/" + item2Id)
+			.then()
+			.statusCode(400);
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao atualizar com entidades relacionadas inexistentes")
+	void deveRetornarErroEntidadesInexistentes() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Entidades")
+			.codigoItem("COD-ENT-TEST")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemCriado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoOriginal)
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		Long itemId = itemCriado.getId();
+
+		var dtoCategoria = AtualizarItemRequestDTO.builder()
+			.categoriaItemId(999L)
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoCategoria)
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(400);
+
+		var dtoLocalizacao = AtualizarItemRequestDTO.builder()
+			.localizacaoId(999L)
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoLocalizacao)
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(400);
+
+		var dtoStatus = AtualizarItemRequestDTO.builder()
+			.statusItemId(999L)
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoStatus)
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(400);
+
+		var dtoTipoEntrada = AtualizarItemRequestDTO.builder()
+			.tipoEntradaId(999L)
+			.build();
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoTipoEntrada)
+			.put("/core-service/v1/itens/" + itemId)
+			.then()
+			.statusCode(400);
 	}
 
 }
