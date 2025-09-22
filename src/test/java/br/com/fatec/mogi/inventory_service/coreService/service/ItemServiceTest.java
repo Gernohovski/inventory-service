@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.coreService.service;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.impl.ItemServiceImpl;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import org.junit.jupiter.api.DisplayName;
@@ -238,6 +239,301 @@ public class ItemServiceTest {
 			.build();
 		var resposta = itemService.filtrarItems(filtros, PageRequest.of(0, 10));
 		assertTrue(resposta.getTotalElements() > 0);
+	}
+
+	@Test
+	@DisplayName("Deve atualizar item com sucesso")
+	void deveAtualizarItemComSucesso() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Original Unit")
+			.descricaoCurta("Descrição original")
+			.descricaoDetalhada("Descrição detalhada original")
+			.numeroSerie("SN-UNIT-ORIGINAL")
+			.codigoItem("COD-UNIT-UPDATE-1")
+			.notaFiscal("NF-UNIT-ORIGINAL")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-UPDATE-1").orElseThrow();
+		var itemIdOriginal = itemCriado.getId();
+		var dataAlteracaoOriginal = itemCriado.getDataAlteracao();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Atualizado Unit")
+			.descricaoCurta("Descrição atualizada")
+			.descricaoDetalhada("Descrição detalhada atualizada")
+			.numeroSerie("SN-UNIT-ATUALIZADO")
+			.notaFiscal("NF-UNIT-ATUALIZADA")
+			.categoriaItemId(1L)
+			.localizacaoId(2L)
+			.statusItemId(2L)
+			.tipoEntradaId(2L)
+			.build();
+
+		itemService.atualizar(dtoAtualizacao, itemIdOriginal);
+
+		var itemAtualizado = itemRepository.findById(itemIdOriginal).orElseThrow();
+
+		assertTrue(itemAtualizado.getNomeItem().equals("Item Atualizado Unit"));
+		assertTrue(itemAtualizado.getDescricaoCurta().equals("Descrição atualizada"));
+		assertTrue(itemAtualizado.getDescricaoDetalhada().equals("Descrição detalhada atualizada"));
+		assertTrue(itemAtualizado.getNumeroSerie().equals("SN-UNIT-ATUALIZADO"));
+		assertTrue(itemAtualizado.getNotaFiscal().equals("NF-UNIT-ATUALIZADA"));
+		assertTrue(itemAtualizado.getLocalizacao().getId().equals(2L));
+		assertTrue(itemAtualizado.getStatusItem().getId().equals(2L));
+		assertTrue(itemAtualizado.getTipoEntrada().getId().equals(2L));
+		assertTrue(itemAtualizado.getDataAlteracao().isAfter(dataAlteracaoOriginal));
+	}
+
+	@Test
+	@DisplayName("Deve atualizar apenas campos fornecidos (atualização parcial)")
+	void deveAtualizarApenasCamposFornecidos() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Parcial Unit")
+			.descricaoCurta("Descrição original")
+			.descricaoDetalhada("Detalhes originais")
+			.numeroSerie("SN-UNIT-PARCIAL")
+			.codigoItem("COD-UNIT-PARCIAL-1")
+			.notaFiscal("NF-UNIT-PARCIAL")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-PARCIAL-1").orElseThrow();
+		var itemId = itemCriado.getId();
+
+		var dtoAtualizacaoParcial = AtualizarItemRequestDTO.builder()
+			.nomeItem("Nome Atualizado Unit")
+			.localizacaoId(2L)
+			.build();
+
+		itemService.atualizar(dtoAtualizacaoParcial, itemId);
+
+		var itemAtualizado = itemRepository.findById(itemId).orElseThrow();
+
+		assertTrue(itemAtualizado.getNomeItem().equals("Nome Atualizado Unit"));
+		assertTrue(itemAtualizado.getLocalizacao().getId().equals(2L));
+
+		assertTrue(itemAtualizado.getDescricaoCurta().equals("Descrição original"));
+		assertTrue(itemAtualizado.getDescricaoDetalhada().equals("Detalhes originais"));
+		assertTrue(itemAtualizado.getNumeroSerie().equals("SN-UNIT-PARCIAL"));
+		assertTrue(itemAtualizado.getCodigoItem().equals("COD-UNIT-PARCIAL-1"));
+		assertTrue(itemAtualizado.getNotaFiscal().equals("NF-UNIT-PARCIAL"));
+		assertTrue(itemAtualizado.getCategoriaItem().getId().equals(1L));
+		assertTrue(itemAtualizado.getStatusItem().getId().equals(1L));
+		assertTrue(itemAtualizado.getTipoEntrada().getId().equals(1L));
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao tentar atualizar item inexistente")
+	void deveLancarErroItemInexistente() {
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Inexistente")
+			.build();
+
+		assertThrows(ItemNaoEncontradoException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, 99999L);
+		});
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao atualizar com código já existente")
+	void deveLancarErroCodigoJaExistente() {
+		var dto1 = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item 1 Unit")
+			.codigoItem("COD-UNIT-EXISTENTE-1")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dto1);
+
+		var dto2 = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item 2 Unit")
+			.codigoItem("COD-UNIT-EXISTENTE-2")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dto2);
+
+		var item2 = itemRepository.findByCodigoItem("COD-UNIT-EXISTENTE-2").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.codigoItem("COD-UNIT-EXISTENTE-1")
+			.build();
+
+		assertThrows(ItemJaCadastradoException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, item2.getId());
+		});
+	}
+
+	@Test
+	@DisplayName("Deve permitir atualizar com o mesmo código do item")
+	void devePermitirAtualizarComMesmoCodigo() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Mesmo Código")
+			.codigoItem("COD-UNIT-MESMO")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-MESMO").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Atualizado Mesmo Código")
+			.codigoItem("COD-UNIT-MESMO")
+			.build();
+
+		itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+
+		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
+		assertTrue(itemAtualizado.getNomeItem().equals("Item Atualizado Mesmo Código"));
+		assertTrue(itemAtualizado.getCodigoItem().equals("COD-UNIT-MESMO"));
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao atualizar com categoria inexistente")
+	void deveLancarErroAtualizarCategoriaInexistente() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Categoria")
+			.codigoItem("COD-UNIT-CAT-TEST")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-CAT-TEST").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.categoriaItemId(999L)
+			.build();
+
+		assertThrows(CategoriaNaoEncontradaException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		});
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao atualizar com localização inexistente")
+	void deveLancarErroAtualizarLocalizacaoInexistente() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Localização")
+			.codigoItem("COD-UNIT-LOC-TEST")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-LOC-TEST").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.localizacaoId(999L)
+			.build();
+
+		assertThrows(LocalizacaoNaoEncontradaException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		});
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao atualizar com status inexistente")
+	void deveLancarErroAtualizarStatusInexistente() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Status")
+			.codigoItem("COD-UNIT-STATUS-TEST")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-STATUS-TEST").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.statusItemId(999L)
+			.build();
+
+		assertThrows(StatusItemNaoEncontradoException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		});
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao atualizar com tipo de entrada inexistente")
+	void deveLancarErroAtualizarTipoEntradaInexistente() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Tipo Entrada")
+			.codigoItem("COD-UNIT-TE-TEST")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-TE-TEST").orElseThrow();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.tipoEntradaId(999L)
+			.build();
+
+		assertThrows(TipoEntradaNaoEncontradaException.class, () -> {
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		});
+	}
+
+	@Test
+	@DisplayName("Deve atualizar data de alteração ao atualizar item")
+	void deveAtualizarDataAlteracao() {
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Data Alteração")
+			.codigoItem("COD-UNIT-DATA-ALT")
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		itemService.cadastrarItem(dtoOriginal);
+
+		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-DATA-ALT").orElseThrow();
+		var dataAlteracaoOriginal = itemCriado.getDataAlteracao();
+
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
+			.nomeItem("Item Data Alteração Atualizada")
+			.build();
+
+		itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+
+		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
+		assertTrue(itemAtualizado.getDataAlteracao().isAfter(dataAlteracaoOriginal));
 	}
 
 }
