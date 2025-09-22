@@ -36,4 +36,10 @@ public record ItemController(ItemService itemService) {
 		var item = itemService.atualizar(dto, id);
 		return ResponseEntity.status(HttpStatus.OK).body(item);
 	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deletarItem(@PathVariable Long id, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		itemService.deletar(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
 }

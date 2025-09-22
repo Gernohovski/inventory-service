@@ -15,4 +15,6 @@ public interface ItemService {
 
 	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id);
 
+	void deletar(Long id);
+
 }

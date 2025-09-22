@@ -100,4 +100,10 @@ public class ItemServiceImpl implements ItemService {
 		return itemMapper.from(itemRepository.save(item));
 	}
 
+	@Override
+	public void deletar(Long id) {
+		itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
+		itemRepository.deleteById(id);
+	}
+
 }
