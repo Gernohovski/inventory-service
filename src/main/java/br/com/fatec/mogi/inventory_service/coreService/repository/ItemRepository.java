@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	boolean existsByCodigoItem(String codigo);
@@ -43,5 +45,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			@Param("statusItemId") Long statusItemId, @Param("tipoEntradaId") Long tipoEntradaId,
 			@Param("nomeItem") String nomeItem, @Param("codigoItem") String codigoItem,
 			@Param("numeroSerie") String numeroSerie, @Param("notaFiscal") String notaFiscal, Pageable pageable);
+
+	Optional<Item> findByCodigoItem(String codigoItem);
 
 }

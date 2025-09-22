@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
@@ -16,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public record ItemController(ItemService itemService) {
 
 	@PostMapping
-	public ResponseEntity<Void> cadastrarItem(@RequestBody CadastrarItemRequestDTO dto,
+	public ResponseEntity<ItemResponseDTO> cadastrarItem(@RequestBody CadastrarItemRequestDTO dto,
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
-		itemService.cadastrarItem(dto);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var item = itemService.cadastrarItem(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(item);
 	}
 
 	@GetMapping
@@ -28,5 +29,11 @@ public record ItemController(ItemService itemService) {
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var items = itemService.filtrarItems(dto, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(items);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<ItemResponseDTO> atualizarItem(@PathVariable Long id, @RequestBody AtualizarItemRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var item = itemService.atualizar(dto, id);
+		return ResponseEntity.status(HttpStatus.OK).body(item);
 	}
 }
