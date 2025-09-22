@@ -18,6 +18,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -267,7 +270,7 @@ public class ItemControllerTest {
 			.body()
 			.as(ItemResponseDTO.class);
 
-		Long itemId =  itemCriado.getId();
+		Long itemId = itemCriado.getId();
 
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
 			.nomeItem("Item Atualizado")
@@ -357,9 +360,7 @@ public class ItemControllerTest {
 	void deveRetornarErroItemInexistente() {
 		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.nomeItem("Item Inexistente")
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().nomeItem("Item Inexistente").build();
 
 		RestAssured.given()
 			.port(porta)
@@ -418,9 +419,7 @@ public class ItemControllerTest {
 
 		Long item2Id = itemCriado2.getId();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.codigoItem("COD-EXISTENTE-1")
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().codigoItem("COD-EXISTENTE-1").build();
 
 		RestAssured.given()
 			.port(porta)
@@ -460,9 +459,7 @@ public class ItemControllerTest {
 
 		Long itemId = itemCriado.getId();
 
-		var dtoCategoria = AtualizarItemRequestDTO.builder()
-			.categoriaItemId(999L)
-			.build();
+		var dtoCategoria = AtualizarItemRequestDTO.builder().categoriaItemId(999L).build();
 
 		RestAssured.given()
 			.port(porta)
@@ -473,9 +470,7 @@ public class ItemControllerTest {
 			.then()
 			.statusCode(400);
 
-		var dtoLocalizacao = AtualizarItemRequestDTO.builder()
-			.localizacaoId(999L)
-			.build();
+		var dtoLocalizacao = AtualizarItemRequestDTO.builder().localizacaoId(999L).build();
 
 		RestAssured.given()
 			.port(porta)
@@ -486,9 +481,7 @@ public class ItemControllerTest {
 			.then()
 			.statusCode(400);
 
-		var dtoStatus = AtualizarItemRequestDTO.builder()
-			.statusItemId(999L)
-			.build();
+		var dtoStatus = AtualizarItemRequestDTO.builder().statusItemId(999L).build();
 
 		RestAssured.given()
 			.port(porta)
@@ -499,9 +492,7 @@ public class ItemControllerTest {
 			.then()
 			.statusCode(400);
 
-		var dtoTipoEntrada = AtualizarItemRequestDTO.builder()
-			.tipoEntradaId(999L)
-			.build();
+		var dtoTipoEntrada = AtualizarItemRequestDTO.builder().tipoEntradaId(999L).build();
 
 		RestAssured.given()
 			.port(porta)
@@ -511,6 +502,43 @@ public class ItemControllerTest {
 			.put("/core-service/v1/itens/" + itemId)
 			.then()
 			.statusCode(400);
+	}
+
+	@Test
+	@DisplayName("Deve deletar um item com sucesso")
+	void deveDeletarUmItemComSucesso() {
+		Mockito.doNothing().when(autorizacaoService).autorizar(ArgumentMatchers.any(), ArgumentMatchers.any());
+
+		var dtoOriginal = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Entidades")
+			.codigoItem(UUID.randomUUID().toString())
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemCriado = RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.body(dtoOriginal)
+			.post("/core-service/v1/itens")
+			.then()
+			.statusCode(201)
+			.extract()
+			.body()
+			.as(ItemResponseDTO.class);
+
+		RestAssured.given()
+			.port(porta)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.delete("/core-service/v1/itens/" + itemCriado.getId())
+			.then()
+			.statusCode(204);
+
+		assertFalse(itemRepository.findById(itemCriado.getId()).isPresent());
 	}
 
 }

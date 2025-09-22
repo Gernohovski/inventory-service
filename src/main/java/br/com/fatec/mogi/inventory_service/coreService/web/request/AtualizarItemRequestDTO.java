@@ -11,24 +11,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AtualizarItemRequestDTO {
 
-    private String nomeItem;
+	private String nomeItem;
 
-    private String descricaoCurta;
+	private String descricaoCurta;
 
-    private String descricaoDetalhada;
+	private String descricaoDetalhada;
 
-    private String numeroSerie;
+	private String numeroSerie;
 
-    private String codigoItem;
+	private String codigoItem;
 
-    private String notaFiscal;
+	private String notaFiscal;
 
-    private Long categoriaItemId;
+	private Long categoriaItemId;
 
-    private Long localizacaoId;
+	private Long localizacaoId;
 
-    private Long statusItemId;
+	private Long statusItemId;
 
-    private Long tipoEntradaId;
+	private Long tipoEntradaId;
 
 }

@@ -13,8 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -336,9 +337,7 @@ public class ItemServiceTest {
 	@Test
 	@DisplayName("Deve lançar erro ao tentar atualizar item inexistente")
 	void deveLancarErroItemInexistente() {
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.nomeItem("Item Inexistente")
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().nomeItem("Item Inexistente").build();
 
 		assertThrows(ItemNaoEncontradoException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, 99999L);
@@ -372,9 +371,7 @@ public class ItemServiceTest {
 
 		var item2 = itemRepository.findByCodigoItem("COD-UNIT-EXISTENTE-2").orElseThrow();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.codigoItem("COD-UNIT-EXISTENTE-1")
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().codigoItem("COD-UNIT-EXISTENTE-1").build();
 
 		assertThrows(ItemJaCadastradoException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, item2.getId());
@@ -425,9 +422,7 @@ public class ItemServiceTest {
 
 		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-CAT-TEST").orElseThrow();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.categoriaItemId(999L)
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().categoriaItemId(999L).build();
 
 		assertThrows(CategoriaNaoEncontradaException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
@@ -450,9 +445,7 @@ public class ItemServiceTest {
 
 		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-LOC-TEST").orElseThrow();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.localizacaoId(999L)
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().localizacaoId(999L).build();
 
 		assertThrows(LocalizacaoNaoEncontradaException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
@@ -475,9 +468,7 @@ public class ItemServiceTest {
 
 		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-STATUS-TEST").orElseThrow();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.statusItemId(999L)
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().statusItemId(999L).build();
 
 		assertThrows(StatusItemNaoEncontradoException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
@@ -500,9 +491,7 @@ public class ItemServiceTest {
 
 		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-TE-TEST").orElseThrow();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.tipoEntradaId(999L)
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().tipoEntradaId(999L).build();
 
 		assertThrows(TipoEntradaNaoEncontradaException.class, () -> {
 			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
@@ -526,14 +515,31 @@ public class ItemServiceTest {
 		var itemCriado = itemRepository.findByCodigoItem("COD-UNIT-DATA-ALT").orElseThrow();
 		var dataAlteracaoOriginal = itemCriado.getDataAlteracao();
 
-		var dtoAtualizacao = AtualizarItemRequestDTO.builder()
-			.nomeItem("Item Data Alteração Atualizada")
-			.build();
+		var dtoAtualizacao = AtualizarItemRequestDTO.builder().nomeItem("Item Data Alteração Atualizada").build();
 
 		itemService.atualizar(dtoAtualizacao, itemCriado.getId());
 
 		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
 		assertTrue(itemAtualizado.getDataAlteracao().isAfter(dataAlteracaoOriginal));
+	}
+
+	@Test
+	@DisplayName("Deve excluir item com sucesso")
+	void deveExcluirItemComSucesso() {
+		var item = CadastrarItemRequestDTO.builder()
+			.nomeItem("Item Teste Tipo Entrada")
+			.codigoItem(UUID.randomUUID().toString())
+			.categoriaItemId(1L)
+			.localizacaoId(1L)
+			.statusItemId(1L)
+			.tipoEntradaId(1L)
+			.build();
+
+		var itemSalvo = itemService.cadastrarItem(item);
+
+		itemService.deletar(itemSalvo.getId());
+
+		assertFalse(itemRepository.findById(itemSalvo.getId()).isPresent());
 	}
 
 }
