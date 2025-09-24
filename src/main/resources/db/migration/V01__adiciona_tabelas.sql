@@ -82,5 +82,6 @@ CREATE TABLE IF NOT EXISTS item (
     categoria_item_id BIGINT REFERENCES categoria_item(id),
     localizacao_id BIGINT REFERENCES localizacao(id),
     status_item_id BIGINT REFERENCES status_item(id),
-    tipo_entrada_id BIGINT REFERENCES tipo_entrada(id)
+    tipo_entrada_id BIGINT REFERENCES tipo_entrada(id),
+    nota_fiscal VARCHAR(150)
 );
