@@ -2,6 +2,8 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
+import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import io.restassured.RestAssured;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -71,6 +74,51 @@ public class LocalizacaoControllerTest {
 			.post("/core-service/v1/localizacao")
 			.then()
 			.statusCode(201);
+	}
+
+	@Test
+	@DisplayName("Deve buscar localizações paginadas com sucesso")
+	void deveBuscarLocalizacoesPaginadasComSucesso() {
+		var response = RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.queryParam("page", "0")
+			.queryParam("size", "10")
+			.log()
+			.all()
+			.when()
+			.get("/core-service/v1/localizacao/paginado")
+			.then()
+			.statusCode(200)
+			.extract()
+			.body()
+			.as(CustomPageResponseDTO.class);
+
+		assertTrue(response.getContent().size() >= 3);
+		assertEquals(0, (int) response.getPage());
+		assertEquals(10, (int) response.getSize());
+		assertTrue(response.getTotalElements() >= 3);
+		assertTrue(response.getTotalPages() >= 1);
+	}
+
+	@Test
+	@DisplayName("Deve atualizar localização com sucesso")
+	void deveAtualizarLocalizacaoComSucesso() {
+		var dto = AtualizarLocalizacaoRequestDTO.builder().andar("2").nomeSala("LAB01").build();
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.pathParam("id", 1)
+			.log()
+			.all()
+			.when()
+			.body(dto)
+			.put("/core-service/v1/localizacao/{id}")
+			.then()
+			.statusCode(200);
 	}
 
 }
