@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import io.restassured.RestAssured;
@@ -99,6 +100,25 @@ public class LocalizacaoControllerTest {
 		assertEquals(10, (int) response.getSize());
 		assertTrue(response.getTotalElements() >= 3);
 		assertTrue(response.getTotalPages() >= 1);
+	}
+
+	@Test
+	@DisplayName("Deve atualizar localização com sucesso")
+	void deveAtualizarLocalizacaoComSucesso() {
+		var dto = AtualizarLocalizacaoRequestDTO.builder().andar("2").nomeSala("LAB01").build();
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.pathParam("id", 1)
+			.log()
+			.all()
+			.when()
+			.body(dto)
+			.put("/core-service/v1/localizacao/{id}")
+			.then()
+			.statusCode(200);
 	}
 
 }
