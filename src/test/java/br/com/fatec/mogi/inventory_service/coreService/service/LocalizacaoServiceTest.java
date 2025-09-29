@@ -6,8 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.AssertionsKt.assertNotNull;
 
@@ -38,6 +40,25 @@ public class LocalizacaoServiceTest {
 		localizacaoService.cadastrar(dto);
 		var localizacoes = localizacaoRepository.findAll();
 		assertTrue(localizacoes.toString().contains("SALA MAKER"));
+	}
+
+	@Test
+	@DisplayName("Deve buscar localizações paginadas com sucesso")
+	void deveBuscarLocalizacoesPaginadasComSucesso() {
+		var pageable = PageRequest.of(0, 10);
+		var resultado = localizacaoService.buscarPaginado(pageable);
+
+		assertNotNull(resultado);
+		assertTrue(resultado.getTotalElements() >= 3);
+		assertTrue(resultado.getContent().size() > 0);
+		assertEquals(0, resultado.getPage());
+		assertEquals(10, resultado.getSize());
+		assertTrue(resultado.getTotalPages() >= 1);
+
+		var localizacoes = resultado.getContent();
+		assertTrue(localizacoes.stream().anyMatch(l -> l.getNomeSala().equals("LAB01")));
+		assertTrue(localizacoes.stream().anyMatch(l -> l.getNomeSala().equals("LAB02")));
+		assertTrue(localizacoes.stream().anyMatch(l -> l.getNomeSala().equals("LAB03")));
 	}
 
 }
