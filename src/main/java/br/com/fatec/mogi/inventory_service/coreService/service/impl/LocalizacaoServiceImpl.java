@@ -54,4 +54,10 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 		localizacaoRepository.save(localizacao);
 	}
 
+	@Override
+	public void deletar(Long id) {
+		localizacaoRepository.findById(id).orElseThrow(LocalizacaoNaoEncontradaException::new);
+		localizacaoRepository.deleteById(id);
+	}
+
 }

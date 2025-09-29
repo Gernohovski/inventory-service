@@ -17,4 +17,6 @@ public interface LocalizacaoService {
 
 	void atualizar(AtualizarLocalizacaoRequestDTO dto, Long id);
 
+	void deletar(Long id);
+
 }
