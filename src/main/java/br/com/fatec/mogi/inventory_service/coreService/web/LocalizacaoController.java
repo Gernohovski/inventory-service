@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.service.LocalizacaoService;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
@@ -33,6 +34,13 @@ public record LocalizacaoController(LocalizacaoService localizacaoService) {
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		localizacaoService.cadastrar(dto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@PutMapping("/{id}")
+	ResponseEntity<?> atualizar(@RequestBody AtualizarLocalizacaoRequestDTO dto,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken, @PathVariable("id") Long id) {
+		localizacaoService.atualizar(dto, id);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 }
