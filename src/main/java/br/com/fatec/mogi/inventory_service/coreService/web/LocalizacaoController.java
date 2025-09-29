@@ -43,4 +43,10 @@ public record LocalizacaoController(LocalizacaoService localizacaoService) {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@DeleteMapping("/{id}")
+	ResponseEntity<?> deletar(@PathVariable("id") Long id, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		localizacaoService.deletar(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }
