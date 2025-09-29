@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.coreService.web;
 import br.com.fatec.mogi.inventory_service.InventoryServiceApplication;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRepository;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
@@ -13,13 +14,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = InventoryServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -30,6 +31,9 @@ public class LocalizacaoControllerTest {
 
 	@MockitoBean
 	AutorizacaoService autorizacaoService;
+
+	@Autowired
+	LocalizacaoRepository localizacaoRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -119,6 +123,42 @@ public class LocalizacaoControllerTest {
 			.put("/core-service/v1/localizacao/{id}")
 			.then()
 			.statusCode(200);
+	}
+
+	@Test
+	@DisplayName("Deve deletar localização com sucesso")
+	void deveDeletarLocalizacaoComSucesso() {
+		var dto = CadastrarLocalizacaoRequestDTO.builder().andar("1").nomeSala("SALA DELETAR").build();
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.log()
+			.all()
+			.when()
+			.body(dto)
+			.post("/core-service/v1/localizacao")
+			.then()
+			.statusCode(201);
+
+		var localizacoes = localizacaoRepository.findAll();
+		var localizacaoDeletar = localizacoes.stream()
+			.filter(localizacao -> localizacao.getNomeSala().equals("SALA DELETAR"))
+			.findFirst()
+			.orElse(null);
+		assertNotNull(localizacaoDeletar);
+
+		RestAssured.given()
+			.port(port)
+			.contentType(ContentType.JSON)
+			.header("X-ACCESS-TOKEN", "token")
+			.log()
+			.all()
+			.when()
+			.delete("/core-service/v1/localizacao/" + localizacaoDeletar.getId())
+			.then()
+			.statusCode(204);
 	}
 
 }

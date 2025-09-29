@@ -77,4 +77,28 @@ public class LocalizacaoServiceTest {
 		assertThrows(LocalizacaoNaoEncontradaException.class, () -> localizacaoService.atualizar(dto, 999L));
 	}
 
+	@Test
+	@DisplayName("Deve deletar localização com sucesso")
+	void deveDeletarLocalizacaoComSucesso() {
+		var dto = CadastrarLocalizacaoRequestDTO.builder().andar("1").nomeSala("SALA DELETAR").build();
+		localizacaoService.cadastrar(dto);
+
+		var localizacoesAntes = localizacaoRepository.findAll();
+		var localizacaoDeletar = localizacoesAntes.stream()
+			.filter(localizacao -> localizacao.getNomeSala().equals("SALA DELETAR"))
+			.findFirst()
+			.orElse(null);
+		assertNotNull(localizacaoDeletar);
+		localizacaoService.deletar(localizacaoDeletar.getId());
+		var localizacoesDepois = localizacaoRepository.findAll();
+		assertTrue(
+				localizacoesDepois.stream().noneMatch(localizacao -> localizacao.getNomeSala().equals("SALA DELETAR")));
+	}
+
+	@Test
+	@DisplayName("Deve retornar erro ao tentar deletar localização inexistente")
+	void deveRetornarErroAoTentarDeletarLocalizacaoInexistente() {
+		assertThrows(LocalizacaoNaoEncontradaException.class, () -> localizacaoService.deletar(999L));
+	}
+
 }
