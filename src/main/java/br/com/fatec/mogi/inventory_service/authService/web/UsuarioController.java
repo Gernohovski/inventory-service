@@ -2,10 +2,13 @@ package br.com.fatec.mogi.inventory_service.authService.web;
 
 import br.com.fatec.mogi.inventory_service.authService.service.UsuarioService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AlterarSenhaRequestDTO;
+import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AtualizarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.CadastrarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.SolicitarResetSenhaRequestDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.CadastrarUsuarioResponseDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.SolicitarResetSenhaResponseDTO;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +39,33 @@ public record UsuarioController(UsuarioService usuarioService) {
 	public ResponseEntity<?> alterarSenha(@RequestBody AlterarSenhaRequestDTO dto) {
 		usuarioService.alterarSenha(dto);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@GetMapping
+	public ResponseEntity<?> listarUsuarios(@RequestHeader("X-ACCESS-TOKEN") String accessToken,
+			@PageableDefault Pageable pageable) {
+		var usuarios = usuarioService.listarUsuarios(pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(usuarios);
+	}
+
+	@GetMapping("/administradores")
+	public ResponseEntity<?> listarAdministradores(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var administradores = usuarioService.listarAdministradores();
+		return ResponseEntity.status(HttpStatus.OK).body(administradores);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deletarUsuario(@PathVariable("id") Long id,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		usuarioService.deletarUsuario(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> atualizarUsuario(@PathVariable("id") Long id,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken, @RequestBody AtualizarUsuarioRequestDTO dto) {
+		var usuarioAtualizado = usuarioService.atualizarUsuario(id, dto);
+		return ResponseEntity.status(HttpStatus.OK).body(usuarioAtualizado);
 	}
 
 }
