@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> {
 
 	@Query(value = """
@@ -18,5 +20,7 @@ public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> 
 			FROM Localizacao l
 			""")
 	Page<LocalizacaoResponseDTO> findPaginado(Pageable pageable);
+
+	Optional<Localizacao> findByNomeSala(String nomeSala);
 
 }
