@@ -1,4 +1,4 @@
-package br.com.fatec.mogi.inventory_service.coreService.strategy;
+package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem;
 
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ItemUploadRequestDTO;
 import jakarta.annotation.PostConstruct;

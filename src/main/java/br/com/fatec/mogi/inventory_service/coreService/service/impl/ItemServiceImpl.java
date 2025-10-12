@@ -1,19 +1,33 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.config.ItemUploadJobConfig;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.domain.mapper.ItemMapper;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
+import br.com.fatec.mogi.inventory_service.coreService.reader.ItemUploadReader;
 import br.com.fatec.mogi.inventory_service.coreService.repository.*;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
+import br.com.fatec.mogi.inventory_service.coreService.strategy.exportarItem.ExportarItemNavigation;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -32,6 +46,12 @@ public class ItemServiceImpl implements ItemService {
 	private final LocalizacaoRepository localizacaoRepository;
 
 	private final ItemMapper itemMapper;
+
+	private final JobLauncher jobLauncher;
+
+	private final ItemUploadJobConfig jobConfig;
+
+	private final ExportarItemNavigation exportarItemNavigation;
 
 	@Override
 	public ItemResponseDTO cadastrarItem(CadastrarItemRequestDTO dto) {
@@ -100,6 +120,54 @@ public class ItemServiceImpl implements ItemService {
 	public void deletar(Long id) {
 		itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
 		itemRepository.deleteById(id);
+	}
+
+	@Override
+	public void upload(MultipartFile file) throws Exception {
+		String originalFilename = file.getOriginalFilename();
+		if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".csv")) {
+			throw new ArquivoNaoSuportadoException();
+		}
+
+		File tempFile = null;
+		try {
+			tempFile = File.createTempFile("upload-", ".csv");
+			try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+				fos.write(file.getBytes());
+			}
+
+			Resource resource = new FileSystemResource(tempFile);
+			ItemUploadReader reader = new ItemUploadReader(resource);
+			var step = jobConfig.itemUploadStep(reader);
+			Job job = jobConfig.createJob(step);
+			JobParameters params = new JobParametersBuilder().addString("fileName", originalFilename)
+				.addLong("timestamp", System.currentTimeMillis())
+				.addString("tempFilePath", tempFile.getAbsolutePath())
+				.toJobParameters();
+
+			jobLauncher.run(job, params);
+		}
+		finally {
+			if (tempFile != null) {
+				final File fileToDelete = tempFile;
+				new Thread(() -> {
+					try {
+						Thread.sleep(60000);
+						if (fileToDelete.exists()) {
+							fileToDelete.delete();
+						}
+					}
+					catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}).start();
+			}
+		}
+	}
+
+	@Override
+	public ResponseEntity<byte[]> exportar(ExportarItensRequestDTO dto, String tipo) {
+		return exportarItemNavigation.processarEstrategia(dto.getItensId(), tipo);
 	}
 
 }

@@ -1,8 +1,8 @@
-package br.com.fatec.mogi.inventory_service.coreService.strategy.impl;
+package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.impl;
 
 import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
-import br.com.fatec.mogi.inventory_service.coreService.strategy.ValidarItemContexto;
-import br.com.fatec.mogi.inventory_service.coreService.strategy.ValidarItemStrategy;
+import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemContexto;
+import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemStrategy;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ItemUploadRequestDTO;
 import jakarta.annotation.Priority;
 import lombok.RequiredArgsConstructor;
