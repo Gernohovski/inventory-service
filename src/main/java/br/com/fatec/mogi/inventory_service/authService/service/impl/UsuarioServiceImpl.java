@@ -63,6 +63,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepository.findByEmail(usuario.getEmail()).ifPresent(u -> {
 			throw new EmailJaUtilizadoException("E-mail já utilizado.");
 		});
+		usuario.setDataCriacao(LocalDateTime.now());
+		usuario.setDataAlteracao(LocalDateTime.now());
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 		usuarioFuncaoRepository.save(new UsuarioFuncao(usuarioSalvo, funcao));
 		return usuarioSalvo;
