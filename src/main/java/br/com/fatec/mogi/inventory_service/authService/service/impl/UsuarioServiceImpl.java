@@ -63,6 +63,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepository.findByEmail(usuario.getEmail()).ifPresent(u -> {
 			throw new EmailJaUtilizadoException("E-mail já utilizado.");
 		});
+		usuario.setDataCriacao(LocalDateTime.now());
+		usuario.setDataAlteracao(LocalDateTime.now());
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 		usuarioFuncaoRepository.save(new UsuarioFuncao(usuarioSalvo, funcao));
 		return usuarioSalvo;
@@ -144,6 +146,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setDataAlteracao(LocalDateTime.now());
 		var usuarioAtualizado = usuarioRepository.save(usuario);
 		return usuarioResponseDTOMapper.from(usuarioAtualizado);
+	}
+
+	@Override
+	public void desativarAuditoria(Long id) {
+		var usuario = usuarioRepository.findById(id)
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+		usuario.setPodeRealizarAuditoria(false);
+		usuarioRepository.save(usuario);
+	}
+
+	@Override
+	public void ativarAuditoria(Long id) {
+		var usuario = usuarioRepository.findById(id)
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+		usuario.setPodeRealizarAuditoria(true);
+		usuarioRepository.save(usuario);
 	}
 
 }

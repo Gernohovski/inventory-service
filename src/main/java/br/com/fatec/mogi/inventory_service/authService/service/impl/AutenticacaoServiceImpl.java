@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.authService.service.impl;
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
+import br.com.fatec.mogi.inventory_service.authService.repository.UsuarioFuncaoRepository;
 import br.com.fatec.mogi.inventory_service.authService.service.AutenticacaoService;
 import br.com.fatec.mogi.inventory_service.authService.service.RedisService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.LogoutRequestDTO;
@@ -37,6 +38,8 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 
 	private final RedisService redisService;
 
+	private final UsuarioFuncaoRepository usuarioFuncaoRepository;
+
 	private Algorithm algorithm;
 
 	@PostConstruct
@@ -48,9 +51,10 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 	public LoginResponseDTO gerarAutenticacao(Usuario usuario) {
 		var accessToken = this.gerarToken(usuario);
 		var refreshToken = this.gerarRefreshToken(usuario.getEmail().getEmail());
+		var funcao = this.usuarioFuncaoRepository.findByUsuarioId(usuario.getId());
 		redisService.salvar(TipoCache.REFRESH_TOKEN, refreshToken, usuario, refreshExpiration);
 		redisService.salvar(TipoCache.SESSAO_USUARIO, accessToken, usuario, expiration);
-		return new LoginResponseDTO(accessToken, refreshToken, expiration);
+		return new LoginResponseDTO(accessToken, refreshToken, expiration, funcao.getFirst().getFuncao().getNome());
 	}
 
 	@Override
