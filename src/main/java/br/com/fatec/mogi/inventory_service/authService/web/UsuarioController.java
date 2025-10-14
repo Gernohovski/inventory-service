@@ -68,4 +68,18 @@ public record UsuarioController(UsuarioService usuarioService) {
 		return ResponseEntity.status(HttpStatus.OK).body(usuarioAtualizado);
 	}
 
+	@PutMapping("/desativar-auditoria/{id}")
+	public ResponseEntity<?> desativarAuditoria(@PathVariable("id") Long id,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		usuarioService.desativarAuditoria(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PutMapping("/ativar-auditoria/{id}")
+	public ResponseEntity<?> ativarAuditoria(@PathVariable("id") Long id,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		usuarioService.ativarAuditoria(id);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }

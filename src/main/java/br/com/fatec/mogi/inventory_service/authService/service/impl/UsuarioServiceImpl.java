@@ -148,4 +148,20 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return usuarioResponseDTOMapper.from(usuarioAtualizado);
 	}
 
+	@Override
+	public void desativarAuditoria(Long id) {
+		var usuario = usuarioRepository.findById(id)
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+		usuario.setPodeRealizarAuditoria(false);
+		usuarioRepository.save(usuario);
+	}
+
+	@Override
+	public void ativarAuditoria(Long id) {
+		var usuario = usuarioRepository.findById(id)
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
+		usuario.setPodeRealizarAuditoria(true);
+		usuarioRepository.save(usuario);
+	}
+
 }

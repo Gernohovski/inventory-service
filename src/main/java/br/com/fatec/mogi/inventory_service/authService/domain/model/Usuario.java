@@ -40,6 +40,8 @@ public class Usuario {
 	@JoinColumn(name = "administrador_id")
 	private Usuario administradorVinculado;
 
+	private boolean podeRealizarAuditoria;
+
 	public Usuario(String nome, String senha, String email) {
 		this.nome = nome;
 		this.senha = new Senha(senha);
