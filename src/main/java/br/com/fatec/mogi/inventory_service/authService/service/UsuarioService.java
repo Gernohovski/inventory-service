@@ -27,4 +27,8 @@ public interface UsuarioService {
 
 	UsuarioResponseDTO atualizarUsuario(Long id, AtualizarUsuarioRequestDTO dto);
 
+	void desativarAuditoria(Long id);
+
+	void ativarAuditoria(Long id);
+
 }

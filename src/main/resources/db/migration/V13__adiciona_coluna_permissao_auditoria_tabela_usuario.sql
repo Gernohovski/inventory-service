@@ -1,0 +1,2 @@
+ALTER TABLE usuario
+ADD COLUMN pode_realizar_auditoria BOOLEAN NOT NULL DEFAULT TRUE;

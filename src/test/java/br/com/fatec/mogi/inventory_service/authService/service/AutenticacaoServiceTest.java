@@ -39,10 +39,9 @@ public class AutenticacaoServiceTest {
 	@Test
 	@DisplayName("Deve gerar tokens para usuário com sucesso e salvar refreshToken no cache")
 	void deveGerarTokensParaUsuarioComSucessoSalvarRefreshTokenCache() {
-		String nome = "Usuario teste";
 		String senha = "Senha123";
-		String email = "email@gmail.com";
-		var usuario = new Usuario(nome, senha, email);
+		String email = "email321@gmail.com";
+		var usuario = cadastrarUsuario(email, senha);
 		var tokens = autenticacaoService.gerarAutenticacao(usuario);
 		var decodedAccessToken = autenticacaoService.decodeJwt(tokens.getAccessToken());
 		assertEquals(usuario.getEmail().getEmail(), decodedAccessToken.getSubject());
@@ -65,10 +64,9 @@ public class AutenticacaoServiceTest {
 	@Test
 	@DisplayName("Deve gerar novo JWT com base no refreshToken do usuario")
 	void deveGerarNovoJwtComBaseRefreshTokenUsuario() {
-		String nome = "Usuario teste";
 		String senha = "Senha123";
-		String email = "email@gmail.com";
-		var usuario = new Usuario(nome, senha, email);
+		String email = "email123@gmail.com";
+		var usuario = cadastrarUsuario(email, senha);
 		var tokens = autenticacaoService.gerarAutenticacao(usuario);
 		var newTokens = autenticacaoService.gerarAutenticacao(new RefreshTokenRequestDTO(tokens.getRefreshToken()));
 		assertNotEquals(tokens.getRefreshToken(), newTokens.getRefreshToken());
@@ -101,7 +99,7 @@ public class AutenticacaoServiceTest {
 		assertNull(refreshTokenPosLogout);
 	}
 
-	private void cadastrarUsuario(String email, String senha) {
+	private Usuario cadastrarUsuario(String email, String senha) {
 		var funcao = funcaoRepository.findAll();
 		CadastrarUsuarioRequestDTO cadastrarUsuarioRequestDTO = CadastrarUsuarioRequestDTO.builder()
 			.nome("Usuario teste")
@@ -109,7 +107,7 @@ public class AutenticacaoServiceTest {
 			.senha(senha)
 			.funcaoId(funcao.getFirst().getId())
 			.build();
-		usuarioService.cadastrarUsuario(cadastrarUsuarioRequestDTO);
+		return usuarioService.cadastrarUsuario(cadastrarUsuarioRequestDTO);
 	}
 
 	private LoginResponseDTO fazerLogin(String email, String senha) {

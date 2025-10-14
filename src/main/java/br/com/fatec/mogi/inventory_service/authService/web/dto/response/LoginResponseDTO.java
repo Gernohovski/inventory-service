@@ -17,4 +17,6 @@ public class LoginResponseDTO {
 
 	private Long expiresIn;
 
+	private String role;
+
 }
