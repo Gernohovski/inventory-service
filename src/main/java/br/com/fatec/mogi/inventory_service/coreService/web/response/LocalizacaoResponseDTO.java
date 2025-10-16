@@ -17,4 +17,6 @@ public class LocalizacaoResponseDTO {
 
 	private String andar;
 
+	private Long quantidadeItens;
+
 }
