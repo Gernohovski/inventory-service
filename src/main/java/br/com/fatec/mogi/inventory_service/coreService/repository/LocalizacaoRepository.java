@@ -15,7 +15,8 @@ public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> 
 			SELECT NEW br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO(
 			    l.id,
 			    l.nomeSala,
-			    l.andar
+			    l.andar,
+			    l.quantidadeItens
 			)
 			FROM Localizacao l
 			""")
