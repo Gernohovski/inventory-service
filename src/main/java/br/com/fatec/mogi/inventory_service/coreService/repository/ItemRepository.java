@@ -48,4 +48,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	Optional<Item> findByCodigoItem(String codigoItem);
 
+	boolean existsByLocalizacaoId(Long localizacaoId);
+
+	boolean existsByCategoriaItemId(Long categoriaId);
+
 }

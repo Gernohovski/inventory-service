@@ -6,6 +6,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItem
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemUploadResponseDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +21,7 @@ public interface ItemService {
 
 	void deletar(Long id);
 
-	void upload(MultipartFile file) throws Exception;
+	ItemUploadResponseDTO upload(MultipartFile file) throws Exception;
 
 	ResponseEntity<byte[]> exportar(ExportarItensRequestDTO dto, String tipo);
 

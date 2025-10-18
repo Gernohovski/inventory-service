@@ -159,10 +159,7 @@ public class LocalizacaoServiceTest {
 	@Test
 	@DisplayName("Deve retornar quantidade zero para localização sem itens")
 	void deveRetornarQuantidadeZeroParaLocalizacaoSemItens() {
-		var localizacaoDto = CadastrarLocalizacaoRequestDTO.builder()
-			.andar("4")
-			.nomeSala("SALA VAZIA TESTE")
-			.build();
+		var localizacaoDto = CadastrarLocalizacaoRequestDTO.builder().andar("4").nomeSala("SALA VAZIA TESTE").build();
 		localizacaoService.cadastrar(localizacaoDto);
 		var localizacoes = localizacaoRepository.findAll();
 		var localizacaoVazia = localizacoes.stream()

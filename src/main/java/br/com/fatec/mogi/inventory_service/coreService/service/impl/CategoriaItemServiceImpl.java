@@ -3,8 +3,10 @@ package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaJaCadastradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoPodeSerExcluidaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.CategoriaItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.CategoriaItemRepository;
+import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 public class CategoriaItemServiceImpl implements CategoriaItemService {
 
 	private final CategoriaItemRepository categoriaItemRepository;
+
+	private final ItemRepository itemRepository;
 
 	@Override
 	public BuscarCategoriasResponseDTO buscar() {
@@ -37,6 +41,10 @@ public class CategoriaItemServiceImpl implements CategoriaItemService {
 	@Override
 	public void deletar(Long id) {
 		categoriaItemRepository.findById(id).orElseThrow(CategoriaNaoEncontradaException::new);
+		var categoriaVinculada = itemRepository.existsByCategoriaItemId(id);
+		if (categoriaVinculada) {
+			throw new CategoriaNaoPodeSerExcluidaException();
+		}
 		categoriaItemRepository.deleteById(id);
 	}
 

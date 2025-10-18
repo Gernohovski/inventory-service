@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.config.ItemUploadJobConfi
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.coreService.domain.mapper.ItemMapper;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
+import br.com.fatec.mogi.inventory_service.coreService.listener.ItemUploadSkipListener;
 import br.com.fatec.mogi.inventory_service.coreService.reader.ItemUploadReader;
 import br.com.fatec.mogi.inventory_service.coreService.repository.*;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
@@ -14,10 +15,9 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItem
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemUploadResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -52,6 +52,8 @@ public class ItemServiceImpl implements ItemService {
 	private final ItemUploadJobConfig jobConfig;
 
 	private final ExportarItemNavigation exportarItemNavigation;
+
+	private final ItemUploadSkipListener skipListener;
 
 	@Override
 	public ItemResponseDTO cadastrarItem(CadastrarItemRequestDTO dto) {
@@ -123,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public void upload(MultipartFile file) throws Exception {
+	public ItemUploadResponseDTO upload(MultipartFile file) throws Exception {
 		String originalFilename = file.getOriginalFilename();
 		if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".csv")) {
 			throw new ArquivoNaoSuportadoException();
@@ -145,7 +147,18 @@ public class ItemServiceImpl implements ItemService {
 				.addString("tempFilePath", tempFile.getAbsolutePath())
 				.toJobParameters();
 
-			jobLauncher.run(job, params);
+			skipListener.limparErros();
+			JobExecution jobExecution = jobLauncher.run(job, params);
+
+			ItemUploadResponseDTO itemUploadResponseDTO = ItemUploadResponseDTO.builder()
+				.processadosComSucesso(
+						jobExecution.getStepExecutions().stream().mapToLong(StepExecution::getWriteCount).sum())
+				.processadosComErro(
+						jobExecution.getStepExecutions().stream().mapToLong(StepExecution::getSkipCount).sum())
+				.erros(skipListener.getErros())
+				.build();
+
+			return itemUploadResponseDTO;
 		}
 		finally {
 			if (tempFile != null) {

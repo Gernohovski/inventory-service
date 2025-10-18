@@ -2,8 +2,10 @@ package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoEncontradaException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoPodeSerExcluidaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.mapper.LocalizacaoMapper;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Localizacao;
+import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.LocalizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class LocalizacaoServiceImpl implements LocalizacaoService {
 
 	private final LocalizacaoRepository localizacaoRepository;
+
+	private final ItemRepository itemRepository;
 
 	private final LocalizacaoMapper localizacaoMapper;
 
@@ -57,6 +61,10 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 	@Override
 	public void deletar(Long id) {
 		localizacaoRepository.findById(id).orElseThrow(LocalizacaoNaoEncontradaException::new);
+		var localizacaoVinculada = itemRepository.existsByLocalizacaoId(id);
+		if (localizacaoVinculada) {
+			throw new LocalizacaoNaoPodeSerExcluidaException();
+		}
 		localizacaoRepository.deleteById(id);
 	}
 
