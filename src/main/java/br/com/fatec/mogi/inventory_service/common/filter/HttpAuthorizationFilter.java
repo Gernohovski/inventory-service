@@ -84,7 +84,7 @@ public class HttpAuthorizationFilter implements Filter {
 				.httpMethod(method)
 				.build();
 
-			// autorizacaoService.autorizar(autorizacaoRequestDto, accessToken);
+			autorizacaoService.autorizar(autorizacaoRequestDto, accessToken);
 			chain.doFilter(request, response);
 		}
 		catch (Exception e) {
