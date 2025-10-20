@@ -1,11 +1,13 @@
 package br.com.fatec.mogi.inventory_service.coreService.repository;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.CategoriaItem;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.CategoriaItemResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -21,7 +23,9 @@ public interface CategoriaItemRepository extends JpaRepository<CategoriaItem, Lo
 				c.nome
 			)
 			FROM CategoriaItem c
+			WHERE (:dto.termoPesquisa IS NULL OR
+			      UPPER(c.nome) LIKE CONCAT('%', UPPER(TRIM(:dto.termoPesquisa)), '%'))
 			""")
-	Page<CategoriaItemResponseDTO> findPaginado(Pageable pageable);
+	Page<CategoriaItemResponseDTO> findPaginado(@Param("dto") ConsultarCategoriaItemRequestDTO dto, Pageable pageable);
 
 }

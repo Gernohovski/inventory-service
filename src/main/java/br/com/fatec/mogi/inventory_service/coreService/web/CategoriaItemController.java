@@ -4,6 +4,7 @@ import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageRespons
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.CategoriaItemResponseDTO;
 import org.springframework.data.domain.Pageable;
@@ -44,8 +45,9 @@ public record CategoriaItemController(CategoriaItemService categoriaItemService)
 
 	@GetMapping("/paginado")
 	public ResponseEntity<CustomPageResponseDTO<CategoriaItemResponseDTO>> buscarPaginado(
-			@PageableDefault Pageable pageable, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
-		var items = categoriaItemService.buscarPaginado(pageable);
+			@ModelAttribute ConsultarCategoriaItemRequestDTO dto, @PageableDefault Pageable pageable,
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var items = categoriaItemService.buscarPaginado(pageable, dto);
 		return ResponseEntity.status(HttpStatus.OK).body(items);
 	}
 

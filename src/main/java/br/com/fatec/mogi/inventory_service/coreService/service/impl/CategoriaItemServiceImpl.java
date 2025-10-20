@@ -10,6 +10,7 @@ import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository
 import br.com.fatec.mogi.inventory_service.coreService.service.CategoriaItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarCategoriasResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.CategoriaItemResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +57,9 @@ public class CategoriaItemServiceImpl implements CategoriaItemService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<CategoriaItemResponseDTO> buscarPaginado(Pageable pageable) {
-		var categorias = categoriaItemRepository.findPaginado(pageable);
+	public CustomPageResponseDTO<CategoriaItemResponseDTO> buscarPaginado(ConsultarCategoriaItemRequestDTO dto,
+			Pageable pageable) {
+		var categorias = categoriaItemRepository.findPaginado(dto, pageable);
 		return CustomPageResponseDTO.<CategoriaItemResponseDTO>builder()
 			.content(categorias.getContent())
 			.page(categorias.getNumber())
