@@ -28,6 +28,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 				i.notaFiscal
 			)
 			FROM Item i
+			LEFT JOIN i.localizacao l
+			LEFT JOIN i.categoriaItem c
+			LEFT JOIN i.statusItem s
 			WHERE i.dataCadastro >= COALESCE(:dataCadastroInicio, i.dataCadastro)
 			  and i.dataCadastro <= COALESCE(:dataCadastroFim, i.dataCadastro)
 			  and i.categoriaItem.id = COALESCE(:categoriaItemId, i.categoriaItem.id)
@@ -38,13 +41,25 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			  and upper(i.codigoItem) like COALESCE(concat('%', upper(:codigoItem), '%'), upper(i.codigoItem))
 			  and upper(i.numeroSerie) like COALESCE(concat('%', upper(:numeroSerie), '%'), upper(i.numeroSerie))
 			  and upper(i.notaFiscal) like COALESCE(concat('%', upper(:notaFiscal), '%'), upper(i.notaFiscal))
+			  and (
+			    :termoPesquisa is null or
+			    upper(concat(
+			      COALESCE(i.codigoItem, ''), ' ',
+			      COALESCE(i.numeroSerie, ''), ' ',
+			      COALESCE(FUNCTION('TO_CHAR', i.dataCadastro, 'DD/MM/YYYY'), ''), ' ',
+			      COALESCE(l.nomeSala, ''), ' ',
+			      COALESCE(c.nome, ''), ' ',
+			      COALESCE(s.descricao, '')
+			    )) like concat('%', upper(trim(:termoPesquisa)), '%')
+			  )
 			""")
 	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
 			@Param("dataCadastroFim") java.time.LocalDateTime dataCadastroFim,
 			@Param("categoriaItemId") Long categoriaItemId, @Param("localizacaoId") Long localizacaoId,
 			@Param("statusItemId") Long statusItemId, @Param("tipoEntradaId") Long tipoEntradaId,
 			@Param("nomeItem") String nomeItem, @Param("codigoItem") String codigoItem,
-			@Param("numeroSerie") String numeroSerie, @Param("notaFiscal") String notaFiscal, Pageable pageable);
+			@Param("numeroSerie") String numeroSerie, @Param("notaFiscal") String notaFiscal,
+			@Param("termoPesquisa") String termoPesquisa, Pageable pageable);
 
 	Optional<Item> findByCodigoItem(String codigoItem);
 
