@@ -54,7 +54,8 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 		var funcao = this.usuarioFuncaoRepository.findByUsuarioId(usuario.getId());
 		redisService.salvar(TipoCache.REFRESH_TOKEN, refreshToken, usuario, refreshExpiration);
 		redisService.salvar(TipoCache.SESSAO_USUARIO, accessToken, usuario, expiration);
-		return new LoginResponseDTO(accessToken, refreshToken, expiration, funcao.getFirst().getFuncao().getNome());
+		return new LoginResponseDTO(accessToken, refreshToken, expiration, funcao.getFirst().getFuncao().getNome(),
+				usuario.isPodeRealizarAuditoria());
 	}
 
 	@Override

@@ -19,4 +19,6 @@ public class LoginResponseDTO {
 
 	private String role;
 
+	private boolean canAudit;
+
 }
