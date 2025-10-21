@@ -19,7 +19,7 @@ public interface UsuarioService {
 
 	void alterarSenha(AlterarSenhaRequestDTO dto);
 
-	CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable);
+	CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable, ConsultarUsuarioRequestDTO dto);
 
 	List<UsuarioResponseDTO> listarAdministradores();
 

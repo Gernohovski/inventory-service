@@ -1,10 +1,7 @@
 package br.com.fatec.mogi.inventory_service.authService.web;
 
 import br.com.fatec.mogi.inventory_service.authService.service.UsuarioService;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AlterarSenhaRequestDTO;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AtualizarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.CadastrarUsuarioRequestDTO;
-import br.com.fatec.mogi.inventory_service.authService.web.dto.request.SolicitarResetSenhaRequestDTO;
+import br.com.fatec.mogi.inventory_service.authService.web.dto.request.*;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.CadastrarUsuarioResponseDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.SolicitarResetSenhaResponseDTO;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +40,8 @@ public record UsuarioController(UsuarioService usuarioService) {
 
 	@GetMapping
 	public ResponseEntity<?> listarUsuarios(@RequestHeader("X-ACCESS-TOKEN") String accessToken,
-			@PageableDefault Pageable pageable) {
-		var usuarios = usuarioService.listarUsuarios(pageable);
+			@PageableDefault Pageable pageable, @ModelAttribute ConsultarUsuarioRequestDTO dto) {
+		var usuarios = usuarioService.listarUsuarios(pageable, dto);
 		return ResponseEntity.status(HttpStatus.OK).body(usuarios);
 	}
 

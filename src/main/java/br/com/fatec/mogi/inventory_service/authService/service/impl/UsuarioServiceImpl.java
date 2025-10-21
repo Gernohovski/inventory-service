@@ -100,8 +100,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable) {
-		var usuarios = usuarioRepository.findAllUsuarios(pageable);
+	public CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable, ConsultarUsuarioRequestDTO dto) {
+		var usuarios = usuarioRepository.findAllUsuarios(pageable, dto);
 		return CustomPageResponseDTO.<UsuarioResponseDTO>builder()
 			.page(usuarios.getNumber())
 			.size(usuarios.getSize())
