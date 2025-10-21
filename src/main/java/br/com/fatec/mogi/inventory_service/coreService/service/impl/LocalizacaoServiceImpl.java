@@ -10,6 +10,7 @@ import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRep
 import br.com.fatec.mogi.inventory_service.coreService.service.LocalizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
 import jakarta.transaction.Transactional;
@@ -39,8 +40,9 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<LocalizacaoResponseDTO> buscarPaginado(Pageable pageable) {
-		var localizacoes = localizacaoRepository.findPaginado(pageable);
+	public CustomPageResponseDTO<LocalizacaoResponseDTO> buscarPaginado(ConsultarLocalizacaoRequestDTO dto,
+			Pageable pageable) {
+		var localizacoes = localizacaoRepository.findPaginado(dto, pageable);
 		return CustomPageResponseDTO.<LocalizacaoResponseDTO>builder()
 			.page(localizacoes.getNumber())
 			.size(localizacoes.getSize())

@@ -47,7 +47,7 @@ public record CategoriaItemController(CategoriaItemService categoriaItemService)
 	public ResponseEntity<CustomPageResponseDTO<CategoriaItemResponseDTO>> buscarPaginado(
 			@ModelAttribute ConsultarCategoriaItemRequestDTO dto, @PageableDefault Pageable pageable,
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
-		var items = categoriaItemService.buscarPaginado(pageable, dto);
+		var items = categoriaItemService.buscarPaginado(dto, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(items);
 	}
 
