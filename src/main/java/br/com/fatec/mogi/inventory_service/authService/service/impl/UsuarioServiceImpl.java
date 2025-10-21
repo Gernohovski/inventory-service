@@ -139,6 +139,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 			});
 			usuario.setEmail(novoEmail);
 		}
+		if (dto.getSenha() != null) {
+			usuario.setSenha(new Senha(dto.getSenha()));
+		}
+		if (dto.getFuncaoId() != null) {
+			var usuarioFuncao = usuarioFuncaoRepository.findByUsuarioId(id);
+			usuarioFuncao.getFirst().setFuncao(funcaoRepository.findById(dto.getFuncaoId())
+				.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada")));
+		}
 		if (dto.getNome() != null) {
 			usuario.setNome(dto.getNome());
 		}

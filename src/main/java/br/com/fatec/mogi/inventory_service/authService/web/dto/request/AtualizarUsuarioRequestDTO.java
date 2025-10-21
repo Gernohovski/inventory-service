@@ -17,4 +17,8 @@ public class AtualizarUsuarioRequestDTO {
 
 	private boolean ativo;
 
+	private String senha;
+
+	private Long funcaoId;
+
 }
