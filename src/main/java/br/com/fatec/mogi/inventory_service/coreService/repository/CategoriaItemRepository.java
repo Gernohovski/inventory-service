@@ -23,8 +23,8 @@ public interface CategoriaItemRepository extends JpaRepository<CategoriaItem, Lo
 				c.nome
 			)
 			FROM CategoriaItem c
-			WHERE (:dto.termoPesquisa IS NULL OR
-			      UPPER(c.nome) LIKE CONCAT('%', UPPER(TRIM(:dto.termoPesquisa)), '%'))
+			WHERE (:#{#dto.termoPesquisa} IS NULL OR
+			      UPPER(c.nome) LIKE CONCAT('%', UPPER(TRIM(:#{#dto.termoPesquisa})), '%'))
 			""")
 	Page<CategoriaItemResponseDTO> findPaginado(@Param("dto") ConsultarCategoriaItemRequestDTO dto, Pageable pageable);
 

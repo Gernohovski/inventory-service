@@ -39,13 +39,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
 			LEFT JOIN uf.funcao f
 			WHERE u.ativo = TRUE
-			  AND (:dto.termoPesquisa IS NULL OR
+			  AND (:#{#dto.termoPesquisa} IS NULL OR
 			      UPPER(CONCAT(
 			          COALESCE(u.nome, ''), ' ',
 			          COALESCE(u.email.email, ''), ' ',
 			          CASE WHEN u.ativo = TRUE THEN 'ativo' ELSE 'inativo' END, ' ',
 			          COALESCE(f.nome, '')
-			      )) LIKE CONCAT('%', UPPER(TRIM(COALESCE(:dto.termoPesquisa, ''))), '%'))
+			      )) LIKE CONCAT('%', UPPER(TRIM(COALESCE(:#{#dto.termoPesquisa}, ''))), '%'))
 			""")
 	Page<UsuarioResponseDTO> findAllUsuarios(Pageable pageable,
 			@Param("dto") br.com.fatec.mogi.inventory_service.authService.web.dto.request.ConsultarUsuarioRequestDTO dto);

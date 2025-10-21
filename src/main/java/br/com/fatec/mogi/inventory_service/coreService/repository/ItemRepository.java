@@ -36,7 +36,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			  and i.categoriaItem.id = COALESCE(:categoriaItemId, i.categoriaItem.id)
 			  and i.localizacao.id   = COALESCE(:localizacaoId, i.localizacao.id)
 			  and i.statusItem.id    = COALESCE(:statusItemId, i.statusItem.id)
-			  and i.tipoEntrada.id   = COALESCE(:tipoEntradaId, i.tipoEntrada.id)
 			  and upper(i.nomeItem)   like COALESCE(concat('%', upper(:nomeItem), '%'), upper(i.nomeItem))
 			  and upper(i.codigoItem) like COALESCE(concat('%', upper(:codigoItem), '%'), upper(i.codigoItem))
 			  and upper(i.numeroSerie) like COALESCE(concat('%', upper(:numeroSerie), '%'), upper(i.numeroSerie))
@@ -49,8 +48,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			      COALESCE(FUNCTION('TO_CHAR', i.dataCadastro, 'DD/MM/YYYY'), ''), ' ',
 			      COALESCE(l.nomeSala, ''), ' ',
 			      COALESCE(c.nome, ''), ' ',
-			      COALESCE(s.descricao, '')
-			    )) like concat('%', upper(trim(:termoPesquisa)), '%')
+			      COALESCE(s.nome, '')
+			    )) like concat('%', upper(trim(COALESCE(:termoPesquisa, ''))), '%')
 			  )
 			""")
 	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> {
 
-	@Query(value = """
+	@Query("""
 			SELECT NEW br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO(
 			    l.id,
 			    l.nomeSala,
@@ -21,9 +21,9 @@ public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> 
 			    l.quantidadeItens
 			)
 			FROM Localizacao l
-			WHERE (:dto.termoPesquisa IS NULL OR
-			      UPPER(l.nomeSala) LIKE CONCAT('%', UPPER(TRIM(:dto.termoPesquisa)), '%') OR
-			      UPPER(CAST(l.andar AS string)) LIKE CONCAT('%', UPPER(TRIM(:dto.termoPesquisa)), '%'))
+			WHERE (:#{#dto.termoPesquisa} IS NULL OR
+			      UPPER(l.nomeSala) LIKE CONCAT('%', UPPER(TRIM(:#{#dto.termoPesquisa})), '%') OR
+			      UPPER(CAST(l.andar AS string)) LIKE CONCAT('%', UPPER(TRIM(:#{#dto.termoPesquisa})), '%'))
 			""")
 	Page<LocalizacaoResponseDTO> findPaginado(@Param("dto") ConsultarLocalizacaoRequestDTO dto, Pageable pageable);
 
