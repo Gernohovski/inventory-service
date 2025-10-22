@@ -19,4 +19,6 @@ public class UsuarioResponseDTO {
 
 	private boolean ativo;
 
+	private boolean canAudit;
+
 }

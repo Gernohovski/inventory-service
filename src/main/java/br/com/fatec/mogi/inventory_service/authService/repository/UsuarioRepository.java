@@ -34,6 +34,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				u.nome,
 				u.email.email,
 				u.ativo
+				u.podeRealizarAuditoria
 			)
 			FROM Usuario u
 			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
