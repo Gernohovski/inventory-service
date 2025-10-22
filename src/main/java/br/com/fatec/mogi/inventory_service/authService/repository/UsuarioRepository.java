@@ -33,7 +33,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				u.id,
 				u.nome,
 				u.email.email,
-				u.ativo
+				u.ativo,
 				u.podeRealizarAuditoria
 			)
 			FROM Usuario u
@@ -56,7 +56,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				 u.id,
 			     u.nome,
 				 u.email.email,
-				 u.ativo
+				 u.ativo,
+				 u.podeRealizarAuditoria
 			)
 			FROM Usuario u
 			JOIN UsuarioFuncao uf ON uf.usuario.id = u.id
