@@ -100,8 +100,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable) {
-		var usuarios = usuarioRepository.findAllUsuarios(pageable);
+	public CustomPageResponseDTO<UsuarioResponseDTO> listarUsuarios(Pageable pageable, ConsultarUsuarioRequestDTO dto) {
+		var usuarios = usuarioRepository.findAllUsuarios(pageable, dto);
 		return CustomPageResponseDTO.<UsuarioResponseDTO>builder()
 			.page(usuarios.getNumber())
 			.size(usuarios.getSize())
@@ -138,6 +138,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 				}
 			});
 			usuario.setEmail(novoEmail);
+		}
+		if (dto.getSenha() != null) {
+			usuario.setSenha(new Senha(dto.getSenha()));
+		}
+		if (dto.getFuncaoId() != null) {
+			usuarioFuncaoRepository.deleteByUsuarioId(id);
+			var novaFuncao = funcaoRepository.findById(dto.getFuncaoId())
+				.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
+			UsuarioFuncao novoUsuarioFuncao = UsuarioFuncao.builder().usuario(usuario).funcao(novaFuncao).build();
+			usuarioFuncaoRepository.save(novoUsuarioFuncao);
 		}
 		if (dto.getNome() != null) {
 			usuario.setNome(dto.getNome());

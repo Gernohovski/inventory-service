@@ -49,8 +49,8 @@ public record ItemController(ItemService itemService) {
 	@PostMapping("/upload")
 	public ResponseEntity<?> uploadCsv(@RequestParam("file") MultipartFile file,
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) throws Exception {
-		itemService.upload(file);
-		return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+		var resultado = itemService.upload(file);
+		return ResponseEntity.ok(resultado);
 	}
 
 	@PostMapping("/exportar/{tipo}")

@@ -9,4 +9,6 @@ public interface StatusItemRepository extends JpaRepository<StatusItem, Long> {
 
 	Optional<StatusItem> findByNome(String nome);
 
+	boolean existsByNome(String nome);
+
 }

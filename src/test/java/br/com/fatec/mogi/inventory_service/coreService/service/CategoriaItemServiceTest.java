@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.domain.exception.Categori
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.CategoriaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarCategoriaItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarCategoriaItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.CategoriaItemResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -131,7 +132,8 @@ class CategoriaItemServiceTest {
 	@DisplayName("Deve retornar página com categorias quando existirem dados")
 	void deveRetornarPaginaComCategorias() {
 		Pageable pageable = PageRequest.of(0, 10);
-		CustomPageResponseDTO<CategoriaItemResponseDTO> resultado = categoriaItemService.buscarPaginado(pageable);
+		CustomPageResponseDTO<CategoriaItemResponseDTO> resultado = categoriaItemService
+			.buscarPaginado(new ConsultarCategoriaItemRequestDTO(), pageable);
 		assertThat(resultado).isNotNull();
 		assertThat(resultado.getPage()).isEqualTo(0);
 		assertThat(resultado.getSize()).isEqualTo(10);

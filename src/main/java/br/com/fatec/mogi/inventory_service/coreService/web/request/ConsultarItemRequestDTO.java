@@ -33,4 +33,6 @@ public class ConsultarItemRequestDTO {
 
 	private String notaFiscal;
 
+	private String termoPesquisa;
+
 }

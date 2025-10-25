@@ -4,6 +4,7 @@ import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageRespons
 import br.com.fatec.mogi.inventory_service.coreService.service.LocalizacaoService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,9 @@ public record LocalizacaoController(LocalizacaoService localizacaoService) {
 
 	@GetMapping("/paginado")
 	ResponseEntity<CustomPageResponseDTO<LocalizacaoResponseDTO>> buscarPaginado(
-			@RequestHeader("X-ACCESS-TOKEN") String accessToken, @PageableDefault Pageable pageable) {
-		var localizacoes = localizacaoService.buscarPaginado(pageable);
+			@ModelAttribute ConsultarLocalizacaoRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken,
+			@PageableDefault Pageable pageable) {
+		var localizacoes = localizacaoService.buscarPaginado(dto, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(localizacoes);
 	}
 

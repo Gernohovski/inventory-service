@@ -12,4 +12,6 @@ public interface UsuarioFuncaoRepository extends JpaRepository<UsuarioFuncao, Us
 
 	List<UsuarioFuncao> findByUsuarioId(Long usuarioId);
 
+	void deleteByUsuarioId(Long usuarioId);
+
 }

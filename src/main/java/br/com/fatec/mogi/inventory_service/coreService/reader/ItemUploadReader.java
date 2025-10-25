@@ -63,7 +63,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 				.condicao(rec.getString("Condição"))
 				.tipoEntrada(rec.getString("Modalidade Aquisição"))
 				.dataCadastro(rec.getString("Data de Cadastramento"))
-				.numeroLinha(linhaAtual + 1)
+				.numeroLinha(linhaAtual)
 				.build();
 		}
 		return null;

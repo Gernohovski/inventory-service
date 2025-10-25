@@ -9,16 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AtualizarUsuarioRequestDTO {
+public class ConsultarUsuarioRequestDTO {
 
-	private String nome;
-
-	private String email;
-
-	private boolean ativo;
-
-	private String senha;
-
-	private Long funcaoId;
+	private String termoPesquisa;
 
 }

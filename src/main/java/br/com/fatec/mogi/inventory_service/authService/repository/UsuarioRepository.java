@@ -29,23 +29,35 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	boolean possuiFuncionalidade(@Param("usuarioId") Long usuarioId, @Param("funcionalidade") String funcionalidade);
 
 	@Query("""
-			SELECT NEW br.com.fatec.mogi.inventory_service.authService.web.dto.response.UsuarioResponseDTO(
-				 u.id,
-			     u.nome,
-				 u.email.email,
-				 u.ativo
+			SELECT DISTINCT NEW br.com.fatec.mogi.inventory_service.authService.web.dto.response.UsuarioResponseDTO(
+				u.id,
+				u.nome,
+				u.email.email,
+				u.ativo,
+				u.podeRealizarAuditoria
 			)
 			FROM Usuario u
+			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
+			LEFT JOIN uf.funcao f
 			WHERE u.ativo = TRUE
+			  AND (:#{#dto.termoPesquisa} IS NULL OR
+			      UPPER(CONCAT(
+			          COALESCE(u.nome, ''), ' ',
+			          COALESCE(u.email.email, ''), ' ',
+			          CASE WHEN u.ativo = TRUE THEN 'ativo' ELSE 'inativo' END, ' ',
+			          COALESCE(f.nome, '')
+			      )) LIKE CONCAT('%', UPPER(TRIM(COALESCE(:#{#dto.termoPesquisa}, ''))), '%'))
 			""")
-	Page<UsuarioResponseDTO> findAllUsuarios(Pageable pageable);
+	Page<UsuarioResponseDTO> findAllUsuarios(Pageable pageable,
+			@Param("dto") br.com.fatec.mogi.inventory_service.authService.web.dto.request.ConsultarUsuarioRequestDTO dto);
 
 	@Query("""
 			SELECT NEW br.com.fatec.mogi.inventory_service.authService.web.dto.response.UsuarioResponseDTO(
 				 u.id,
 			     u.nome,
 				 u.email.email,
-				 u.ativo
+				 u.ativo,
+				 u.podeRealizarAuditoria
 			)
 			FROM Usuario u
 			JOIN UsuarioFuncao uf ON uf.usuario.id = u.id
