@@ -143,9 +143,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuario.setSenha(new Senha(dto.getSenha()));
 		}
 		if (dto.getFuncaoId() != null) {
-			var usuarioFuncao = usuarioFuncaoRepository.findByUsuarioId(id);
-			usuarioFuncao.getFirst().setFuncao(funcaoRepository.findById(dto.getFuncaoId())
-				.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada")));
+			usuarioFuncaoRepository.deleteByUsuarioId(id);
+			var novaFuncao = funcaoRepository.findById(dto.getFuncaoId())
+				.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
+			UsuarioFuncao novoUsuarioFuncao = UsuarioFuncao.builder().usuario(usuario).funcao(novaFuncao).build();
+			usuarioFuncaoRepository.save(novoUsuarioFuncao);
 		}
 		if (dto.getNome() != null) {
 			usuario.setNome(dto.getNome());
