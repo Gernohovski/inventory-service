@@ -66,4 +66,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	boolean existsByCategoriaItemId(Long categoriaId);
 
+	boolean existsByStatusItemId(Long statusItemID);
+
 }
