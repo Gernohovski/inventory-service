@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -182,6 +184,11 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ResponseEntity<byte[]> exportar(ExportarItensRequestDTO dto, String tipo) {
 		return exportarItemNavigation.processarEstrategia(dto.getItensId(), tipo);
+	}
+
+	@Override
+	public ResponseEntity<byte[]> exportarTodos(String tipo) {
+		return exportarItemNavigation.processarEstrategia(List.of(), tipo);
 	}
 
 }
