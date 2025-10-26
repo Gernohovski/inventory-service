@@ -36,9 +36,15 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 			CsvWriter writer = new CsvWriter(new OutputStreamWriter(byteArrayOutputStream, StandardCharsets.UTF_8),
 					configuracoes);
 			writer.writeHeaders("Código", "Nome", "Data de entrada", "Localização", "Categoria", "Status");
-			var itens = itemRepository.findAllById(itensId);
-			if (itens.isEmpty()) {
-				throw new NenhumItemEncontradoException();
+			List<Item> itens;
+			if (!itensId.isEmpty()) {
+				itens = itemRepository.findAllById(itensId);
+				if (itens.isEmpty()) {
+					throw new NenhumItemEncontradoException();
+				}
+			}
+			else {
+				itens = itemRepository.findAll();
 			}
 			for (Item item : itens) {
 				writer.writeRow(item.getCodigoItem(), item.getNomeItem(), item.getDataCadastro().format(formatter),
