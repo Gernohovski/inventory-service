@@ -6,6 +6,7 @@ import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.StatusItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarStatusItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarStatusItemResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,11 @@ public class StatusItemServiceImpl implements StatusItemService {
 	public void deletar(Long id) {
 		statusItemRepository.findById(id).orElseThrow(StatusItemNaoEncontradoException::new);
 		statusItemRepository.deleteById(id);
+	}
+
+	@Override
+	public BuscarStatusItemResponseDTO listar() {
+		return new BuscarStatusItemResponseDTO(statusItemRepository.findAll());
 	}
 
 }
