@@ -81,4 +81,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			""")
 	List<ItemPorCategoriaResponseDTO> countByCategoriaAndLocalizacaoId(@Param("localizacaoId") Long localizacaoId);
 
+	boolean existsByStatusItemId(Long statusItemID);
+
 }
