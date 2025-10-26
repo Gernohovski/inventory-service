@@ -2,7 +2,9 @@ package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemJaCadastradoException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoEncontradoException;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoPodeSerExcluidoException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
+import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.service.StatusItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarStatusItemRequestDTO;
@@ -16,6 +18,8 @@ public class StatusItemServiceImpl implements StatusItemService {
 
 	private final StatusItemRepository statusItemRepository;
 
+	private final ItemRepository itemRepository;
+
 	@Override
 	public void cadastrar(CadastrarStatusItemRequestDTO dto) {
 		if (statusItemRepository.existsByNome(dto.getNome())) {
@@ -28,6 +32,9 @@ public class StatusItemServiceImpl implements StatusItemService {
 	@Override
 	public void deletar(Long id) {
 		statusItemRepository.findById(id).orElseThrow(StatusItemNaoEncontradoException::new);
+		if (itemRepository.existsByStatusItemId(id)) {
+			throw new StatusItemNaoPodeSerExcluidoException();
+		}
 		statusItemRepository.deleteById(id);
 	}
 
