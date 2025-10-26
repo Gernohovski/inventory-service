@@ -79,4 +79,16 @@ public record UsuarioController(UsuarioService usuarioService) {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@PutMapping("/destivar-autoria/todos")
+	public ResponseEntity<?> desativarAuditoriaTodos(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		usuarioService.desativarAuditoriaTodos();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PutMapping("/ativar-autoria/todos")
+	public ResponseEntity<?> ativarAuditoriaTodos(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		usuarioService.ativarAuditoriaTodos();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
 }
