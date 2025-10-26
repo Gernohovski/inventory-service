@@ -1,6 +1,7 @@
 package br.com.fatec.mogi.inventory_service.coreService.repository;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemPorCategoriaResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
@@ -65,5 +67,18 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	boolean existsByLocalizacaoId(Long localizacaoId);
 
 	boolean existsByCategoriaItemId(Long categoriaId);
+
+	@Query("""
+			SELECT new br.com.fatec.mogi.inventory_service.coreService.web.response.ItemPorCategoriaResponseDTO(
+				c.nome,
+				COUNT(i.id)
+			)
+			FROM Item i
+			JOIN i.categoriaItem c
+			WHERE i.localizacao.id = :localizacaoId
+			GROUP BY c.nome
+			ORDER BY COUNT(i.id) DESC
+			""")
+	List<ItemPorCategoriaResponseDTO> countByCategoriaAndLocalizacaoId(@Param("localizacaoId") Long localizacaoId);
 
 }

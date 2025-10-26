@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLoca
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -19,5 +20,7 @@ public interface LocalizacaoService {
 	void atualizar(AtualizarLocalizacaoRequestDTO dto, Long id);
 
 	void deletar(Long id);
+
+	LocalizacaoDetalhadaResponseDTO buscarLocalizacao(Long id);
 
 }

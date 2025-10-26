@@ -6,6 +6,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLoca
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -49,6 +50,13 @@ public record LocalizacaoController(LocalizacaoService localizacaoService) {
 	ResponseEntity<?> deletar(@PathVariable("id") Long id, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		localizacaoService.deletar(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@GetMapping("/detalhada/{id}")
+	ResponseEntity<LocalizacaoDetalhadaResponseDTO> buscar(@PathVariable("id") Long id,
+			@PathVariable("X-ACCESS-TOKEN") String accessToken) {
+		var localizacao = localizacaoService.buscarLocalizacao(id);
+		return ResponseEntity.status(HttpStatus.OK).body(localizacao);
 	}
 
 }

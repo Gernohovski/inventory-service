@@ -12,6 +12,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarLoca
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarLocalizacaoRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarLocalizacaoResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.LocalizacaoResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,17 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 			throw new LocalizacaoNaoPodeSerExcluidaException();
 		}
 		localizacaoRepository.deleteById(id);
+	}
+
+	@Override
+	public LocalizacaoDetalhadaResponseDTO buscarLocalizacao(Long id) {
+		var localizacao = localizacaoRepository.findById(id).orElseThrow(LocalizacaoNaoEncontradaException::new);
+		var itensPorCategoria = itemRepository.countByCategoriaAndLocalizacaoId(id);
+		return LocalizacaoDetalhadaResponseDTO.builder()
+			.nome(localizacao.getNomeSala())
+			.andar(localizacao.getAndar())
+			.itensPorCategoria(itensPorCategoria)
+			.build();
 	}
 
 }
