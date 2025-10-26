@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> {
 
@@ -28,6 +29,19 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 
 	private long linhaAtual = 0;
 
+	private static final Map<String, List<String>> HEADER_ALIASES = Map.of("Nome",
+			List.of("nome", "Name", "Descrição", "Descricao", "Item"), "Localização",
+			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location"),
+			"Número do patrimônio",
+			List.of("Número do patrimônio", "Numero do patrimonio", "Patrimônio", "Patrimonio", "Código", "Codigo",
+					"numero", "codigo"),
+			"Categoria", List.of("Categoria", "Grupo", "grupo", "categoria"), "Condição",
+			List.of("Condição", "Condicao", "Estado", "Status", "condicao", "status"), "Modalidade Aquisição",
+			List.of("Modalidade Aquisição", "Modalidade Aquisicao", "Tipo Entrada", "Aquisição", "Aquisicao",
+					"Modalidade"),
+			"Data de Cadastramento",
+			List.of("Data de Cadastramento", "Data Cadastramento", "Data", "Data Cadastro", "data"));
+
 	public ItemUploadReader(Resource resource) {
 		this.resource = resource;
 	}
@@ -39,6 +53,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 			CsvParserSettings settings = new CsvParserSettings();
 			settings.setHeaderExtractionEnabled(true);
 			settings.getFormat().setLineSeparator("\n");
+			settings.detectFormatAutomatically(',', ';');
 			this.parser = new CsvParser(settings);
 
 			List<Record> all = parser.parseAllRecords(reader);
@@ -56,15 +71,34 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 			Record rec = iterator.next();
 			linhaAtual++;
 			return ItemUploadRequestDTO.builder()
-				.nome(rec.getString("Nome"))
-				.localizacao(rec.getString("Localização"))
-				.codigo(rec.getString("Número do patrimônio"))
-				.categoria(rec.getString("Categoria"))
-				.condicao(rec.getString("Condição"))
-				.tipoEntrada(rec.getString("Modalidade Aquisição"))
-				.dataCadastro(rec.getString("Data de Cadastramento"))
+				.nome(getValueByAlias(rec, "Nome"))
+				.localizacao(getValueByAlias(rec, "Localização"))
+				.codigo(getValueByAlias(rec, "Número do patrimônio"))
+				.categoria(getValueByAlias(rec, "Categoria"))
+				.condicao(getValueByAlias(rec, "Condição"))
+				.tipoEntrada(getValueByAlias(rec, "Modalidade Aquisição"))
+				.dataCadastro(getValueByAlias(rec, "Data de Cadastramento"))
 				.numeroLinha(linhaAtual)
 				.build();
+		}
+		return null;
+	}
+
+	private String getValueByAlias(Record rec, String headerPrincipal) {
+		List<String> aliases = HEADER_ALIASES.get(headerPrincipal);
+		if (aliases == null) {
+			return null;
+		}
+		for (String alias : aliases) {
+			try {
+				String value = rec.getString(alias);
+				if (value != null && !value.trim().isEmpty()) {
+					return value;
+				}
+			}
+			catch (Exception e) {
+				// Header não encontrado, tenta próximo alias
+			}
 		}
 		return null;
 	}
