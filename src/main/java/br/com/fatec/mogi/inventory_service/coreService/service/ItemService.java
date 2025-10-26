@@ -25,4 +25,6 @@ public interface ItemService {
 
 	ResponseEntity<byte[]> exportar(ExportarItensRequestDTO dto, String tipo);
 
+	ResponseEntity<byte[]> exportarTodos(String tipo);
+
 }

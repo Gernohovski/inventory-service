@@ -174,4 +174,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepository.save(usuario);
 	}
 
+	@Override
+	@Transactional
+	public void desativarAuditoriaTodos() {
+		usuarioRepository.updatePodeRealizarAuditoria(false);
+	}
+
+	@Override
+	@Transactional
+	public void ativarAuditoriaTodos() {
+		usuarioRepository.updatePodeRealizarAuditoria(true);
+	}
+
 }

@@ -44,9 +44,15 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 			var logoFile = new ClassPathResource("static/logo.png");
 			Image logo = new Image(ImageDataFactory.create(logoFile.getInputStream().readAllBytes())).scaleToFit(100,
 					100);
-			var itens = itemRepository.findAllById(itensId);
-			if (itens.isEmpty()) {
-				throw new NenhumItemEncontradoException();
+			List<Item> itens;
+			if (!itensId.isEmpty()) {
+				itens = itemRepository.findAllById(itensId);
+				if (itens.isEmpty()) {
+					throw new NenhumItemEncontradoException();
+				}
+			}
+			else {
+				itens = itemRepository.findAll();
 			}
 			Table header = new Table(new float[] { 1, 4 });
 			header.addCell(new Cell().add(logo).setBorder(null));
