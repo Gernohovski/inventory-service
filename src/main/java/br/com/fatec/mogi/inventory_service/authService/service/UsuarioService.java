@@ -31,4 +31,8 @@ public interface UsuarioService {
 
 	void ativarAuditoria(Long id);
 
+	void desativarAuditoriaTodos();
+
+	void ativarAuditoriaTodos();
+
 }
