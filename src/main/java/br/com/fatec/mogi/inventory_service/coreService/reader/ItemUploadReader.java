@@ -66,7 +66,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	}
 
 	@Override
-	public ItemUploadRequestDTO read() throws Exception {
+	public ItemUploadRequestDTO read() {
 		if (iterator != null && iterator.hasNext()) {
 			Record rec = iterator.next();
 			linhaAtual++;
