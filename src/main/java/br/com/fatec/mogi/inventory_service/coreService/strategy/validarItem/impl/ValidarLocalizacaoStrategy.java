@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.impl;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.model.Localizacao;
 import br.com.fatec.mogi.inventory_service.coreService.repository.LocalizacaoRepository;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemContexto;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemStrategy;
@@ -25,8 +26,9 @@ public class ValidarLocalizacaoStrategy implements ValidarItemStrategy {
 		}
 		var localizacao = localizacaoRepository.findByNomeSala(dto.getLocalizacao());
 		if (localizacao.isEmpty()) {
-			contexto.adicionarErro("Localização não mapeada", dto.getLocalizacao());
-			contexto.setEncerrarFluxo(true);
+			Localizacao novaLocalizacao = Localizacao.builder().nomeSala(dto.getLocalizacao()).build();
+			var localizacaoSalva = localizacaoRepository.save(novaLocalizacao);
+			contexto.getItem().setLocalizacao(localizacaoSalva);
 			return;
 		}
 		contexto.getItem().setLocalizacao(localizacao.get());
