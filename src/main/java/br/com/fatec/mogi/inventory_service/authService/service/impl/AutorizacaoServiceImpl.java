@@ -11,6 +11,7 @@ import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoServic
 import br.com.fatec.mogi.inventory_service.authService.service.RedisService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
 import br.com.fatec.mogi.inventory_service.common.filter.HttpAuthorizationFilter;
+import br.com.fatec.mogi.inventory_service.common.web.context.RequestContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,7 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 		if (funcionalidade.getFuncionalidade().equals("REALIZAR_AUDITORIA") && !usuario.isPodeRealizarAuditoria()) {
 			throw new UsuarioNaoAutorizadoException();
 		}
+		RequestContext.setUsuario(usuario);
 		LOG.info("Usuário autorizado!");
 	}
 
