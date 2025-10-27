@@ -74,9 +74,8 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable) {
 		var pagina = itemRepository.filtrar(dto.getDataCadastroInicio(), dto.getDataCadastroFim(),
-				dto.getCategoriaItemId(), dto.getLocalizacaoId(), dto.getStatusItemId(), dto.getTipoEntradaId(),
-				dto.getNomeItem(), dto.getCodigoItem(), dto.getNumeroSerie(), dto.getNotaFiscal(),
-				dto.getTermoPesquisa(), pageable);
+				dto.getCategoriaItemId(), dto.getLocalizacaoId(), dto.getStatusItemId(), dto.getNomeItem(),
+				dto.getCodigoItem(), dto.getNumeroSerie(), dto.getNotaFiscal(), dto.getTermoPesquisa(), pageable);
 		return CustomPageResponseDTO.<ItemResponseDTO>builder()
 			.content(pagina.getContent())
 			.size(pagina.getSize())

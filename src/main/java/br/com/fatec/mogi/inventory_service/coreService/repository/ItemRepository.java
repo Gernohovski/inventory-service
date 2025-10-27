@@ -33,17 +33,17 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			LEFT JOIN i.localizacao l
 			LEFT JOIN i.categoriaItem c
 			LEFT JOIN i.statusItem s
-			WHERE i.dataCadastro >= COALESCE(:dataCadastroInicio, i.dataCadastro)
-			  and i.dataCadastro <= COALESCE(:dataCadastroFim, i.dataCadastro)
-			  and i.categoriaItem.id = COALESCE(:categoriaItemId, i.categoriaItem.id)
-			  and i.localizacao.id   = COALESCE(:localizacaoId, i.localizacao.id)
-			  and i.statusItem.id    = COALESCE(:statusItemId, i.statusItem.id)
-			  and upper(i.nomeItem)   like COALESCE(concat('%', upper(:nomeItem), '%'), upper(i.nomeItem))
-			  and upper(i.codigoItem) like COALESCE(concat('%', upper(:codigoItem), '%'), upper(i.codigoItem))
-			  and upper(i.numeroSerie) like COALESCE(concat('%', upper(:numeroSerie), '%'), upper(i.numeroSerie))
-			  and upper(i.notaFiscal) like COALESCE(concat('%', upper(:notaFiscal), '%'), upper(i.notaFiscal))
-			  and (
-			    :termoPesquisa is null or
+			WHERE (:dataCadastroInicio IS NULL OR i.dataCadastro >= :dataCadastroInicio)
+			  AND (:dataCadastroFim IS NULL OR i.dataCadastro <= :dataCadastroFim)
+			  AND (:categoriaItemId IS NULL OR i.categoriaItem.id = :categoriaItemId)
+			  AND (:localizacaoId IS NULL OR i.localizacao.id = :localizacaoId)
+			  AND (:statusItemId IS NULL OR i.statusItem.id = :statusItemId)
+			  AND (:nomeItem IS NULL OR upper(i.nomeItem) LIKE concat('%', upper(:nomeItem), '%'))
+			  AND (:codigoItem IS NULL OR upper(i.codigoItem) LIKE concat('%', upper(:codigoItem), '%'))
+			  AND (:numeroSerie IS NULL OR upper(i.numeroSerie) LIKE concat('%', upper(:numeroSerie), '%'))
+			  AND (:notaFiscal IS NULL OR upper(i.notaFiscal) LIKE concat('%', upper(:notaFiscal), '%'))
+			  AND (
+			    :termoPesquisa IS NULL OR
 			    upper(concat(
 			      COALESCE(i.codigoItem, ''), ' ',
 			      COALESCE(i.numeroSerie, ''), ' ',
@@ -51,16 +51,15 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			      COALESCE(l.nomeSala, ''), ' ',
 			      COALESCE(c.nome, ''), ' ',
 			      COALESCE(s.nome, '')
-			    )) like concat('%', upper(trim(COALESCE(cast(:termoPesquisa as string), ''))), '%')
+			    )) LIKE concat('%', upper(trim(:termoPesquisa)), '%')
 			  )
 			""")
 	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
 			@Param("dataCadastroFim") java.time.LocalDateTime dataCadastroFim,
 			@Param("categoriaItemId") Long categoriaItemId, @Param("localizacaoId") Long localizacaoId,
-			@Param("statusItemId") Long statusItemId, @Param("tipoEntradaId") Long tipoEntradaId,
-			@Param("nomeItem") String nomeItem, @Param("codigoItem") String codigoItem,
-			@Param("numeroSerie") String numeroSerie, @Param("notaFiscal") String notaFiscal,
-			@Param("termoPesquisa") String termoPesquisa, Pageable pageable);
+			@Param("statusItemId") Long statusItemId, @Param("nomeItem") String nomeItem,
+			@Param("codigoItem") String codigoItem, @Param("numeroSerie") String numeroSerie,
+			@Param("notaFiscal") String notaFiscal, @Param("termoPesquisa") String termoPesquisa, Pageable pageable);
 
 	Optional<Item> findByCodigoItem(String codigoItem);
 
