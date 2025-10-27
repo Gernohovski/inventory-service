@@ -45,7 +45,7 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 			LOG.info("Usuário não possui autorização");
 			throw new UsuarioNaoAutorizadoException();
 		}
-		if (funcionalidade.getFuncionalidade().equals("REALIZAR_AUDITORIA") && !usuario.isPodeRealizarAuditoria()) {
+		if (funcionalidade.getFuncionalidade().contains("AUDITORIA") && !usuario.isPodeRealizarAuditoria()) {
 			throw new UsuarioNaoAutorizadoException();
 		}
 		RequestContext.setUsuario(usuario);

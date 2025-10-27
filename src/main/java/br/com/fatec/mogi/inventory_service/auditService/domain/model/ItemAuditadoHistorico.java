@@ -29,13 +29,14 @@ public class ItemAuditadoHistorico extends EntidadeDominio {
 	@Column(nullable = false, length = 100)
 	private String itemCodigo;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false)
 	private String itemNome;
 
-	@Column(length = 255)
+	@Column(length = 100)
+	private String usuarioNome;
+
 	private String itemCategoria;
 
-	@Column(length = 255)
 	private String itemLocalizacao;
 
 	@Column(length = 100)
