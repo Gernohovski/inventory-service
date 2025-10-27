@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.auditService.domain.model;
 
+import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.EntidadeDominio;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
 import jakarta.persistence.Entity;
@@ -28,6 +29,10 @@ public class ItemAuditado extends EntidadeDominio {
 	@ManyToOne
 	@JoinColumn(name = "item_id", nullable = false)
 	private Item item;
+
+	@ManyToOne
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuarioResponsavel;
 
 	private String observacao;
 

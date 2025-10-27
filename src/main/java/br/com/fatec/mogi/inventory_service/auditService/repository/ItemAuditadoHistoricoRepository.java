@@ -13,11 +13,4 @@ public interface ItemAuditadoHistoricoRepository extends JpaRepository<ItemAudit
 
 	List<ItemAuditadoHistorico> findByAuditoriaHistoricoId(Long auditoriaHistoricoId);
 
-	@Query("""
-			SELECT iah FROM ItemAuditadoHistorico iah
-			WHERE iah.itemId = :itemId
-			ORDER BY iah.auditoriaHistorico.dataInicio DESC
-			""")
-	List<ItemAuditadoHistorico> findHistoricoByItemId(@Param("itemId") Long itemId);
-
 }

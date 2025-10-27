@@ -5,12 +5,14 @@ import br.com.fatec.mogi.inventory_service.auditService.domain.model.Auditoria;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
+import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaHistoricoService;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaService;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.AuditarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.ConsultarHistoricoAuditoriaRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaAtivaResponseDTO;
+import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoResponseDTO;
 import br.com.fatec.mogi.inventory_service.common.web.context.RequestContext;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
@@ -36,6 +38,8 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	private final AuditoriaRepository auditoriaRepository;
 
 	private final ItemAuditadoRepository itemAuditadoRepository;
+
+	private final ItemAuditadoHistoricoRepository itemAuditadoHistoricoRepository;
 
 	private final AuditoriaHistoricoService auditoriaHistoricoService;
 
@@ -80,6 +84,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		var itemAuditado = itemAuditadoRepository.findByItemId(item.getId())
 			.orElseThrow(ItemNaoSendoAuditadoException::new);
 		itemAuditado.setConformidade(true);
+		itemAuditado.setUsuarioResponsavel(RequestContext.getUsuario());
 		itemAuditado.setObservacao(dto.getObservacao());
 		itemAuditado.setDataVerificacao(LocalDateTime.now());
 		itemAuditadoRepository.save(itemAuditado);
@@ -140,16 +145,18 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	}
 
 	@Override
-	public AuditoriaHistoricoResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria) {
+	public AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria) {
 		var historico = auditoriaHistoricoRepository.findByCodigoAuditoria(codigoAuditoria)
 			.orElseThrow(AuditoriaNaoEncontradaException::new);
-		return AuditoriaHistoricoResponseDTO.builder()
+		var itens = itemAuditadoHistoricoRepository.findByAuditoriaHistoricoId(historico.getId());
+		return AuditoriaHistoricoDetalhadaResponseDTO.builder()
 			.id(historico.getId())
 			.codigoAuditoria(historico.getCodigoAuditoria())
 			.dataInicio(historico.getDataInicio())
 			.dataFim(historico.getDataFim())
 			.usuarioResponsavelNome(historico.getUsuarioResponsavelNome())
 			.totalItens(historico.getTotalItens())
+			.itens(itens)
 			.build();
 	}
 

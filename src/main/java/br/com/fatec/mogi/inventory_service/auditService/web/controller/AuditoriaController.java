@@ -4,6 +4,7 @@ import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaService
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.AuditarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.ConsultarHistoricoAuditoriaRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaAtivaResponseDTO;
+import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoResponseDTO;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
@@ -61,7 +62,7 @@ public record AuditoriaController(AuditoriaService auditoriaService, ItemService
 	}
 
 	@GetMapping("/historico/buscar/{codigoAuditoria}")
-	public ResponseEntity<AuditoriaHistoricoResponseDTO> buscarHistoricoPorCodigo(
+	public ResponseEntity<AuditoriaHistoricoDetalhadaResponseDTO> buscarHistoricoPorCodigo(
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken,
 			@PathVariable("codigoAuditoria") String codigoAuditoria) {
 		var historico = auditoriaService.buscarHistoricoPorCodigo(codigoAuditoria);
