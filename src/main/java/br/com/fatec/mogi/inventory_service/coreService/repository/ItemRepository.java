@@ -51,7 +51,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			      COALESCE(l.nomeSala, ''), ' ',
 			      COALESCE(c.nome, ''), ' ',
 			      COALESCE(s.nome, '')
-			    )) LIKE concat('%', upper(trim(:termoPesquisa)), '%')
+			    )) LIKE concat('%', upper(trim(CAST(:termoPesquisa AS string))), '%')
 			  )
 			""")
 	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
