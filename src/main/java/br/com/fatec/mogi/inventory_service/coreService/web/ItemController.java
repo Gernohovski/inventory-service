@@ -59,7 +59,7 @@ public record ItemController(ItemService itemService) {
 		return itemService.exportar(dto, tipo);
 	}
 
-	@GetMapping("/exportar/todos")
+	@GetMapping("/exportar/todos/{tipo}")
 	public ResponseEntity<?> exportarTodos(@PathVariable("tipo") String tipo,
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		return itemService.exportarTodos(tipo);

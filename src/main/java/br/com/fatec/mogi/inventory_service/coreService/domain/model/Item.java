@@ -51,4 +51,6 @@ public class Item extends EntidadeDominio {
 
 	private String notaFiscal;
 
+	private LocalDateTime ultimaVezAuditado;
+
 }
