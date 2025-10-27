@@ -1,0 +1,1 @@
+ALTER TABLE item ADD COLUMN ultima_vez_auditado TIMESTAMP;
