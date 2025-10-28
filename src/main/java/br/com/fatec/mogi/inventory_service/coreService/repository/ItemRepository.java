@@ -38,10 +38,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			  AND (:categoriaItemId IS NULL OR i.categoriaItem.id = :categoriaItemId)
 			  AND (:localizacaoId IS NULL OR i.localizacao.id = :localizacaoId)
 			  AND (:statusItemId IS NULL OR i.statusItem.id = :statusItemId)
-			  AND (:nomeItem IS NULL OR upper(i.nomeItem) LIKE concat('%', upper(:nomeItem), '%'))
-			  AND (:codigoItem IS NULL OR upper(i.codigoItem) LIKE concat('%', upper(:codigoItem), '%'))
-			  AND (:numeroSerie IS NULL OR upper(i.numeroSerie) LIKE concat('%', upper(:numeroSerie), '%'))
-			  AND (:notaFiscal IS NULL OR upper(i.notaFiscal) LIKE concat('%', upper(:notaFiscal), '%'))
+			  AND (:nomeItem IS NULL OR upper(i.nomeItem) LIKE concat('%', upper(CAST(:nomeItem AS string)), '%'))
+			  AND (:codigoItem IS NULL OR upper(i.codigoItem) LIKE concat('%', upper(CAST(:codigoItem AS string)), '%'))
+			  AND (:numeroSerie IS NULL OR upper(i.numeroSerie) LIKE concat('%', upper(CAST(:numeroSerie AS string)), '%'))
+			  AND (:notaFiscal IS NULL OR upper(i.notaFiscal) LIKE concat('%', upper(CAST(:notaFiscal AS string)), '%'))
 			  AND (
 			    :termoPesquisa IS NULL OR
 			    upper(concat(
