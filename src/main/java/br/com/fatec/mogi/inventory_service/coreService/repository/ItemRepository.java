@@ -16,46 +16,65 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	boolean existsByCodigoItem(String codigo);
 
-	@Query("""
-			SELECT new br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO(
-				i.id,
-				i.nomeItem,
-				i.numeroSerie,
-				i.statusItem,
-				i.categoriaItem,
-				i.tipoEntrada,
-				i.codigoItem,
-				i.dataCadastro,
-				i.localizacao,
-				i.notaFiscal
-			)
-			FROM Item i
-			LEFT JOIN i.localizacao l
-			LEFT JOIN i.categoriaItem c
-			LEFT JOIN i.statusItem s
+	@Query(value = """
+			SELECT i.*
+			FROM item i
+			LEFT JOIN localizacao l ON l.id = i.localizacao_id
+			LEFT JOIN categoria_item c ON c.id = i.categoria_item_id
+			LEFT JOIN status_item s ON s.id = i.status_item_id
 			WHERE 1=1
-			  AND (:dataCadastroInicio IS NULL OR i.dataCadastro >= :dataCadastroInicio)
-			  AND (:dataCadastroFim IS NULL OR i.dataCadastro <= :dataCadastroFim)
-			  AND (:categoriaItemId IS NULL OR i.categoriaItem.id = :categoriaItemId)
-			  AND (:localizacaoId IS NULL OR i.localizacao.id = :localizacaoId)
-			  AND (:statusItemId IS NULL OR i.statusItem.id = :statusItemId)
-			  AND (:nomeItem IS NULL OR :nomeItem = '' OR upper(i.nomeItem) LIKE upper(concat('%', :nomeItem, '%')))
-			  AND (:codigoItem IS NULL OR :codigoItem = '' OR upper(i.codigoItem) LIKE upper(concat('%', :codigoItem, '%')))
-			  AND (:numeroSerie IS NULL OR :numeroSerie = '' OR upper(i.numeroSerie) LIKE upper(concat('%', :numeroSerie, '%')))
-			  AND (:notaFiscal IS NULL OR :notaFiscal = '' OR upper(i.notaFiscal) LIKE upper(concat('%', :notaFiscal, '%')))
+			  AND (CAST(:dataCadastroInicio AS timestamp) IS NULL OR i.data_cadastro >= CAST(:dataCadastroInicio AS timestamp))
+			  AND (CAST(:dataCadastroFim AS timestamp) IS NULL OR i.data_cadastro <= CAST(:dataCadastroFim AS timestamp))
+			  AND (CAST(:categoriaItemId AS bigint) IS NULL OR i.categoria_item_id = CAST(:categoriaItemId AS bigint))
+			  AND (CAST(:localizacaoId AS bigint) IS NULL OR i.localizacao_id = CAST(:localizacaoId AS bigint))
+			  AND (CAST(:statusItemId AS bigint) IS NULL OR i.status_item_id = CAST(:statusItemId AS bigint))
+			  AND (CAST(:nomeItem AS varchar) IS NULL OR CAST(:nomeItem AS varchar) = '' OR upper(i.nome_item) LIKE upper('%' || CAST(:nomeItem AS varchar) || '%'))
+			  AND (CAST(:codigoItem AS varchar) IS NULL OR CAST(:codigoItem AS varchar) = '' OR upper(i.codigo_item) LIKE upper('%' || CAST(:codigoItem AS varchar) || '%'))
+			  AND (CAST(:numeroSerie AS varchar) IS NULL OR CAST(:numeroSerie AS varchar) = '' OR upper(i.numero_serie) LIKE upper('%' || CAST(:numeroSerie AS varchar) || '%'))
+			  AND (CAST(:notaFiscal AS varchar) IS NULL OR CAST(:notaFiscal AS varchar) = '' OR upper(i.nota_fiscal) LIKE upper('%' || CAST(:notaFiscal AS varchar) || '%'))
 			  AND (
-			    :termoPesquisa IS NULL OR :termoPesquisa = '' OR
-			    upper(concat(
-			      COALESCE(i.codigoItem, ''), ' ',
-			      COALESCE(i.numeroSerie, ''), ' ',
-			      COALESCE(FUNCTION('TO_CHAR', i.dataCadastro, 'DD/MM/YYYY'), ''), ' ',
-			      COALESCE(l.nomeSala, ''), ' ',
-			      COALESCE(c.nome, ''), ' ',
+			    CAST(:termoPesquisa AS varchar) IS NULL OR CAST(:termoPesquisa AS varchar) = '' OR
+			    upper(
+			      COALESCE(i.codigo_item, '') || ' ' ||
+			      COALESCE(i.numero_serie, '') || ' ' ||
+			      COALESCE(to_char(i.data_cadastro, 'DD/MM/YYYY'), '') || ' ' ||
+			      COALESCE(l.nome_sala, '') || ' ' ||
+			      COALESCE(c.nome, '') || ' ' ||
 			      COALESCE(s.nome, '')
-			    )) LIKE upper(concat('%', :termoPesquisa, '%'))
+			    ) LIKE upper('%' || CAST(:termoPesquisa AS varchar) || '%')
 			  )
-			""")
-	Page<ItemResponseDTO> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
+			ORDER BY i.data_cadastro DESC
+			""", 
+			countQuery = """
+			SELECT COUNT(*)
+			FROM item i
+			LEFT JOIN localizacao l ON l.id = i.localizacao_id
+			LEFT JOIN categoria_item c ON c.id = i.categoria_item_id
+			LEFT JOIN status_item s ON s.id = i.status_item_id
+			WHERE 1=1
+			  AND (CAST(:dataCadastroInicio AS timestamp) IS NULL OR i.data_cadastro >= CAST(:dataCadastroInicio AS timestamp))
+			  AND (CAST(:dataCadastroFim AS timestamp) IS NULL OR i.data_cadastro <= CAST(:dataCadastroFim AS timestamp))
+			  AND (CAST(:categoriaItemId AS bigint) IS NULL OR i.categoria_item_id = CAST(:categoriaItemId AS bigint))
+			  AND (CAST(:localizacaoId AS bigint) IS NULL OR i.localizacao_id = CAST(:localizacaoId AS bigint))
+			  AND (CAST(:statusItemId AS bigint) IS NULL OR i.status_item_id = CAST(:statusItemId AS bigint))
+			  AND (CAST(:nomeItem AS varchar) IS NULL OR CAST(:nomeItem AS varchar) = '' OR upper(i.nome_item) LIKE upper('%' || CAST(:nomeItem AS varchar) || '%'))
+			  AND (CAST(:codigoItem AS varchar) IS NULL OR CAST(:codigoItem AS varchar) = '' OR upper(i.codigo_item) LIKE upper('%' || CAST(:codigoItem AS varchar) || '%'))
+			  AND (CAST(:numeroSerie AS varchar) IS NULL OR CAST(:numeroSerie AS varchar) = '' OR upper(i.numero_serie) LIKE upper('%' || CAST(:numeroSerie AS varchar) || '%'))
+			  AND (CAST(:notaFiscal AS varchar) IS NULL OR CAST(:notaFiscal AS varchar) = '' OR upper(i.nota_fiscal) LIKE upper('%' || CAST(:notaFiscal AS varchar) || '%'))
+			  AND (
+			    CAST(:termoPesquisa AS varchar) IS NULL OR CAST(:termoPesquisa AS varchar) = '' OR
+			    upper(
+			      COALESCE(i.codigo_item, '') || ' ' ||
+			      COALESCE(i.numero_serie, '') || ' ' ||
+			      COALESCE(to_char(i.data_cadastro, 'DD/MM/YYYY'), '') || ' ' ||
+			      COALESCE(l.nome_sala, '') || ' ' ||
+			      COALESCE(c.nome, '') || ' ' ||
+			      COALESCE(s.nome, '')
+			    ) LIKE upper('%' || CAST(:termoPesquisa AS varchar) || '%')
+			  )
+			""",
+			nativeQuery = true)
+	Page<Item> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
 			@Param("dataCadastroFim") java.time.LocalDateTime dataCadastroFim,
 			@Param("categoriaItemId") Long categoriaItemId, @Param("localizacaoId") Long localizacaoId,
 			@Param("statusItemId") Long statusItemId, @Param("nomeItem") String nomeItem,
