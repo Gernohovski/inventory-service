@@ -1,11 +1,12 @@
 package br.com.fatec.mogi.inventory_service.coreService.service;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarStatusItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarStatusItemResponseDTO;
 
 public interface StatusItemService {
 
-	void cadastrar(CadastrarStatusItemRequestDTO dto);
+	StatusItem cadastrar(CadastrarStatusItemRequestDTO dto);
 
 	void deletar(Long id);
 

@@ -21,12 +21,12 @@ public class StatusItemServiceImpl implements StatusItemService {
 	private final ItemRepository itemRepository;
 
 	@Override
-	public void cadastrar(CadastrarStatusItemRequestDTO dto) {
+	public StatusItem cadastrar(CadastrarStatusItemRequestDTO dto) {
 		if (statusItemRepository.existsByNome(dto.getNome())) {
 			throw new StatusItemJaCadastradoException();
 		}
 		StatusItem statusItem = StatusItem.builder().nome(dto.getNome()).build();
-		statusItemRepository.save(statusItem);
+		return statusItemRepository.save(statusItem);
 	}
 
 	@Override

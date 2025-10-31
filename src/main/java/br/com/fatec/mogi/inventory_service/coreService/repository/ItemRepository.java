@@ -44,35 +44,35 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			    ) LIKE upper('%' || CAST(:termoPesquisa AS varchar) || '%')
 			  )
 			ORDER BY i.data_cadastro DESC
-			""", 
-			countQuery = """
-			SELECT COUNT(*)
-			FROM item i
-			LEFT JOIN localizacao l ON l.id = i.localizacao_id
-			LEFT JOIN categoria_item c ON c.id = i.categoria_item_id
-			LEFT JOIN status_item s ON s.id = i.status_item_id
-			WHERE 1=1
-			  AND (CAST(:dataCadastroInicio AS timestamp) IS NULL OR i.data_cadastro >= CAST(:dataCadastroInicio AS timestamp))
-			  AND (CAST(:dataCadastroFim AS timestamp) IS NULL OR i.data_cadastro <= CAST(:dataCadastroFim AS timestamp))
-			  AND (CAST(:categoriaItemId AS bigint) IS NULL OR i.categoria_item_id = CAST(:categoriaItemId AS bigint))
-			  AND (CAST(:localizacaoId AS bigint) IS NULL OR i.localizacao_id = CAST(:localizacaoId AS bigint))
-			  AND (CAST(:statusItemId AS bigint) IS NULL OR i.status_item_id = CAST(:statusItemId AS bigint))
-			  AND (CAST(:nomeItem AS varchar) IS NULL OR CAST(:nomeItem AS varchar) = '' OR upper(i.nome_item) LIKE upper('%' || CAST(:nomeItem AS varchar) || '%'))
-			  AND (CAST(:codigoItem AS varchar) IS NULL OR CAST(:codigoItem AS varchar) = '' OR upper(i.codigo_item) LIKE upper('%' || CAST(:codigoItem AS varchar) || '%'))
-			  AND (CAST(:numeroSerie AS varchar) IS NULL OR CAST(:numeroSerie AS varchar) = '' OR upper(i.numero_serie) LIKE upper('%' || CAST(:numeroSerie AS varchar) || '%'))
-			  AND (CAST(:notaFiscal AS varchar) IS NULL OR CAST(:notaFiscal AS varchar) = '' OR upper(i.nota_fiscal) LIKE upper('%' || CAST(:notaFiscal AS varchar) || '%'))
-			  AND (
-			    CAST(:termoPesquisa AS varchar) IS NULL OR CAST(:termoPesquisa AS varchar) = '' OR
-			    upper(
-			      COALESCE(i.codigo_item, '') || ' ' ||
-			      COALESCE(i.numero_serie, '') || ' ' ||
-			      COALESCE(to_char(i.data_cadastro, 'DD/MM/YYYY'), '') || ' ' ||
-			      COALESCE(l.nome_sala, '') || ' ' ||
-			      COALESCE(c.nome, '') || ' ' ||
-			      COALESCE(s.nome, '')
-			    ) LIKE upper('%' || CAST(:termoPesquisa AS varchar) || '%')
-			  )
 			""",
+			countQuery = """
+					SELECT COUNT(*)
+					FROM item i
+					LEFT JOIN localizacao l ON l.id = i.localizacao_id
+					LEFT JOIN categoria_item c ON c.id = i.categoria_item_id
+					LEFT JOIN status_item s ON s.id = i.status_item_id
+					WHERE 1=1
+					  AND (CAST(:dataCadastroInicio AS timestamp) IS NULL OR i.data_cadastro >= CAST(:dataCadastroInicio AS timestamp))
+					  AND (CAST(:dataCadastroFim AS timestamp) IS NULL OR i.data_cadastro <= CAST(:dataCadastroFim AS timestamp))
+					  AND (CAST(:categoriaItemId AS bigint) IS NULL OR i.categoria_item_id = CAST(:categoriaItemId AS bigint))
+					  AND (CAST(:localizacaoId AS bigint) IS NULL OR i.localizacao_id = CAST(:localizacaoId AS bigint))
+					  AND (CAST(:statusItemId AS bigint) IS NULL OR i.status_item_id = CAST(:statusItemId AS bigint))
+					  AND (CAST(:nomeItem AS varchar) IS NULL OR CAST(:nomeItem AS varchar) = '' OR upper(i.nome_item) LIKE upper('%' || CAST(:nomeItem AS varchar) || '%'))
+					  AND (CAST(:codigoItem AS varchar) IS NULL OR CAST(:codigoItem AS varchar) = '' OR upper(i.codigo_item) LIKE upper('%' || CAST(:codigoItem AS varchar) || '%'))
+					  AND (CAST(:numeroSerie AS varchar) IS NULL OR CAST(:numeroSerie AS varchar) = '' OR upper(i.numero_serie) LIKE upper('%' || CAST(:numeroSerie AS varchar) || '%'))
+					  AND (CAST(:notaFiscal AS varchar) IS NULL OR CAST(:notaFiscal AS varchar) = '' OR upper(i.nota_fiscal) LIKE upper('%' || CAST(:notaFiscal AS varchar) || '%'))
+					  AND (
+					    CAST(:termoPesquisa AS varchar) IS NULL OR CAST(:termoPesquisa AS varchar) = '' OR
+					    upper(
+					      COALESCE(i.codigo_item, '') || ' ' ||
+					      COALESCE(i.numero_serie, '') || ' ' ||
+					      COALESCE(to_char(i.data_cadastro, 'DD/MM/YYYY'), '') || ' ' ||
+					      COALESCE(l.nome_sala, '') || ' ' ||
+					      COALESCE(c.nome, '') || ' ' ||
+					      COALESCE(s.nome, '')
+					    ) LIKE upper('%' || CAST(:termoPesquisa AS varchar) || '%')
+					  )
+					""",
 			nativeQuery = true)
 	Page<Item> filtrar(@Param("dataCadastroInicio") java.time.LocalDateTime dataCadastroInicio,
 			@Param("dataCadastroFim") java.time.LocalDateTime dataCadastroFim,

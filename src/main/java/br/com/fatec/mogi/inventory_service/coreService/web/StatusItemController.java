@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.web;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.service.StatusItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarStatusItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.BuscarStatusItemResponseDTO;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public record StatusItemController(StatusItemService service) {
 
 	@PostMapping
-	public ResponseEntity<Void> cadastrar(@RequestHeader("X-ACCESS-TOKEN") String accessToken,
+	public ResponseEntity<StatusItem> cadastrar(@RequestHeader("X-ACCESS-TOKEN") String accessToken,
 			@RequestBody CadastrarStatusItemRequestDTO dto) {
-		service.cadastrar(dto);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var status = service.cadastrar(dto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(status);
 	}
 
 	@DeleteMapping("/{id}")
