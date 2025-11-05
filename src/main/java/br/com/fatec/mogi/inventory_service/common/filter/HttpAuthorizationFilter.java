@@ -30,7 +30,7 @@ public class HttpAuthorizationFilter implements Filter {
 			"/auth-service/v1/autenticacao/refresh");
 
 	private static final Pattern PATH_VARIABLE_PATTERN = Pattern
-		.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
+		.compile("/\\d+|/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|/[A-Z]+-\\d{4}-\\d+");
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
