@@ -20,7 +20,6 @@ public interface AuditoriaHistoricoRepository extends JpaRepository<AuditoriaHis
 			SELECT ah FROM AuditoriaHistorico ah
 			WHERE (:dataInicio IS NULL OR ah.dataInicio >= :dataInicio)
 			  AND (:dataFim IS NULL OR ah.dataFim <= :dataFim)
-			  AND (:usuarioId IS NULL OR ah.usuarioResponsavelId = :usuarioId)
 			ORDER BY ah.dataInicio DESC
 			""")
 	Page<AuditoriaHistorico> findHistorico(@Param("dataInicio") LocalDateTime dataInicio,
