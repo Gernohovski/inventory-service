@@ -18,10 +18,9 @@ public interface AuditoriaHistoricoRepository extends JpaRepository<AuditoriaHis
 
 	@Query("""
 			SELECT ah FROM AuditoriaHistorico ah
-			WHERE 1=1
-			  AND (:dataInicio IS NULL OR ah.dataInicio >= :dataInicio)
-			  AND (:dataFim IS NULL OR ah.dataFim <= :dataFim)
-			ORDER BY ah.dataInicio DESC
+			WHERE ah.dataInicio >= COALESCE(:dataInicio, ah.dataInicio)
+			  AND ah.dataFim <= COALESCE(:dataFim, ah.dataFim)
+			order BY ah.dataInicio DESC
 			""")
 	Page<AuditoriaHistorico> findHistorico(@Param("dataInicio") LocalDateTime dataInicio,
 			@Param("dataFim") LocalDateTime dataFim, Pageable pageable);
