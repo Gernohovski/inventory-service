@@ -18,7 +18,8 @@ public interface AuditoriaHistoricoRepository extends JpaRepository<AuditoriaHis
 
 	@Query("""
 			SELECT ah FROM AuditoriaHistorico ah
-			WHERE (:dataInicio IS NULL OR ah.dataInicio >= :dataInicio)
+			WHERE 1=1
+			  AND (:dataInicio IS NULL OR ah.dataInicio >= :dataInicio)
 			  AND (:dataFim IS NULL OR ah.dataFim <= :dataFim)
 			ORDER BY ah.dataInicio DESC
 			""")
