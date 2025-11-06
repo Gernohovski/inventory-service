@@ -11,4 +11,6 @@ public interface ItemAuditadoRepository extends JpaRepository<ItemAuditado, Long
 
 	Optional<ItemAuditado> findByItemId(Long itemId);
 
+	boolean existsByItemId(Long itemId);
+
 }

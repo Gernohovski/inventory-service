@@ -1,5 +1,9 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
+import br.com.fatec.mogi.inventory_service.auditService.domain.model.AuditoriaHistorico;
+import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
+import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
+import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.config.ItemUploadJobConfig;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.*;
@@ -56,10 +60,17 @@ public class ItemServiceImpl implements ItemService {
 
 	private final ItemUploadSkipListener skipListener;
 
+	private final AuditoriaRepository auditoriaRepository;
+
+	private final ItemAuditadoRepository itemAuditadoRepository;
+
 	@Override
 	public ItemResponseDTO cadastrarItem(CadastrarItemRequestDTO dto) {
 		if (itemRepository.existsByCodigoItem(dto.getCodigoItem())) {
 			throw new ItemJaCadastradoException();
+		}
+		if (auditoriaRepository.findAtiva().isPresent()) {
+			throw new NaoPossivelCadastrarItemException();
 		}
 		categoriaItemRepository.findById(dto.getCategoriaItemId()).orElseThrow(CategoriaNaoEncontradaException::new);
 		tipoEntradaRepository.findById(dto.getTipoEntradaId()).orElseThrow(TipoEntradaNaoEncontradaException::new);
@@ -125,6 +136,9 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public void deletar(Long id) {
 		itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
+		if (itemAuditadoRepository.existsByItemId(id)) {
+			throw new ItemSendoAuditadoException();
+		}
 		itemRepository.deleteById(id);
 	}
 
