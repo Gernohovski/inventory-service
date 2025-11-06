@@ -5,7 +5,6 @@ import br.com.fatec.mogi.inventory_service.auditService.domain.model.Auditoria;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
-import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaHistoricoService;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaService;
@@ -38,8 +37,6 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	private final AuditoriaRepository auditoriaRepository;
 
 	private final ItemAuditadoRepository itemAuditadoRepository;
-
-	private final ItemAuditadoHistoricoRepository itemAuditadoHistoricoRepository;
 
 	private final AuditoriaHistoricoService auditoriaHistoricoService;
 
@@ -148,7 +145,6 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	public AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria) {
 		var historico = auditoriaHistoricoRepository.findByCodigoAuditoria(codigoAuditoria)
 			.orElseThrow(AuditoriaNaoEncontradaException::new);
-		var itens = itemAuditadoHistoricoRepository.findByAuditoriaHistoricoId(historico.getId());
 		return AuditoriaHistoricoDetalhadaResponseDTO.builder()
 			.id(historico.getId())
 			.codigoAuditoria(historico.getCodigoAuditoria())
@@ -156,7 +152,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 			.dataFim(historico.getDataFim())
 			.usuarioResponsavelNome(historico.getUsuarioResponsavelNome())
 			.totalItens(historico.getTotalItens())
-			.itens(itens)
+			.itens(historico.getItensAuditadosHistorico())
 			.build();
 	}
 

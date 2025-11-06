@@ -1,11 +1,9 @@
 package br.com.fatec.mogi.inventory_service.auditService.domain.model;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.EntidadeDominio;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -19,8 +17,10 @@ import java.time.LocalDateTime;
 @Table(name = "item_auditado_historico")
 public class ItemAuditadoHistorico extends EntidadeDominio {
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "auditoria_historico_id", nullable = false)
+	@JsonIgnore
+	@ToString.Exclude
 	private AuditoriaHistorico auditoriaHistorico;
 
 	@Column(nullable = false)
