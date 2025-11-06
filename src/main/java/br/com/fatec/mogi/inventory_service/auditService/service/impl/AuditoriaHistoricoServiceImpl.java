@@ -7,6 +7,7 @@ import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditad
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaHistoricoService;
+import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +61,7 @@ public class AuditoriaHistoricoServiceImpl implements AuditoriaHistoricoService 
 				.observacao(itemAuditado.getObservacao())
 				.dataVerificacao(itemAuditado.getDataVerificacao())
 				.conformidade(itemAuditado.getConformidade())
-				.usuarioNome(itemAuditado.getUsuarioResponsavel().getNome())
+				.usuarioNome(Optional.ofNullable(itemAuditado.getUsuarioResponsavel()).map(Usuario::getNome).orElse(null))
 				.build();
 			itensHistorico.add(itemHistorico);
 		}
