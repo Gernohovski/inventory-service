@@ -184,4 +184,10 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		return itemAtualizado;
 	}
 
+    @Override
+    public List<ItemAuditado> itensNaoLocalizadosAuditoriaAtiva() {
+        var auditoriaAtiva = auditoriaRepository.findAtiva().orElseThrow(NaoHaAuditoriaAtivaException::new);
+        return auditoriaAtiva.getItensAuditados().stream().filter(item -> !item.getLocalizado()).toList();
+    }
+
 }

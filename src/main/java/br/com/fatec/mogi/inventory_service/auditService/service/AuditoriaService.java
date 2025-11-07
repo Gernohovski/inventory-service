@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.auditService.service;
 
+import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.AuditarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.ConsultarHistoricoAuditoriaRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaAtivaResponseDTO;
@@ -9,6 +10,8 @@ import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageRespons
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface AuditoriaService {
 
@@ -26,5 +29,7 @@ public interface AuditoriaService {
 	AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria);
 
 	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id);
+
+    List<ItemAuditado> itensNaoLocalizadosAuditoriaAtiva();
 
 }
