@@ -53,4 +53,7 @@ public class ItemAuditadoHistorico extends EntidadeDominio {
 	@Column(nullable = false)
 	private Boolean conformidade;
 
+	@Column(nullable = false)
+	private Boolean localizado;
+
 }

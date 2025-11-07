@@ -6,6 +6,8 @@ import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.Auditor
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoResponseDTO;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 public interface AuditoriaService {
@@ -22,5 +24,7 @@ public interface AuditoriaService {
 			Pageable pageable);
 
 	AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria);
+
+	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id);
 
 }

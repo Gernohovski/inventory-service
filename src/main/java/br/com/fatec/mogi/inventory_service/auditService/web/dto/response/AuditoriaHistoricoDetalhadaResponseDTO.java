@@ -35,6 +35,8 @@ public class AuditoriaHistoricoDetalhadaResponseDTO {
 
 	private BigDecimal porcentagemConclusao;
 
-	private List<ItemAuditadoHistorico> itens;
+	private List<ItemAuditadoHistorico> itensLocalizados;
+
+	private List<ItemAuditadoHistorico> itensNaoLocalizados;
 
 }

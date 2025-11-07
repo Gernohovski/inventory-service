@@ -61,7 +61,8 @@ public class AuditoriaHistoricoServiceImpl implements AuditoriaHistoricoService 
 				.observacao(itemAuditado.getObservacao())
 				.dataVerificacao(itemAuditado.getDataVerificacao())
 				.conformidade(itemAuditado.getConformidade())
-				.usuarioNome(Optional.ofNullable(itemAuditado.getUsuarioResponsavel()).map(Usuario::getNome).orElse(null))
+				.usuarioNome(
+						Optional.ofNullable(itemAuditado.getUsuarioResponsavel()).map(Usuario::getNome).orElse(null))
 				.build();
 			itensHistorico.add(itemHistorico);
 		}

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/audit-service/v1/auditoria")
-public record AuditoriaController(AuditoriaService auditoriaService, ItemService itemService) {
+public record AuditoriaController(AuditoriaService auditoriaService) {
 
 	@PostMapping("/iniciar")
 	public ResponseEntity<?> iniciarAuditoria(@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
@@ -49,7 +49,7 @@ public record AuditoriaController(AuditoriaService auditoriaService, ItemService
 	@PutMapping("/editar-item/{id}")
 	public ResponseEntity<ItemResponseDTO> atualizarItem(@PathVariable Long id,
 			@RequestBody AtualizarItemRequestDTO dto, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
-		var item = itemService.atualizar(dto, id);
+		var item = auditoriaService.atualizar(dto, id);
 		return ResponseEntity.status(HttpStatus.OK).body(item);
 	}
 

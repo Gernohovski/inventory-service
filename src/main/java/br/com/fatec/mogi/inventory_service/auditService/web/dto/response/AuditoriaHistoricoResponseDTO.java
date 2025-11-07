@@ -26,10 +26,4 @@ public class AuditoriaHistoricoResponseDTO {
 
 	private Long totalItens;
 
-	private Long itensAuditados;
-
-	private Long itensNaoAuditados;
-
-	private BigDecimal porcentagemConclusao;
-
 }

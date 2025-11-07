@@ -40,4 +40,6 @@ public class ItemAuditado extends EntidadeDominio {
 
 	private Boolean conformidade;
 
+	private Boolean localizado;
+
 }
