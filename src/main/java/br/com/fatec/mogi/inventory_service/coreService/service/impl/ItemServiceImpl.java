@@ -147,7 +147,8 @@ public class ItemServiceImpl implements ItemService {
 	public ItemUploadResponseDTO upload(MultipartFile file) throws Exception {
 		String originalFilename = file.getOriginalFilename();
 		if (originalFilename == null || (!originalFilename.toLowerCase().endsWith(".csv")
-				&& !originalFilename.toLowerCase().endsWith(".xlsx"))) {
+				&& !originalFilename.toLowerCase().endsWith(".xlsx")
+				&& !originalFilename.toLowerCase().endsWith(".xls"))) {
 			throw new ArquivoNaoSuportadoException();
 		}
 
