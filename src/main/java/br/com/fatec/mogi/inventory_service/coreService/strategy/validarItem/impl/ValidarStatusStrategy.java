@@ -21,7 +21,6 @@ public class ValidarStatusStrategy implements ValidarItemStrategy {
 	public void executar(ItemUploadRequestDTO dto, ValidarItemContexto contexto) {
 		contexto.adicionarStrategieExecutada(this);
 		if (dto.getCondicao() == null || dto.getCondicao().trim().isEmpty()) {
-			contexto.adicionarErro("Condição inválida", dto.getNumeroLinha().toString());
 			var ativo = statusItemRepository.findByNome("Ativo").orElseThrow(StatusItemNaoEncontradoException::new);
 			contexto.getItem().setStatusItem(ativo);
 			return;
