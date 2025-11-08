@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.impl;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemContexto;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemStrategy;
@@ -25,8 +26,8 @@ public class ValidarStatusStrategy implements ValidarItemStrategy {
 		}
 		var status = statusItemRepository.findByNome(dto.getCondicao());
 		if (status.isEmpty()) {
-			contexto.adicionarErro("Condição não mapeada", dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
+			var novoStatus = statusItemRepository.save(new StatusItem(dto.getCondicao()));
+			contexto.getItem().setStatusItem(novoStatus);
 			return;
 		}
 		contexto.getItem().setStatusItem(status.get());
