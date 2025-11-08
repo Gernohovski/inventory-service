@@ -36,9 +36,8 @@ public class ValidarDataCadastro implements ValidarItemStrategy {
 			contexto.getItem().setDataAlteracao(dataParsed);
 		}
 		catch (Exception e) {
-			contexto.adicionarErro("Data de cadastro inválida: " + dto.getDataCadastro(),
-					dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
+			contexto.getItem().setDataCadastro(LocalDateTime.now());
+			contexto.getItem().setDataAlteracao(LocalDateTime.now());
 		}
 	}
 
