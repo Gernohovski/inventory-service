@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.impl;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.StatusItemNaoEncontradoException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.StatusItem;
 import br.com.fatec.mogi.inventory_service.coreService.repository.StatusItemRepository;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemContexto;
@@ -21,7 +22,8 @@ public class ValidarStatusStrategy implements ValidarItemStrategy {
 		contexto.adicionarStrategieExecutada(this);
 		if (dto.getCondicao() == null || dto.getCondicao().trim().isEmpty()) {
 			contexto.adicionarErro("Condição inválida", dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
+			var ativo = statusItemRepository.findByNome("Ativo").orElseThrow(StatusItemNaoEncontradoException::new);
+			contexto.getItem().setStatusItem(ativo);
 			return;
 		}
 		var status = statusItemRepository.findByNome(dto.getCondicao());
