@@ -92,7 +92,7 @@ public class HttpAuthorizationFilter implements Filter {
 		}
 		catch (UsuarioNaoPodeRealizarEssaAcaoException | UsuarioNaoAutorizadoException
 				| UsuarioNaoAutenticadoException e) {
-			throw e;
+			sendUnauthorizedResponse(httpResponse, e.getMessage());
 		}
 		catch (Exception e) {
 			LOG.info(e.getMessage());

@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id) {
+	public ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id, boolean setUltimaVezAuditado) {
 		var item = itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
 		var codigoItemSalvo = item.getCodigoItem();
 		if (dto.getCategoriaItemId() != null) {

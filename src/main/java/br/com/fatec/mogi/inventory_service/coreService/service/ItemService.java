@@ -17,7 +17,7 @@ public interface ItemService {
 
 	CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable);
 
-	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id);
+	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id, boolean setUltimaVezAuditado);
 
 	void deletar(Long id);
 
