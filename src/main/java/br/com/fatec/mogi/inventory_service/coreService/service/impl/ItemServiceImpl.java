@@ -19,6 +19,8 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItens
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemUploadResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.core.io.FileSystemResource;
@@ -28,9 +30,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -143,7 +146,8 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ItemUploadResponseDTO upload(MultipartFile file) throws Exception {
 		String originalFilename = file.getOriginalFilename();
-		if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".csv")) {
+		if (originalFilename == null || (!originalFilename.toLowerCase().endsWith(".csv")
+				&& !originalFilename.toLowerCase().endsWith(".xlsx"))) {
 			throw new ArquivoNaoSuportadoException();
 		}
 
@@ -151,9 +155,15 @@ public class ItemServiceImpl implements ItemService {
 		try {
 			tempFile = File.createTempFile("upload-", ".csv");
 			try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-				fos.write(file.getBytes());
+				if (originalFilename.toLowerCase().endsWith(".xlsx")) {
+					File csvFile = convertXlsxToCsv(file);
+					Files.copy(csvFile.toPath(), fos);
+					csvFile.delete();
+				}
+				else {
+					fos.write(file.getBytes());
+				}
 			}
-
 			Resource resource = new FileSystemResource(tempFile);
 			ItemUploadReader reader = new ItemUploadReader(resource);
 			var step = jobConfig.itemUploadStep(reader);
@@ -202,6 +212,70 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ResponseEntity<byte[]> exportarTodos(String tipo) {
 		return exportarItemNavigation.processarEstrategia(List.of(), tipo);
+	}
+
+	private File convertXlsxToCsv(MultipartFile multipartFile) throws IOException {
+		try (InputStream inputStream = multipartFile.getInputStream();
+				Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+			Sheet sheet = workbook.getSheetAt(0);
+			File tempFile = File.createTempFile("excel-", ".csv");
+
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+				for (Row row : sheet) {
+					StringBuilder line = new StringBuilder();
+
+					Iterator<Cell> cellIterator = row.cellIterator();
+					while (cellIterator.hasNext()) {
+						Cell cell = cellIterator.next();
+						String cellValue = getCellValueAsString(cell);
+						cellValue = "\"" + cellValue.replace("\"", "\"\"") + "\"";
+						line.append(cellValue);
+						if (cellIterator.hasNext()) {
+							line.append(",");
+						}
+					}
+					writer.write(line.toString());
+					writer.newLine();
+				}
+			}
+			return tempFile;
+		}
+	}
+
+	private String getCellValueAsString(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		switch (cell.getCellType()) {
+			case STRING:
+				return cell.getStringCellValue();
+			case NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					return cell.getDateCellValue().toString();
+				}
+				else {
+					double numericValue = cell.getNumericCellValue();
+					if (numericValue == Math.floor(numericValue)) {
+						return String.valueOf((long) numericValue);
+					}
+					return String.valueOf(numericValue);
+				}
+			case BOOLEAN:
+				return String.valueOf(cell.getBooleanCellValue());
+			case FORMULA:
+				try {
+					return cell.getStringCellValue();
+				}
+				catch (IllegalStateException e) {
+					return String.valueOf(cell.getNumericCellValue());
+				}
+			case BLANK:
+			case _NONE:
+			case ERROR:
+			default:
+				return "";
+		}
 	}
 
 }
