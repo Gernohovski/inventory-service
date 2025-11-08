@@ -2,7 +2,6 @@ package br.com.fatec.mogi.inventory_service.coreService.repository;
 
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemPorCategoriaResponseDTO;
-import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

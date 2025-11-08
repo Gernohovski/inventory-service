@@ -1,7 +1,5 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
-import br.com.fatec.mogi.inventory_service.auditService.domain.model.AuditoriaHistorico;
-import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;

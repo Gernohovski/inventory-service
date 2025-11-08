@@ -4,6 +4,7 @@ import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncionalidadeNaoMapeadaException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoPodeRealizarEssaAcaoException;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncionalidadeRepository;
 import br.com.fatec.mogi.inventory_service.authService.repository.UsuarioRepository;
@@ -46,7 +47,7 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 			throw new UsuarioNaoAutorizadoException();
 		}
 		if (funcionalidade.getFuncionalidade().contains("AUDITORIA") && !usuario.isPodeRealizarAuditoria()) {
-			throw new UsuarioNaoAutorizadoException();
+			throw new UsuarioNaoPodeRealizarEssaAcaoException();
 		}
 		RequestContext.setUsuario(usuario);
 		LOG.info("Usuário autorizado!");

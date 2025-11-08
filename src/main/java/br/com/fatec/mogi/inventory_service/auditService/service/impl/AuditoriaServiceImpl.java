@@ -4,6 +4,7 @@ import br.com.fatec.mogi.inventory_service.auditService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.Auditoria;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditadoHistorico;
+import br.com.fatec.mogi.inventory_service.auditService.domain.model.mapper.ItemAuditadoMapper;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
@@ -14,6 +15,7 @@ import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.Consulta
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaAtivaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoResponseDTO;
+import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.ItensAuditadosAuditoriaAtivaResponseDTO;
 import br.com.fatec.mogi.inventory_service.common.web.context.RequestContext;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.ItemNaoEncontradoException;
@@ -47,6 +49,8 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	private final AuditoriaHistoricoRepository auditoriaHistoricoRepository;
 
 	private final ItemService itemService;
+
+	private final ItemAuditadoMapper itemAuditadoMapper;
 
 	@Override
 	@Transactional
@@ -150,6 +154,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	}
 
 	@Override
+	@Transactional
 	public AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria) {
 		var historico = auditoriaHistoricoRepository.findByCodigoAuditoria(codigoAuditoria)
 			.orElseThrow(AuditoriaNaoEncontradaException::new);
@@ -184,10 +189,19 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		return itemAtualizado;
 	}
 
-    @Override
-    public List<ItemAuditado> itensNaoLocalizadosAuditoriaAtiva() {
-        var auditoriaAtiva = auditoriaRepository.findAtiva().orElseThrow(NaoHaAuditoriaAtivaException::new);
-        return auditoriaAtiva.getItensAuditados().stream().filter(item -> !item.getLocalizado()).toList();
-    }
+	@Override
+	public ItensAuditadosAuditoriaAtivaResponseDTO itensNaoLocalizadosAuditoriaAtiva() {
+		var auditoriaAtiva = auditoriaRepository.findAtiva().orElseThrow(NaoHaAuditoriaAtivaException::new);
+		var itensNaoLocalizados = auditoriaAtiva.getItensAuditados()
+			.stream()
+			.filter(item -> !item.getLocalizado())
+			.toList();
+		var itensLocalizados = auditoriaAtiva.getItensAuditados().stream().filter(ItemAuditado::getLocalizado).toList();
+		return ItensAuditadosAuditoriaAtivaResponseDTO.builder()
+			.codigoAuditoria(auditoriaAtiva.getCodigoAuditoria())
+			.itensLocalizados(itemAuditadoMapper.from(itensLocalizados))
+			.itensNaoLocalizados(itemAuditadoMapper.from(itensNaoLocalizados))
+			.build();
+	}
 
 }

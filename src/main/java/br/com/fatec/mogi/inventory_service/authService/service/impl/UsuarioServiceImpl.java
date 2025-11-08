@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.authService.service.impl;
 
+import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Funcao;
@@ -47,6 +48,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	private final RedisService redisService;
 
 	private final UsuarioResponseDTOMapper usuarioResponseDTOMapper;
+
+	private final AuditoriaRepository auditoriaRepository;
 
 	@Override
 	@Transactional
@@ -160,6 +163,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void desativarAuditoria(Long id) {
+		this.existeAuditoriaAtiva();
 		var usuario = usuarioRepository.findById(id)
 			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
 		usuario.setPodeRealizarAuditoria(false);
@@ -168,6 +172,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void ativarAuditoria(Long id) {
+		this.existeAuditoriaAtiva();
 		var usuario = usuarioRepository.findById(id)
 			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado."));
 		usuario.setPodeRealizarAuditoria(true);
@@ -177,13 +182,21 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	@Transactional
 	public void desativarAuditoriaTodos() {
+		this.existeAuditoriaAtiva();
 		usuarioRepository.updatePodeRealizarAuditoria(false);
 	}
 
 	@Override
 	@Transactional
 	public void ativarAuditoriaTodos() {
+		this.existeAuditoriaAtiva();
 		usuarioRepository.updatePodeRealizarAuditoria(true);
+	}
+
+	private void existeAuditoriaAtiva() {
+		if (auditoriaRepository.findAtiva().isPresent()) {
+			throw new VoceNaoPodeRealizarEssaAcaoException();
+		}
 	}
 
 }

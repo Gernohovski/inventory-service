@@ -14,7 +14,8 @@ import java.util.Optional;
 @Repository
 public interface AuditoriaHistoricoRepository extends JpaRepository<AuditoriaHistorico, Long> {
 
-	Optional<AuditoriaHistorico> findByCodigoAuditoria(String codigoAuditoria);
+	@Query("SELECT ah FROM AuditoriaHistorico ah LEFT JOIN FETCH ah.itensAuditadosHistorico WHERE ah.codigoAuditoria = :codigoAuditoria")
+	Optional<AuditoriaHistorico> findByCodigoAuditoria(@Param("codigoAuditoria") String codigoAuditoria);
 
 	@Query("""
 			SELECT ah FROM AuditoriaHistorico ah
