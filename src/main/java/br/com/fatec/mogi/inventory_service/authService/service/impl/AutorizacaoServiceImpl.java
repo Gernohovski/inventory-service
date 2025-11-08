@@ -1,10 +1,7 @@
 package br.com.fatec.mogi.inventory_service.authService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.enums.TipoCache;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.FuncionalidadeNaoMapeadaException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
-import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoPodeRealizarEssaAcaoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.authService.domain.model.Usuario;
 import br.com.fatec.mogi.inventory_service.authService.repository.FuncionalidadeRepository;
 import br.com.fatec.mogi.inventory_service.authService.repository.UsuarioRepository;
@@ -42,11 +39,13 @@ public class AutorizacaoServiceImpl implements AutorizacaoService {
 			LOG.info("Usuário não encontrado!");
 			throw new UsuarioNaoAutenticadoException();
 		}
+		var usuarioAtualizado = usuarioRepository.findById(usuario.getId())
+			.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
 		if (!usuarioRepository.possuiFuncionalidade(usuario.getId(), funcionalidade.getFuncionalidade())) {
 			LOG.info("Usuário não possui autorização");
 			throw new UsuarioNaoAutorizadoException();
 		}
-		if (funcionalidade.getFuncionalidade().contains("AUDITORIA") && !usuario.isPodeRealizarAuditoria()) {
+		if (funcionalidade.getFuncionalidade().contains("AUDITORIA") && !usuarioAtualizado.isPodeRealizarAuditoria()) {
 			throw new UsuarioNaoPodeRealizarEssaAcaoException();
 		}
 		RequestContext.setUsuario(usuario);

@@ -158,13 +158,15 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	public AuditoriaHistoricoDetalhadaResponseDTO buscarHistoricoPorCodigo(String codigoAuditoria) {
 		var historico = auditoriaHistoricoRepository.findByCodigoAuditoria(codigoAuditoria)
 			.orElseThrow(AuditoriaNaoEncontradaException::new);
-		var itensLocalizados = historico.getItensAuditadosHistorico()
-			.stream()
-			.filter(ItemAuditadoHistorico::getLocalizado)
+		var itensHistorico = historico.getItensAuditadosHistorico();
+		if (itensHistorico == null) {
+			itensHistorico = new ArrayList<>();
+		}
+		var itensLocalizados = itensHistorico.stream()
+			.filter(item -> item.getLocalizado() != null && item.getLocalizado())
 			.toList();
-		var itensNaoLocalizados = historico.getItensAuditadosHistorico()
-			.stream()
-			.filter(item -> !item.getLocalizado())
+		var itensNaoLocalizados = itensHistorico.stream()
+			.filter(item -> item.getLocalizado() == null || !item.getLocalizado())
 			.toList();
 		return AuditoriaHistoricoDetalhadaResponseDTO.builder()
 			.id(historico.getId())
