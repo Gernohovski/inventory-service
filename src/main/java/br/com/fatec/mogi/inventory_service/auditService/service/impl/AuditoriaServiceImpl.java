@@ -3,7 +3,6 @@ package br.com.fatec.mogi.inventory_service.auditService.service.impl;
 import br.com.fatec.mogi.inventory_service.auditService.domain.exception.*;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.Auditoria;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
-import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditadoHistorico;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.mapper.ItemAuditadoMapper;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
@@ -132,7 +131,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	@Override
 	public CustomPageResponseDTO<AuditoriaHistoricoResponseDTO> consultarHistorico(
 			ConsultarHistoricoAuditoriaRequestDTO dto, Pageable pageable) {
-		var page = auditoriaHistoricoRepository.findHistorico(dto.getDataInicio(), dto.getDataFim(), pageable);
+		var page = auditoriaHistoricoRepository.findHistorico(dto.getDataInicio(), dto.getDataFim(), dto.getTermoPesquisa(), pageable);
 		var content = page.getContent()
 			.stream()
 			.map(historico -> AuditoriaHistoricoResponseDTO.builder()

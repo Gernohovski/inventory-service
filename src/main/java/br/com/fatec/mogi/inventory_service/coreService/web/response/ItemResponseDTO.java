@@ -37,4 +37,6 @@ public class ItemResponseDTO {
 
 	private String notaFiscal;
 
+	private LocalDateTime ultimaVezAuditado;
+
 }

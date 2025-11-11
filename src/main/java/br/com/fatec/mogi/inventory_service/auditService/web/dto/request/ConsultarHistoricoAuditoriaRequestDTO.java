@@ -17,4 +17,6 @@ public class ConsultarHistoricoAuditoriaRequestDTO {
 
 	private LocalDateTime dataFim;
 
+	private String termoPesquisa;
+
 }
