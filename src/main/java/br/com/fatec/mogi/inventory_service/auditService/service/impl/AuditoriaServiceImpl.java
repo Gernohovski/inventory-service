@@ -177,7 +177,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	public ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id) {
 		var itemAuditado = itemAuditadoRepository.findByItemId(id).orElseThrow(ItemNaoSendoAuditadoException::new);
 		var itemAtualizado = itemService.atualizar(dto, id);
-		itemAuditado.setConformidade(true);
+		itemAuditado.setConformidade(false);
 		itemAuditado.setLocalizado(true);
 		itemAuditado.setUsuarioResponsavel(RequestContext.getUsuario());
 		itemAuditado.setDataVerificacao(LocalDateTime.now());
