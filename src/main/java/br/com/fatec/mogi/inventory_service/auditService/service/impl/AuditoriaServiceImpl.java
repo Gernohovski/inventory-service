@@ -90,7 +90,9 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		itemRepository.save(item);
 		var itemAuditado = itemAuditadoRepository.findByItemId(item.getId())
 			.orElseThrow(ItemNaoSendoAuditadoException::new);
-		itemAuditado.setConformidade(true);
+		if (!itemAuditado.getLocalizado()) {
+			itemAuditado.setConformidade(true);
+		}
 		itemAuditado.setLocalizado(true);
 		itemAuditado.setUsuarioResponsavel(RequestContext.getUsuario());
 		itemAuditado.setObservacao(dto.getObservacao());
