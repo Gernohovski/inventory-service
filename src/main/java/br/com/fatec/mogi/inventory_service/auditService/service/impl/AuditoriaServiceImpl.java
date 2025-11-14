@@ -183,6 +183,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	}
 
 	@Override
+	@Transactional
 	public ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id) {
 		var itemAuditado = itemAuditadoRepository.findByItemId(id).orElseThrow(ItemNaoSendoAuditadoException::new);
 		var itemAtualizado = itemService.atualizar(dto, id, true);
@@ -190,6 +191,7 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		itemAuditado.setLocalizado(true);
 		itemAuditado.setUsuarioResponsavel(RequestContext.getUsuario());
 		itemAuditado.setDataVerificacao(LocalDateTime.now());
+		itemAuditadoRepository.save(itemAuditado);
 		return itemAtualizado;
 	}
 
