@@ -72,80 +72,49 @@ public class EmailServiceImpl implements EmailService {
 
 	private String buildResetPasswordEmailHtml(String userName, String code) {
 		String resetUrl = confirmUrl + "?code=" + code;
-		return """
-			<!DOCTYPE html>
-			<html>
-			<head>
-				<meta charset="UTF-8">
-				<style>
-					body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-					.container { max-width: 600px; margin: 0 auto; padding: 20px; }
-					.header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }
-					.content { background-color: #f9f9f9; padding: 30px; border-radius: 5px; margin-top: 20px; }
-					.code { background-color: #fff; border: 2px solid #4CAF50; padding: 15px; font-size: 24px; 
-							font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0; }
-					.button { 
-						display: inline-block; 
-						padding: 15px 30px; 
-						margin: 20px 0; 
-						background-color: #4CAF50; 
-						color: white !important; 
-						text-decoration: none; 
-						border-radius: 5px; 
-						font-weight: bold;
-						font-size: 16px;
-						text-align: center;
-					}
-					.button:hover { background-color: #45a049; }
-					.button-container { text-align: center; margin: 30px 0; }
-					.divider { 
-						margin: 30px 0; 
-						text-align: center; 
-						color: #999; 
-						position: relative;
-					}
-					.divider::before,
-					.divider::after {
-						content: '';
-						position: absolute;
-						top: 50%;
-						width: 40%;
-						height: 1px;
-						background-color: #ddd;
-					}
-					.divider::before { left: 0; }
-					.divider::after { right: 0; }
-					.footer { text-align: center; margin-top: 20px; color: #777; font-size: 12px; }
-				</style>
-			</head>
-			<body>
-				<div class="container">
-					<div class="header">
-						<h1>Redefinição de Senha</h1>
-					</div>
-					<div class="content">
-						<p>Olá <strong>%s</strong>,</p>
-						<p>Recebemos uma solicitação para redefinir sua senha no Sistema de Inventário.</p>
-						
-						<div class="button-container">
-							<a href="%s" class="button">Redefinir Senha</a>
-						</div>
-						
-						<div class="divider">OU</div>
-						
-						<p>Use o código abaixo para redefinir sua senha manualmente:</p>
-						<div class="code">%s</div>
-						
-						<p>Este código é válido por 10 horas.</p>
-						<p>Se você não solicitou esta redefinição, por favor ignore este e-mail.</p>
-					</div>
-					<div class="footer">
-						<p>Sistema de Inventário - FATEC Mogi das Cruzes</p>
-					</div>
-				</div>
-			</body>
-			</html>
-			""".formatted(userName, resetUrl, code);
+		return "<!DOCTYPE html>" +
+			"<html>" +
+			"<head>" +
+			"<meta charset=\"UTF-8\">" +
+			"<style>" +
+			"body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }" +
+			".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
+			".header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }" +
+			".content { background-color: #f9f9f9; padding: 30px; border-radius: 5px; margin-top: 20px; }" +
+			".code { background-color: #fff; border: 2px solid #4CAF50; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0; }" +
+			".button { display: inline-block; padding: 15px 30px; margin: 20px 0; background-color: #4CAF50; color: white !important; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; text-align: center; }" +
+			".button:hover { background-color: #45a049; }" +
+			".button-container { text-align: center; margin: 30px 0; }" +
+			".divider { margin: 30px 0; text-align: center; color: #999; position: relative; }" +
+			".divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #ddd; }" +
+			".divider::before { left: 0; }" +
+			".divider::after { right: 0; }" +
+			".footer { text-align: center; margin-top: 20px; color: #777; font-size: 12px; }" +
+			"</style>" +
+			"</head>" +
+			"<body>" +
+			"<div class=\"container\">" +
+			"<div class=\"header\">" +
+			"<h1>Redefinição de Senha</h1>" +
+			"</div>" +
+			"<div class=\"content\">" +
+			"<p>Olá <strong>" + userName + "</strong>,</p>" +
+			"<p>Recebemos uma solicitação para redefinir sua senha no Sistema de Inventário.</p>" +
+			"<div class=\"button-container\">" +
+			"<a href=\"" + resetUrl + "\" class=\"button\">Redefinir Senha</a>" +
+			"</div>" +
+			"<div class=\"divider\">OU</div>" +
+			"<p>Use o código abaixo para redefinir sua senha manualmente:</p>" +
+			"<div class=\"code\">" + code + "</div>" +
+			"<p>Este código é válido por 10 horas.</p>" +
+			"<p>Se você não solicitou esta redefinição, por favor ignore este e-mail.</p>" +
+			"</div>" +
+			"<div class=\"footer\">" +
+			"<p>Sistema de Inventário - FATEC Mogi das Cruzes</p>" +
+			"</div>" +
+			"</div>" +
+			"</body>" +
+			"</html>";
 	}
 
 }
