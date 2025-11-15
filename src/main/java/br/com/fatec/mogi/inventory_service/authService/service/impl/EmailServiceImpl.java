@@ -77,19 +77,16 @@ public class EmailServiceImpl implements EmailService {
 			"<head>" +
 			"<meta charset=\"UTF-8\">" +
 			"<style>" +
-			"body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }" +
-			".container { max-width: 600px; margin: 0 auto; padding: 20px; }" +
-			".header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }" +
-			".content { background-color: #f9f9f9; padding: 30px; border-radius: 5px; margin-top: 20px; }" +
-			".code { background-color: #fff; border: 2px solid #4CAF50; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0; }" +
-			".button { display: inline-block; padding: 15px 30px; margin: 20px 0; background-color: #4CAF50; color: white !important; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; text-align: center; }" +
-			".button:hover { background-color: #45a049; }" +
+			"body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 20px; }" +
+			".container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }" +
+			".header { background-color: #941711; color: white; padding: 30px 20px; text-align: center; }" +
+			".header h1 { margin: 0; font-size: 28px; }" +
+			".content { background-color: white; padding: 40px 30px; }" +
+			".button { display: inline-block; padding: 15px 40px; margin: 20px 0; background-color: #941711; color: white !important; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; text-align: center; }" +
+			".button:hover { background-color: #7a120e; }" +
 			".button-container { text-align: center; margin: 30px 0; }" +
-			".divider { margin: 30px 0; text-align: center; color: #999; position: relative; }" +
-			".divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #ddd; }" +
-			".divider::before { left: 0; }" +
-			".divider::after { right: 0; }" +
-			".footer { text-align: center; margin-top: 20px; color: #777; font-size: 12px; }" +
+			".footer { background-color: #f9f9f9; text-align: center; padding: 20px; color: #777; font-size: 12px; border-top: 1px solid #e0e0e0; }" +
+			".footer p { margin: 0; }" +
 			"</style>" +
 			"</head>" +
 			"<body>" +
@@ -103,9 +100,6 @@ public class EmailServiceImpl implements EmailService {
 			"<div class=\"button-container\">" +
 			"<a href=\"" + resetUrl + "\" class=\"button\">Redefinir Senha</a>" +
 			"</div>" +
-			"<div class=\"divider\">OU</div>" +
-			"<p>Use o código abaixo para redefinir sua senha manualmente:</p>" +
-			"<div class=\"code\">" + code + "</div>" +
 			"<p>Este código é válido por 10 horas.</p>" +
 			"<p>Se você não solicitou esta redefinição, por favor ignore este e-mail.</p>" +
 			"</div>" +
