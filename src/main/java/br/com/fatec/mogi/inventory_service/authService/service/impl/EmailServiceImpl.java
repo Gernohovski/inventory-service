@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Profile("!test")
 public class EmailServiceImpl implements EmailService {
 
-	@Value("${spring.mail.username}")
+	@Value("${auth.email.sender}")
 	private String emailSender;
 
 	@Value("${confirm.email.code.url}")
