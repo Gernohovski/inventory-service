@@ -155,7 +155,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (dto.getNome() != null) {
 			usuario.setNome(dto.getNome());
 		}
-		usuario.setAtivo(dto.isAtivo());
 		usuario.setDataAlteracao(LocalDateTime.now());
 		var usuarioAtualizado = usuarioRepository.save(usuario);
 		return usuarioResponseDTOMapper.from(usuarioAtualizado);
