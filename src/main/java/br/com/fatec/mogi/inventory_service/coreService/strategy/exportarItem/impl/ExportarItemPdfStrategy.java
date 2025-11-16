@@ -69,7 +69,7 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 			tabela.addHeaderCell(new Cell().add(new Paragraph("Código")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
 			tabela.addHeaderCell(new Cell().add(new Paragraph("Nome")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
 			tabela.addHeaderCell(
-					new Cell().add(new Paragraph("Data de entrada")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+					new Cell().add(new Paragraph("Data da última auditoria")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
 			tabela.addHeaderCell(
 					new Cell().add(new Paragraph("Localização")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
 			tabela.addHeaderCell(
@@ -78,7 +78,7 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 			for (Item item : itens) {
 				tabela.addCell(new Cell().add(new Paragraph(item.getCodigoItem())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getNomeItem())));
-				tabela.addCell(new Cell().add(new Paragraph(item.getDataCadastro().format(formatter))));
+				tabela.addCell(new Cell().add(new Paragraph(item.getUltimaVezAuditado().format(formatter))));
 				tabela.addCell(new Cell().add(new Paragraph(item.getLocalizacao().getNomeSala())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getCategoriaItem().getNome())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getStatusItem().getNome())));
