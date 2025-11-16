@@ -1,6 +1,7 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.auditService.repository.AuditoriaRepository;
+import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoHistoricoRepository;
 import br.com.fatec.mogi.inventory_service.auditService.repository.ItemAuditadoRepository;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.config.ItemUploadJobConfig;
@@ -16,6 +17,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItem
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemDetalhadoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemUploadResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,8 @@ public class ItemServiceImpl implements ItemService {
 	private final AuditoriaRepository auditoriaRepository;
 
 	private final ItemAuditadoRepository itemAuditadoRepository;
+
+	private final ItemAuditadoHistoricoRepository itemAuditadoHistoricoRepository;
 
 	@Override
 	public ItemResponseDTO cadastrarItem(CadastrarItemRequestDTO dto) {
@@ -213,6 +217,15 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public ResponseEntity<byte[]> exportarTodos(String tipo) {
 		return exportarItemNavigation.processarEstrategia(List.of(), tipo);
+	}
+
+	@Override
+	public ItemDetalhadoResponseDTO buscar(Long id) {
+		var item = itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
+		var itemDetalhado = itemMapper.fromEntity(item);
+		var itensHistoricos = itemAuditadoHistoricoRepository.findAllByItemId(id);
+		itemDetalhado.setItemAuditadoHistorico(itensHistoricos);
+		return itemDetalhado;
 	}
 
 	private File convertXlsxToCsv(MultipartFile multipartFile) throws IOException {

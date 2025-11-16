@@ -6,6 +6,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItem
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemDetalhadoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -31,6 +32,12 @@ public record ItemController(ItemService itemService) {
 			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var items = itemService.filtrarItems(dto, pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(items);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<ItemDetalhadoResponseDTO> buscarItem(@PathVariable("id") Long itemId, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var item = itemService.buscar(itemId);
+		return ResponseEntity.status(HttpStatus.OK).body(item);
 	}
 
 	@PutMapping("/{id}")

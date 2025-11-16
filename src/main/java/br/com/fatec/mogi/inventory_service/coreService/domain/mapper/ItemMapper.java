@@ -3,6 +3,7 @@ package br.com.fatec.mogi.inventory_service.coreService.domain.mapper;
 import br.com.fatec.mogi.inventory_service.coreService.domain.model.Item;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemDetalhadoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.mapstruct.*;
 
@@ -27,5 +28,8 @@ public interface ItemMapper {
 	Item update(AtualizarItemRequestDTO dto, @MappingTarget Item item);
 
 	ItemResponseDTO from(Item item);
+
+	@Mapping(target = "itemAuditadoHistorico", ignore = true)
+	ItemDetalhadoResponseDTO fromEntity(Item item);
 
 }
