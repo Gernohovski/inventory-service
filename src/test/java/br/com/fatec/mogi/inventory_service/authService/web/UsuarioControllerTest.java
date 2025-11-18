@@ -217,7 +217,6 @@ public class UsuarioControllerTest {
 
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
-			.email(email)
 			.novaSenha(novaSenha)
 			.build();
 

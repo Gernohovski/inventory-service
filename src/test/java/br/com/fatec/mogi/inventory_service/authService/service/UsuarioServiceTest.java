@@ -214,7 +214,6 @@ public class UsuarioServiceTest {
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
 			.novaSenha(novaSenha)
-			.email(email)
 			.build();
 		usuarioService.alterarSenha(alterarSenhaRequestDTO);
 		var usuario = usuarioRepository.findByEmail(new Email(email))
@@ -239,7 +238,6 @@ public class UsuarioServiceTest {
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
 			.novaSenha(novaSenha)
-			.email(UUID.randomUUID().toString().concat("@gmail.com"))
 			.build();
 		assertThrows(UsuariosDivergentesException.class, () -> {
 			usuarioService.alterarSenha(alterarSenhaRequestDTO);
@@ -263,7 +261,6 @@ public class UsuarioServiceTest {
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
 			.novaSenha(novaSenha)
-			.email(email)
 			.build();
 		assertThrows(SenhaInvalidaException.class, () -> {
 			usuarioService.alterarSenha(alterarSenhaRequestDTO);
@@ -281,7 +278,6 @@ public class UsuarioServiceTest {
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
 			.novaSenha(novaSenha)
-			.email(email)
 			.build();
 		assertThrows(SolicitacaoExpiradaExpcetion.class, () -> {
 			usuarioService.alterarSenha(alterarSenhaRequestDTO);
@@ -332,7 +328,6 @@ public class UsuarioServiceTest {
 		AlterarSenhaRequestDTO alterarSenhaRequestDTO = AlterarSenhaRequestDTO.builder()
 			.codigo(codigoEsperado)
 			.novaSenha(novaSenha)
-			.email(emailUsuario)
 			.build();
 		usuarioService.alterarSenha(alterarSenhaRequestDTO);
 		var usuarioAlterado = usuarioRepository.findByEmail(new Email(emailUsuario))

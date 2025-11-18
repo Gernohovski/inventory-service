@@ -13,8 +13,6 @@ public class AlterarSenhaRequestDTO {
 
 	private String codigo;
 
-	private String email;
-
 	private String novaSenha;
 
 }
