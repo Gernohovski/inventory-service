@@ -1,5 +1,8 @@
 package br.com.fatec.mogi.inventory_service.common.filter;
 
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
+import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoPodeRealizarEssaAcaoException;
 import br.com.fatec.mogi.inventory_service.authService.service.AutorizacaoService;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.AutorizarUsuarioRequestDTO;
 import jakarta.servlet.*;
@@ -86,6 +89,10 @@ public class HttpAuthorizationFilter implements Filter {
 
 			autorizacaoService.autorizar(autorizacaoRequestDto, accessToken);
 			chain.doFilter(request, response);
+		}
+		catch (UsuarioNaoPodeRealizarEssaAcaoException | UsuarioNaoAutorizadoException
+				| UsuarioNaoAutenticadoException e) {
+			sendUnauthorizedResponse(httpResponse, e.getMessage());
 		}
 		catch (Exception e) {
 			LOG.info(e.getMessage());

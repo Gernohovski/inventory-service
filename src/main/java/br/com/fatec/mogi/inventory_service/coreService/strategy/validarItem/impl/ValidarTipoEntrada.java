@@ -1,5 +1,6 @@
 package br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.impl;
 
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.TipoEntradaNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.repository.TipoEntradaRepository;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemContexto;
 import br.com.fatec.mogi.inventory_service.coreService.strategy.validarItem.ValidarItemStrategy;
@@ -19,8 +20,8 @@ public class ValidarTipoEntrada implements ValidarItemStrategy {
 	public void executar(ItemUploadRequestDTO dto, ValidarItemContexto contexto) {
 		contexto.adicionarStrategieExecutada(this);
 		if (dto.getTipoEntrada() == null || dto.getTipoEntrada().trim().isEmpty()) {
-			contexto.adicionarErro("Tipo entrada inválido", dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
+			var compra = tipoEntradaRepository.findByNome("Compra").orElseThrow(TipoEntradaNaoEncontradaException::new);
+			contexto.getItem().setTipoEntrada(compra);
 			return;
 		}
 		var tipoEntrada = tipoEntradaRepository.findByNome(dto.getTipoEntrada());

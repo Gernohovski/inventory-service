@@ -5,24 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuditoriaHistoricoResponseDTO {
-
-	private Long id;
+@NoArgsConstructor
+public class ItensAuditadosAuditoriaAtivaResponseDTO {
 
 	private String codigoAuditoria;
 
-	private LocalDateTime dataInicio;
+	private List<ItemAuditadoResponseDTO> itensLocalizados;
 
-	private LocalDateTime dataFim;
-
-	private String usuarioResponsavelNome;
-
-	private Long totalItens;
+	private List<ItemAuditadoResponseDTO> itensNaoLocalizados;
 
 }

@@ -34,7 +34,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location"),
 			"Número do patrimônio",
 			List.of("Número do patrimônio", "Numero do patrimonio", "Patrimônio", "Patrimonio", "Código", "Codigo",
-					"numero", "codigo"),
+					"numero", "codigo", "Nº Patrimonial"),
 			"Categoria", List.of("Categoria", "Grupo", "grupo", "categoria"), "Condição",
 			List.of("Condição", "Condicao", "Estado", "Status", "condicao", "status"), "Modalidade Aquisição",
 			List.of("Modalidade Aquisição", "Modalidade Aquisicao", "Tipo Entrada", "Aquisição", "Aquisicao",

@@ -5,6 +5,7 @@ import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItem
 import br.com.fatec.mogi.inventory_service.coreService.web.request.CadastrarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ConsultarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.ExportarItensRequestDTO;
+import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemDetalhadoResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemUploadResponseDTO;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface ItemService {
 
 	CustomPageResponseDTO<ItemResponseDTO> filtrarItems(ConsultarItemRequestDTO dto, Pageable pageable);
 
-	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id);
+	ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id, boolean setUltimaVezAuditado);
 
 	void deletar(Long id);
 
@@ -26,5 +27,7 @@ public interface ItemService {
 	ResponseEntity<byte[]> exportar(ExportarItensRequestDTO dto, String tipo);
 
 	ResponseEntity<byte[]> exportarTodos(String tipo);
+
+	ItemDetalhadoResponseDTO buscar(Long id);
 
 }

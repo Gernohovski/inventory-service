@@ -38,7 +38,8 @@ public class AuditoriaHistorico extends EntidadeDominio {
 	@Column(nullable = false)
 	private Long totalItens;
 
-	@OneToMany(mappedBy = "auditoriaHistorico", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "auditoriaHistorico", cascade = CascadeType.ALL, orphanRemoval = true,
+			fetch = FetchType.EAGER)
 	private List<ItemAuditadoHistorico> itensAuditadosHistorico;
 
 }

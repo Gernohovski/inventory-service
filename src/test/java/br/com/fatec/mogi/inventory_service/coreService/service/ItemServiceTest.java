@@ -276,7 +276,7 @@ public class ItemServiceTest {
 			.tipoEntradaId(2L)
 			.build();
 
-		itemService.atualizar(dtoAtualizacao, itemIdOriginal);
+		itemService.atualizar(dtoAtualizacao, itemIdOriginal, false);
 
 		var itemAtualizado = itemRepository.findById(itemIdOriginal).orElseThrow();
 
@@ -317,7 +317,7 @@ public class ItemServiceTest {
 			.localizacaoId(2L)
 			.build();
 
-		itemService.atualizar(dtoAtualizacaoParcial, itemId);
+		itemService.atualizar(dtoAtualizacaoParcial, itemId, false);
 
 		var itemAtualizado = itemRepository.findById(itemId).orElseThrow();
 
@@ -340,7 +340,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().nomeItem("Item Inexistente").build();
 
 		assertThrows(ItemNaoEncontradoException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, 99999L);
+			itemService.atualizar(dtoAtualizacao, 99999L, false);
 		});
 	}
 
@@ -374,7 +374,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().codigoItem("COD-UNIT-EXISTENTE-1").build();
 
 		assertThrows(ItemJaCadastradoException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, item2.getId());
+			itemService.atualizar(dtoAtualizacao, item2.getId(), false);
 		});
 	}
 
@@ -399,7 +399,7 @@ public class ItemServiceTest {
 			.codigoItem("COD-UNIT-MESMO")
 			.build();
 
-		itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 
 		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
 		assertTrue(itemAtualizado.getNomeItem().equals("Item Atualizado Mesmo Código"));
@@ -425,7 +425,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().categoriaItemId(999L).build();
 
 		assertThrows(CategoriaNaoEncontradaException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 		});
 	}
 
@@ -448,7 +448,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().localizacaoId(999L).build();
 
 		assertThrows(LocalizacaoNaoEncontradaException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 		});
 	}
 
@@ -471,7 +471,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().statusItemId(999L).build();
 
 		assertThrows(StatusItemNaoEncontradoException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 		});
 	}
 
@@ -494,7 +494,7 @@ public class ItemServiceTest {
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().tipoEntradaId(999L).build();
 
 		assertThrows(TipoEntradaNaoEncontradaException.class, () -> {
-			itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+			itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 		});
 	}
 
@@ -517,7 +517,7 @@ public class ItemServiceTest {
 
 		var dtoAtualizacao = AtualizarItemRequestDTO.builder().nomeItem("Item Data Alteração Atualizada").build();
 
-		itemService.atualizar(dtoAtualizacao, itemCriado.getId());
+		itemService.atualizar(dtoAtualizacao, itemCriado.getId(), false);
 
 		var itemAtualizado = itemRepository.findById(itemCriado.getId()).orElseThrow();
 		assertTrue(itemAtualizado.getDataAlteracao().isAfter(dataAlteracaoOriginal));

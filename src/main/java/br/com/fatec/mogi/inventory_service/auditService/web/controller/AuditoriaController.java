@@ -1,14 +1,13 @@
 package br.com.fatec.mogi.inventory_service.auditService.web.controller;
 
-import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.service.AuditoriaService;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.AuditarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.request.ConsultarHistoricoAuditoriaRequestDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaAtivaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoDetalhadaResponseDTO;
 import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.AuditoriaHistoricoResponseDTO;
+import br.com.fatec.mogi.inventory_service.auditService.web.dto.response.ItensAuditadosAuditoriaAtivaResponseDTO;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
-import br.com.fatec.mogi.inventory_service.coreService.service.ItemService;
 import br.com.fatec.mogi.inventory_service.coreService.web.request.AtualizarItemRequestDTO;
 import br.com.fatec.mogi.inventory_service.coreService.web.response.ItemResponseDTO;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +15,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/audit-service/v1/auditoria")
@@ -72,10 +69,10 @@ public record AuditoriaController(AuditoriaService auditoriaService) {
 		return ResponseEntity.status(HttpStatus.OK).body(historico);
 	}
 
-    @GetMapping("/ativa/itens-nao-localizados")
-    public ResponseEntity<List<ItemAuditado>> itensNaoLocalizadosAuditoriaAtiva(
-            @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
-        var itensNaoLocalizados = auditoriaService.itensNaoLocalizadosAuditoriaAtiva();
-        return ResponseEntity.status(HttpStatus.OK).body(itensNaoLocalizados);
-    }
+	@GetMapping("/ativa/itens-nao-localizados")
+	public ResponseEntity<ItensAuditadosAuditoriaAtivaResponseDTO> itensNaoLocalizadosAuditoriaAtiva(
+			@RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+		var itensNaoLocalizados = auditoriaService.itensNaoLocalizadosAuditoriaAtiva();
+		return ResponseEntity.status(HttpStatus.OK).body(itensNaoLocalizados);
+	}
 }

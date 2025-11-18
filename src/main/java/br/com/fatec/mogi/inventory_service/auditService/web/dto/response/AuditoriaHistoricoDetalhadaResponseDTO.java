@@ -1,6 +1,5 @@
 package br.com.fatec.mogi.inventory_service.auditService.web.dto.response;
 
-import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditado;
 import br.com.fatec.mogi.inventory_service.auditService.domain.model.ItemAuditadoHistorico;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

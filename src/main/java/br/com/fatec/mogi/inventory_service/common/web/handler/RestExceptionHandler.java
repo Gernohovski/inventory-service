@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.sql.SQLException;
+
 @ControllerAdvice
 public class RestExceptionHandler {
 
@@ -28,6 +30,11 @@ public class RestExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<String> tratarRuntimeException(RuntimeException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	}
+
+	@ExceptionHandler(SQLException.class)
+	public ResponseEntity<String> tratarSqlException(SQLException ex) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro, tente novamente mais tarde.");
 	}
 
 }

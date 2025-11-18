@@ -13,13 +13,13 @@ public class ValidarNomeStrategy implements ValidarItemStrategy {
 	@Override
 	public void executar(ItemUploadRequestDTO dto, ValidarItemContexto contexto) {
 		contexto.adicionarStrategieExecutada(this);
-		if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
-			contexto.adicionarErro("Nome inválido", dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
-		}
-		else {
-			contexto.getItem().setNomeItem(dto.getNome());
-		}
+		// if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
+		// contexto.adicionarErro("Nome inválido", dto.getNumeroLinha().toString());
+		// contexto.setEncerrarFluxo(true);
+		// }
+		// else {
+		// contexto.getItem().setNomeItem(dto.getNome());
+		// }
 	}
 
 }

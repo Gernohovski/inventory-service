@@ -55,6 +55,11 @@
             <version>7.2.5</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version>
@@ -118,9 +123,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.mailtrap</groupId>
-            <artifactId>mailtrap-java</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>

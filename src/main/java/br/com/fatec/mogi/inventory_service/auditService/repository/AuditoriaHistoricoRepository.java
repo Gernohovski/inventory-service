@@ -20,10 +20,11 @@ public interface AuditoriaHistoricoRepository extends JpaRepository<AuditoriaHis
 			SELECT ah FROM AuditoriaHistorico ah
 			WHERE ah.dataInicio >= COALESCE(:dataInicio, ah.dataInicio)
 			  AND ah.dataFim <= COALESCE(:dataFim, ah.dataFim)
+			  AND (:termoPesquisa = '' OR UPPER(ah.codigoAuditoria) LIKE UPPER(CONCAT('%', :termoPesquisa, '%')))
 			order BY ah.dataInicio DESC
 			""")
 	Page<AuditoriaHistorico> findHistorico(@Param("dataInicio") LocalDateTime dataInicio,
-			@Param("dataFim") LocalDateTime dataFim, Pageable pageable);
+			@Param("dataFim") LocalDateTime dataFim, @Param("termoPesquisa") String termoPesquisa, Pageable pageable);
 
 	@Query("""
 			SELECT COUNT(ah) FROM AuditoriaHistorico ah

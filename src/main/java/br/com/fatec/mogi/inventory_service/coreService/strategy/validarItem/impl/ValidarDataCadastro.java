@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Priority(7)
 @Component
@@ -27,14 +28,16 @@ public class ValidarDataCadastro implements ValidarItemStrategy {
 		}
 
 		try {
-			LocalDateTime dataParsed = LocalDate.parse(dto.getDataCadastro()).atStartOfDay();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+			LocalDate data = LocalDate.parse(dto.getDataCadastro(), formatter);
+			LocalDateTime dataParsed = data.atStartOfDay();
+
 			contexto.getItem().setDataCadastro(dataParsed);
 			contexto.getItem().setDataAlteracao(dataParsed);
 		}
 		catch (Exception e) {
-			contexto.adicionarErro("Data de cadastro inválida: " + dto.getDataCadastro(),
-					dto.getNumeroLinha().toString());
-			contexto.setEncerrarFluxo(true);
+			contexto.getItem().setDataCadastro(LocalDateTime.now());
+			contexto.getItem().setDataAlteracao(LocalDateTime.now());
 		}
 	}
 
