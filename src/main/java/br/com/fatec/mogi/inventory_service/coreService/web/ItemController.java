@@ -34,6 +34,12 @@ public record ItemController(ItemService itemService) {
 		return ResponseEntity.status(HttpStatus.OK).body(items);
 	}
 
+    @GetMapping("/buscar/{codigoItem}")
+    public ResponseEntity<ItemResponseDTO> buscarItemPeloCodigo(@PathVariable("codigoItem") String codigoItem, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
+        var item = itemService.buscarPeloCodigo(codigoItem);
+        return ResponseEntity.status(HttpStatus.OK).body(item);
+    }
+
 	@GetMapping("/{id}")
 	public ResponseEntity<ItemDetalhadoResponseDTO> buscarItem(@PathVariable("id") Long itemId, @RequestHeader("X-ACCESS-TOKEN") String accessToken) {
 		var item = itemService.buscar(itemId);

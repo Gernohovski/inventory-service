@@ -231,7 +231,13 @@ public class ItemServiceImpl implements ItemService {
 		return itemDetalhado;
 	}
 
-	private File convertXlsxToCsv(MultipartFile multipartFile) throws IOException {
+    @Override
+    public ItemResponseDTO buscarPeloCodigo(String codigoItem) {
+        var item = itemRepository.findByCodigoItem(codigoItem).orElseThrow(ItemNaoEncontradoException::new);
+        return itemMapper.from(item);
+    }
+
+    private File convertXlsxToCsv(MultipartFile multipartFile) throws IOException {
 		try (InputStream inputStream = multipartFile.getInputStream();
 				Workbook workbook = new XSSFWorkbook(inputStream)) {
 
