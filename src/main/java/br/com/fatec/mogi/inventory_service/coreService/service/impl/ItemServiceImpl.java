@@ -108,6 +108,9 @@ public class ItemServiceImpl implements ItemService {
 	public ItemResponseDTO atualizar(AtualizarItemRequestDTO dto, Long id, boolean setUltimaVezAuditado) {
 		var item = itemRepository.findById(id).orElseThrow(ItemNaoEncontradoException::new);
 		var codigoItemSalvo = item.getCodigoItem();
+        if (setUltimaVezAuditado) {
+            item.setUltimaVezAuditado(LocalDateTime.now());
+        }
 		if (dto.getCategoriaItemId() != null) {
 			var categoria = categoriaItemRepository.findById(dto.getCategoriaItemId())
 				.orElseThrow(CategoriaNaoEncontradaException::new);
