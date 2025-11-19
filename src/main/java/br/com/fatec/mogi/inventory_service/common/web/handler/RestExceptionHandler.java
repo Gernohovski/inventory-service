@@ -2,6 +2,7 @@ package br.com.fatec.mogi.inventory_service.common.web.handler;
 
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutenticadoException;
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.UsuarioNaoAutorizadoException;
+import org.hibernate.JDBCException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,5 +37,10 @@ public class RestExceptionHandler {
 	public ResponseEntity<String> tratarSqlException(SQLException ex) {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro, tente novamente mais tarde.");
 	}
+
+    @ExceptionHandler(JDBCException.class)
+    public ResponseEntity<String> tratarJdbcException(JDBCException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro, tente novamente mais tarde.");
+    }
 
 }

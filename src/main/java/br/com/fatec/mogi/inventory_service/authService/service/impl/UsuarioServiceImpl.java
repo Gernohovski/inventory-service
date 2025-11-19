@@ -95,6 +95,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public void alterarSenha(AlterarSenhaRequestDTO dto) {
 		var usuario = (Usuario) redisService.buscar(TipoCache.CODIGO_RESET_SENHA, dto.getCodigo());
 		Optional.ofNullable(usuario).orElseThrow(SolicitacaoExpiradaExpcetion::new);
+        if (BCrypt.checkpw(dto.getNovaSenha(), usuario.getSenha().getSenha())) {
+            throw new SenhaIgualException();
+        }
 		usuario.setSenha(new Senha(dto.getNovaSenha()));
 		usuarioRepository.save(usuario);
 	}
