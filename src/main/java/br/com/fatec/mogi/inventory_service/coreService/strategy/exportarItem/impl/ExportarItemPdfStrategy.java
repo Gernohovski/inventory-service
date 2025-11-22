@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @TipoExportacao("pdf")
 @Component
@@ -78,7 +79,7 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 			for (Item item : itens) {
 				tabela.addCell(new Cell().add(new Paragraph(item.getCodigoItem())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getNomeItem())));
-				tabela.addCell(new Cell().add(new Paragraph(item.getUltimaVezAuditado().format(formatter))));
+				tabela.addCell(new Cell().add(new Paragraph(Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse(""))));
 				tabela.addCell(new Cell().add(new Paragraph(item.getLocalizacao().getNomeSala())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getCategoriaItem().getNome())));
 				tabela.addCell(new Cell().add(new Paragraph(item.getStatusItem().getNome())));

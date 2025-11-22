@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @TipoExportacao("csv")
 @Component
@@ -35,7 +36,7 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 			configuracoes.setHeaderWritingEnabled(true);
 			CsvWriter writer = new CsvWriter(new OutputStreamWriter(byteArrayOutputStream, StandardCharsets.UTF_8),
 					configuracoes);
-			writer.writeHeaders("Código", "Nome", "Data de entrada", "Localização", "Categoria", "Status");
+			writer.writeHeaders("Código", "Nome", "Última vez auditado", "Localização", "Categoria", "Status");
 			List<Item> itens;
 			if (!itensId.isEmpty()) {
 				itens = itemRepository.findAllById(itensId);
@@ -47,7 +48,7 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 				itens = itemRepository.findAll();
 			}
 			for (Item item : itens) {
-				writer.writeRow(item.getCodigoItem(), item.getNomeItem(), item.getDataCadastro().format(formatter),
+				writer.writeRow(item.getCodigoItem(), item.getNomeItem(), Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse(""),
 						item.getLocalizacao().getNomeSala(), item.getCategoriaItem().getNome(),
 						item.getStatusItem().getNome());
 			}
