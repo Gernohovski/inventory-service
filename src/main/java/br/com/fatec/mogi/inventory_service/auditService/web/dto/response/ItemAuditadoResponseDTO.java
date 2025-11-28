@@ -18,4 +18,6 @@ public class ItemAuditadoResponseDTO {
 
 	private Boolean localizado;
 
+	private String observacao;
+
 }
