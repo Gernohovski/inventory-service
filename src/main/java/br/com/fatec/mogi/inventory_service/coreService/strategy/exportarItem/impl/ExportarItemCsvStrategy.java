@@ -31,12 +31,16 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 	@Override
 	public ResponseEntity<byte[]> exportar(List<Long> itensId) {
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+			byteArrayOutputStream.write(0xEF);
+			byteArrayOutputStream.write(0xBB);
+			byteArrayOutputStream.write(0xBF);
+			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			CsvWriterSettings configuracoes = new CsvWriterSettings();
 			configuracoes.setHeaderWritingEnabled(true);
 			CsvWriter writer = new CsvWriter(new OutputStreamWriter(byteArrayOutputStream, StandardCharsets.UTF_8),
 					configuracoes);
-			writer.writeHeaders("Código", "Nome", "Última vez auditado", "Localização", "Categoria", "Status");
+			writer.writeHeaders("Nº Patrimônio", "Nome", "Última vez auditado", "Localização", "Categoria", "Status");
 			List<Item> itens;
 			if (!itensId.isEmpty()) {
 				itens = itemRepository.findAllById(itensId);
@@ -56,7 +60,7 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 			writer.close();
 			return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=itens.csv")
-				.contentType(MediaType.parseMediaType("text/csv"))
+				.contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
 				.body(byteArrayOutputStream.toByteArray());
 		}
 		catch (Exception e) {
