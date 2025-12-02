@@ -97,10 +97,10 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 
 			DeviceRgb headerColor = new DeviceRgb(139, 0, 0);
 
-			float[] colunas = { 1.5f, 3f, 2.5f, 2f, 2.5f, 1.5f };
+			float[] colunas = { 2f, 3f, 2.5f, 1.5f, 2.5f, 1.5f };
 			Table tabela = new Table(UnitValue.createPercentArray(colunas)).useAllAvailableWidth();
 
-			tabela.addHeaderCell(createHeaderCell("Código", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Nº Patrimônio", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Nome", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Data da última auditoria", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Localização", headerColor));
@@ -109,9 +109,9 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 
 			for (Item item : itens) {
 				tabela.addCell(createDataCell(item.getCodigoItem()));
-				tabela.addCell(createDataCell(Optional.ofNullable(item.getNomeItem()).orElse("")));
+				tabela.addCell(createDataCell(Optional.ofNullable(item.getNomeItem()).orElse("-")));
 				tabela.addCell(createDataCell(
-						Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse("")));
+						Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse("-")));
 				tabela.addCell(createDataCell(item.getLocalizacao().getNomeSala()));
 				tabela.addCell(createDataCell(item.getCategoriaItem().getNome()));
 				tabela.addCell(createDataCell(item.getStatusItem().getNome()));
