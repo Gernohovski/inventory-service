@@ -73,11 +73,7 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 
 			Table logoTextCell = new Table(1);
 			logoTextCell.addCell(
-					new Cell().add(new Paragraph("FATEC").setFontSize(16).setBold()).setBorder(null).setPadding(0));
-			logoTextCell.addCell(new Cell().add(new Paragraph("Mogi das Cruzes").setFontSize(10))
-				.setBorder(null)
-				.setPadding(0)
-				.setMarginTop(-5));
+					new Cell().add(new Paragraph("FATEC Mogi das Cruzes").setFontSize(16).setBold()).setBorder(null).setPadding(0));
 
 			headerTable.addCell(new Cell().add(logoTextCell).setBorder(null).setTextAlignment(TextAlignment.LEFT));
 
