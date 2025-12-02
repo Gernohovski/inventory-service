@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ItemAuditadoHistoricoRepository extends JpaRepository<ItemAuditadoHistorico, Long> {
 
-    List<ItemAuditadoHistorico> findAllByItemId(Long itemId);
+	List<ItemAuditadoHistorico> findAllByItemId(Long itemId);
 
 }

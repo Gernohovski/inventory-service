@@ -30,6 +30,6 @@ public interface ItemService {
 
 	ItemDetalhadoResponseDTO buscar(Long id);
 
-    ItemResponseDTO buscarPeloCodigo(String codigoItem);
+	ItemResponseDTO buscarPeloCodigo(String codigoItem);
 
 }

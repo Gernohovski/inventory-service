@@ -48,7 +48,8 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 				itens = itemRepository.findAll();
 			}
 			for (Item item : itens) {
-				writer.writeRow(item.getCodigoItem(), item.getNomeItem(), Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse(""),
+				writer.writeRow(item.getCodigoItem(), item.getNomeItem(),
+						Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse(""),
 						item.getLocalizacao().getNomeSala(), item.getCategoriaItem().getNome(),
 						item.getStatusItem().getNome());
 			}

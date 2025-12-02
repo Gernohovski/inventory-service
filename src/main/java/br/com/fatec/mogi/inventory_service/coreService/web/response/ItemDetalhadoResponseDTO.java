@@ -19,28 +19,28 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemDetalhadoResponseDTO {
 
-    private Long id;
+	private Long id;
 
-    private String nomeItem;
+	private String nomeItem;
 
-    private String numeroSerie;
+	private String numeroSerie;
 
-    private StatusItem statusItem;
+	private StatusItem statusItem;
 
-    private CategoriaItem categoriaItem;
+	private CategoriaItem categoriaItem;
 
-    private TipoEntrada tipoEntrada;
+	private TipoEntrada tipoEntrada;
 
-    private String codigoItem;
+	private String codigoItem;
 
-    private LocalDateTime dataCadastro;
+	private LocalDateTime dataCadastro;
 
-    private Localizacao localizacao;
+	private Localizacao localizacao;
 
-    private String notaFiscal;
+	private String notaFiscal;
 
-    private LocalDateTime ultimaVezAuditado;
+	private LocalDateTime ultimaVezAuditado;
 
-    private List<ItemAuditadoHistorico> itemAuditadoHistorico;
+	private List<ItemAuditadoHistorico> itemAuditadoHistorico;
 
 }

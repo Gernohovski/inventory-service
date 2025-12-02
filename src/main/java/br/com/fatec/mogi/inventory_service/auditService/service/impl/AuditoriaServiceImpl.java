@@ -134,7 +134,8 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 	public CustomPageResponseDTO<AuditoriaHistoricoResponseDTO> consultarHistorico(
 			ConsultarHistoricoAuditoriaRequestDTO dto, Pageable pageable) {
 		String termoPesquisa = dto.getTermoPesquisa() != null ? dto.getTermoPesquisa() : "";
-		var page = auditoriaHistoricoRepository.findHistorico(dto.getDataInicio(), dto.getDataFim(), termoPesquisa, pageable);
+		var page = auditoriaHistoricoRepository.findHistorico(dto.getDataInicio(), dto.getDataFim(), termoPesquisa,
+				pageable);
 		var content = page.getContent()
 			.stream()
 			.map(historico -> AuditoriaHistoricoResponseDTO.builder()

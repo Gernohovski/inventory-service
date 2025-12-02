@@ -35,12 +35,14 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler(SQLException.class)
 	public ResponseEntity<String> tratarSqlException(SQLException ex) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro, tente novamente mais tarde.");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body("Ocorreu um erro, tente novamente mais tarde.");
 	}
 
-    @ExceptionHandler(JDBCException.class)
-    public ResponseEntity<String> tratarJdbcException(JDBCException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro, tente novamente mais tarde.");
-    }
+	@ExceptionHandler(JDBCException.class)
+	public ResponseEntity<String> tratarJdbcException(JDBCException ex) {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body("Ocorreu um erro, tente novamente mais tarde.");
+	}
 
 }
