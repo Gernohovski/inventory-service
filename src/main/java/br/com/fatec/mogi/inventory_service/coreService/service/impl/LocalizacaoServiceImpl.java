@@ -1,6 +1,7 @@
 package br.com.fatec.mogi.inventory_service.coreService.service.impl;
 
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
+import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoJaCadastradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoEncontradaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.exception.LocalizacaoNaoPodeSerExcluidaException;
 import br.com.fatec.mogi.inventory_service.coreService.domain.mapper.LocalizacaoMapper;
@@ -36,6 +37,10 @@ public class LocalizacaoServiceImpl implements LocalizacaoService {
 
 	@Override
 	public void cadastrar(CadastrarLocalizacaoRequestDTO dto) {
+		var localizacaoCadastrada = localizacaoRepository.findByNomeSala(dto.getNomeSala());
+		if (localizacaoCadastrada.isPresent()) {
+			throw new LocalizacaoJaCadastradaException();
+		}
 		Localizacao localizacao = Localizacao.builder().andar(dto.getAndar()).nomeSala(dto.getNomeSala()).build();
 		localizacaoRepository.save(localizacao);
 	}
