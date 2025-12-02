@@ -72,8 +72,9 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 			Table headerTable = new Table(UnitValue.createPercentArray(new float[] { 1, 1 })).useAllAvailableWidth();
 
 			Table logoTextCell = new Table(1);
-			logoTextCell.addCell(
-					new Cell().add(new Paragraph("FATEC Mogi das Cruzes").setFontSize(16).setBold()).setBorder(null).setPadding(0));
+			logoTextCell.addCell(new Cell().add(new Paragraph("FATEC Mogi das Cruzes").setFontSize(16).setBold())
+				.setBorder(null)
+				.setPadding(0));
 
 			headerTable.addCell(new Cell().add(logoTextCell).setBorder(null).setTextAlignment(TextAlignment.LEFT));
 
@@ -98,7 +99,7 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 
 			tabela.addHeaderCell(createHeaderCell("Nº Patrimônio", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Nome", headerColor));
-			tabela.addHeaderCell(createHeaderCell("Data da última auditoria", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Última vez auditado", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Localização", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Categoria", headerColor));
 			tabela.addHeaderCell(createHeaderCell("Status", headerColor));

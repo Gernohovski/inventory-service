@@ -29,23 +29,20 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 
 	private long linhaAtual = 0;
 
-	private static final Map<String, List<String>> HEADER_ALIASES = Map.of(
-			"Nome",
-			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item"),
-			"Localização",
-			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location", "Número da sala"),
+	private static final Map<String, List<String>> HEADER_ALIASES = Map.of("Nome",
+			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item"), "Localização",
+			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location",
+					"Número da sala"),
 			"Número do patrimônio",
 			List.of("Número do patrimônio", "Numero do patrimonio", "Patrimônio", "Patrimonio", "Código", "Codigo",
 					"numero", "codigo", "Nº Patrimonial", "Número do Patrimônio"),
-			"Categoria",
-			List.of("Categoria", "Grupo", "grupo", "categoria", "Grupo Patrimonial", "Grupo patrimonial"),
-			"Condição",
-			List.of("Condição", "Condicao", "Estado", "Status", "condicao", "status"),
+			"Categoria", List.of("Categoria", "Grupo", "grupo", "categoria", "Grupo Patrimonial", "Grupo patrimonial"),
+			"Condição", List.of("Condição", "Condicao", "Estado", "Status", "condicao", "status"),
 			"Modalidade Aquisição",
 			List.of("Modalidade Aquisição", "Modalidade Aquisicao", "Tipo Entrada", "Aquisição", "Aquisicao",
 					"Modalidade"),
-			"Data de Cadastramento",
-			List.of("Data de Cadastramento", "Data Cadastramento", "Data", "Data Cadastro", "data", "Data de cadastramento"));
+			"Data de Cadastramento", List.of("Data de Cadastramento", "Data Cadastramento", "Data", "Data Cadastro",
+					"data", "Data de cadastramento"));
 
 	public ItemUploadReader(Resource resource) {
 		this.resource = resource;

@@ -34,7 +34,7 @@ public class ExportarItemCsvStrategy implements ExportarItemStrategy {
 			byteArrayOutputStream.write(0xEF);
 			byteArrayOutputStream.write(0xBB);
 			byteArrayOutputStream.write(0xBF);
-			
+
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			CsvWriterSettings configuracoes = new CsvWriterSettings();
 			configuracoes.setHeaderWritingEnabled(true);
