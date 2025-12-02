@@ -8,14 +8,24 @@ import br.com.fatec.mogi.inventory_service.coreService.repository.ItemRepository
 import br.com.fatec.mogi.inventory_service.coreService.strategy.exportarItem.ExportarItemStrategy;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
@@ -39,60 +49,153 @@ public class ExportarItemPdfStrategy implements ExportarItemStrategy {
 	public ResponseEntity<byte[]> exportar(List<Long> itensId) {
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			String dataGeracao = java.time.LocalDate.now().format(formatter);
+			
 			PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream);
 			PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+			pdfDocument.setDefaultPageSize(PageSize.A4.rotate());
+			
 			Document document = new Document(pdfDocument);
-			var logoFile = new ClassPathResource("static/logo.png");
-			Image logo = new Image(ImageDataFactory.create(logoFile.getInputStream().readAllBytes())).scaleToFit(100,
-					100);
+			document.setMargins(50, 36, 50, 36);
+			
 			List<Item> itens;
 			if (!itensId.isEmpty()) {
 				itens = itemRepository.findAllById(itensId);
 				if (itens.isEmpty()) {
 					throw new NenhumItemEncontradoException();
 				}
-			}
-			else {
+			} else {
 				itens = itemRepository.findAll();
 			}
-			Table header = new Table(new float[] { 1, 4 });
-			header.addCell(new Cell().add(logo).setBorder(null));
-			header.addCell(
-					new Cell()
-						.add(new Paragraph("Relatório de Itens").setFontSize(16)
-							.setBold()
-							.setTextAlignment(TextAlignment.CENTER))
-						.setBorder(null));
-			document.add(header);
-			document.add(new Paragraph("\n"));
-			float[] colunas = { 2, 4, 3, 3, 3, 2 };
-			Table tabela = new Table(colunas);
-			tabela.addHeaderCell(new Cell().add(new Paragraph("Código")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
-			tabela.addHeaderCell(new Cell().add(new Paragraph("Nome")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
-			tabela.addHeaderCell(
-					new Cell().add(new Paragraph("Data da última auditoria")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
-			tabela.addHeaderCell(
-					new Cell().add(new Paragraph("Localização")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
-			tabela.addHeaderCell(
-					new Cell().add(new Paragraph("Categoria")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
-			tabela.addHeaderCell(new Cell().add(new Paragraph("Status")).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+
+			int totalPages = 1;
+			pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new FooterEventHandler(totalPages));
+			
+			var logoFile = new ClassPathResource("static/logo.png");
+			Image logo = new Image(ImageDataFactory.create(logoFile.getInputStream().readAllBytes()))
+					.scaleToFit(80, 40);
+			
+			Table headerTable = new Table(UnitValue.createPercentArray(new float[] { 1, 1 }))
+					.useAllAvailableWidth();
+			
+			Table logoCell = new Table(1);
+			logoCell.addCell(new Cell().add(logo).setBorder(null).setPadding(0));
+			logoCell.addCell(new Cell()
+					.add(new Paragraph("Mogi das Cruzes").setFontSize(10))
+					.setBorder(null)
+					.setPadding(0)
+					.setMarginTop(-5));
+
+			headerTable.addCell(new Cell()
+					.add(logoCell)
+					.setBorder(null)
+					.setTextAlignment(TextAlignment.LEFT));
+			
+			headerTable.addCell(new Cell()
+					.add(new Paragraph("Data de geração: " + dataGeracao).setFontSize(10))
+					.setBorder(null)
+					.setTextAlignment(TextAlignment.RIGHT)
+					.setVerticalAlignment(VerticalAlignment.TOP));
+			
+			document.add(headerTable);
+			document.add(new Paragraph("\n").setMarginTop(-10));
+			
+			Paragraph titulo = new Paragraph("Relatório de Itens")
+					.setFontSize(16)
+					.setBold()
+					.setTextAlignment(TextAlignment.CENTER)
+					.setMarginBottom(15);
+			document.add(titulo);
+
+			DeviceRgb headerColor = new DeviceRgb(139, 0, 0);
+			
+			float[] colunas = { 1.5f, 3f, 2.5f, 2f, 2.5f, 1.5f };
+			Table tabela = new Table(UnitValue.createPercentArray(colunas))
+					.useAllAvailableWidth();
+			
+			tabela.addHeaderCell(createHeaderCell("Código", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Nome", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Data da última auditoria", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Localização", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Categoria", headerColor));
+			tabela.addHeaderCell(createHeaderCell("Status", headerColor));
+			
 			for (Item item : itens) {
-				tabela.addCell(new Cell().add(new Paragraph(item.getCodigoItem())));
-				tabela.addCell(new Cell().add(new Paragraph(item.getNomeItem())));
-				tabela.addCell(new Cell().add(new Paragraph(Optional.ofNullable(item.getUltimaVezAuditado()).map(formatter::format).orElse(""))));
-				tabela.addCell(new Cell().add(new Paragraph(item.getLocalizacao().getNomeSala())));
-				tabela.addCell(new Cell().add(new Paragraph(item.getCategoriaItem().getNome())));
-				tabela.addCell(new Cell().add(new Paragraph(item.getStatusItem().getNome())));
+				tabela.addCell(createDataCell(item.getCodigoItem()));
+				tabela.addCell(createDataCell(item.getNomeItem()));
+				tabela.addCell(createDataCell(
+						Optional.ofNullable(item.getUltimaVezAuditado())
+								.map(formatter::format)
+								.orElse("")));
+				tabela.addCell(createDataCell(item.getLocalizacao().getNomeSala()));
+				tabela.addCell(createDataCell(item.getCategoriaItem().getNome()));
+				tabela.addCell(createDataCell(item.getStatusItem().getNome()));
 			}
+			
 			document.add(tabela);
 			document.close();
+			
 			return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=itens.pdf")
-				.contentType(MediaType.APPLICATION_PDF)
-				.body(byteArrayOutputStream.toByteArray());
-		}
-		catch (Exception e) {
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-itens.pdf")
+					.contentType(MediaType.APPLICATION_PDF)
+					.body(byteArrayOutputStream.toByteArray());
+		} catch (Exception e) {
 			throw new ErroExportarItensException();
+		}
+	}
+	
+	private Cell createHeaderCell(String text, DeviceRgb color) {
+		return new Cell()
+				.add(new Paragraph(text)
+						.setFontSize(10)
+						.setBold()
+						.setFontColor(ColorConstants.WHITE))
+				.setBackgroundColor(color)
+				.setTextAlignment(TextAlignment.CENTER)
+				.setVerticalAlignment(VerticalAlignment.MIDDLE)
+				.setPadding(5);
+	}
+	
+	private Cell createDataCell(String text) {
+		return new Cell()
+				.add(new Paragraph(text != null ? text : "")
+						.setFontSize(9))
+				.setPadding(5)
+				.setVerticalAlignment(VerticalAlignment.MIDDLE);
+	}
+	
+	private static class FooterEventHandler implements IEventHandler {
+		private final int totalPages;
+		
+		public FooterEventHandler(int totalPages) {
+			this.totalPages = totalPages;
+		}
+		
+		@Override
+		public void handleEvent(Event event) {
+			PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
+			PdfDocument pdfDoc = docEvent.getDocument();
+			PdfPage page = docEvent.getPage();
+			int pageNumber = pdfDoc.getPageNumber(page);
+			
+			PdfCanvas canvas = new PdfCanvas(page);
+			Canvas canvasLayout = new Canvas(canvas, page.getPageSize());
+			
+			Paragraph footer = new Paragraph("Fatec Mogi das Cruzes ©2025")
+					.setFontSize(8)
+					.setTextAlignment(TextAlignment.CENTER);
+			
+			Paragraph pageInfo = new Paragraph("Página " + pageNumber + " de " + totalPages)
+					.setFontSize(8)
+					.setTextAlignment(TextAlignment.CENTER);
+			
+			float x = page.getPageSize().getWidth() / 2;
+			float y = 20;
+			
+			canvasLayout.showTextAligned(footer, x, y, TextAlignment.CENTER);
+			canvasLayout.showTextAligned(pageInfo, x, y - 12, TextAlignment.CENTER);
+			
+			canvasLayout.close();
 		}
 	}
 
