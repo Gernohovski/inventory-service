@@ -30,9 +30,9 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	private long linhaAtual = 0;
 
 	private static final Map<String, List<String>> HEADER_ALIASES = Map.of("Nome",
-			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item"), "Localização",
-			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location",
-					"Número da sala"),
+			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item", "Descricao do Bem"), 
+			"Localização",
+			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location"),
 			"Número do patrimônio",
 			List.of("Número do patrimônio", "Numero do patrimonio", "Patrimônio", "Patrimonio", "Código", "Codigo",
 					"numero", "codigo", "Nº Patrimonial", "Número do Patrimônio"),
@@ -42,7 +42,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 			List.of("Modalidade Aquisição", "Modalidade Aquisicao", "Tipo Entrada", "Aquisição", "Aquisicao",
 					"Modalidade"),
 			"Data de Cadastramento", List.of("Data de Cadastramento", "Data Cadastramento", "Data", "Data Cadastro",
-					"data", "Data de cadastramento"));
+					"data", "Data de cadastramento", "Data de Incorporação", "Data de Incorporacao"));
 
 	public ItemUploadReader(Resource resource) {
 		this.resource = resource;
@@ -51,7 +51,15 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
 		try {
-			this.reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+			var inputStream = resource.getInputStream();
+			inputStream.mark(3);
+			byte[] bom = new byte[3];
+			int bytesRead = inputStream.read(bom);
+			if (bytesRead == 3 && bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF) {
+			} else {
+				inputStream.reset();
+			}
+			this.reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 			CsvParserSettings settings = new CsvParserSettings();
 			settings.setHeaderExtractionEnabled(true);
 			settings.getFormat().setLineSeparator("\n");
