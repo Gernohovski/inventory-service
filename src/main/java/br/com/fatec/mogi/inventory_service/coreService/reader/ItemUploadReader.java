@@ -51,15 +51,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
 		try {
-			var inputStream = resource.getInputStream();
-			inputStream.mark(3);
-			byte[] bom = new byte[3];
-			int bytesRead = inputStream.read(bom);
-			if (bytesRead == 3 && bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF) {
-			} else {
-				inputStream.reset();
-			}
-			this.reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+			this.reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
 			CsvParserSettings settings = new CsvParserSettings();
 			settings.setHeaderExtractionEnabled(true);
 			settings.getFormat().setLineSeparator("\n");
