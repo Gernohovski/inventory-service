@@ -12,7 +12,9 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	private long linhaAtual = 0;
 
 	private static final Map<String, List<String>> HEADER_ALIASES = Map.of("Nome",
-			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item", "Descricao do Bem"), 
+			List.of("nome", "Name", "Descrição", "Descricao", "Descrição do Bem", "Item", "Descricao do Bem"),
 			"Localização",
 			List.of("Localização", "Localizacao", "localizacao", "localização", "Local", "Sala", "Location"),
 			"Número do patrimônio",
@@ -51,7 +53,8 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
 		try {
-			this.reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+			Charset charset = tentarDetectarCharset();
+			this.reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), charset));
 			CsvParserSettings settings = new CsvParserSettings();
 			settings.setHeaderExtractionEnabled(true);
 			settings.getFormat().setLineSeparator("\n");
@@ -65,6 +68,24 @@ public class ItemUploadReader implements ItemStreamReader<ItemUploadRequestDTO> 
 		catch (IOException e) {
 			throw new ItemStreamException("Erro ao abrir arquivo CSV", e);
 		}
+	}
+
+	private Charset tentarDetectarCharset() throws IOException {
+		try (BufferedReader testeReader = new BufferedReader(
+				new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+			CsvParserSettings settings = new CsvParserSettings();
+			settings.setHeaderExtractionEnabled(true);
+			settings.getFormat().setLineSeparator("\n");
+			settings.detectFormatAutomatically(',', ';');
+			CsvParser testeParser = new CsvParser(settings);
+			testeParser.parseAllRecords(testeReader);
+
+			String[] headers = testeParser.getRecordMetadata().headers();
+			if (headers != null && Arrays.toString(headers).contains("�")) {
+				return StandardCharsets.ISO_8859_1;
+			}
+		}
+		return StandardCharsets.UTF_8;
 	}
 
 	@Override
