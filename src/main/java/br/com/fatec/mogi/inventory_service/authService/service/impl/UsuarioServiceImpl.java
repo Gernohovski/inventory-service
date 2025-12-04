@@ -143,6 +143,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuario.setEmail(novoEmail);
 		}
 		if (dto.getSenha() != null) {
+            if (BCrypt.checkpw(dto.getSenha(), usuario.getSenha().getSenha())) {
+                throw new SenhaIgualException();
+            }
 			usuario.setSenha(new Senha(dto.getSenha()));
 		}
 		if (dto.getFuncaoId() != null) {
