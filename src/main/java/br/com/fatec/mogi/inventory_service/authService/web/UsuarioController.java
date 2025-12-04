@@ -35,7 +35,7 @@ public record UsuarioController(UsuarioService usuarioService) {
 	@PutMapping("/alterar-senha")
 	public ResponseEntity<?> alterarSenha(@RequestBody AlterarSenhaRequestDTO dto) {
 		usuarioService.alterarSenha(dto);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@GetMapping

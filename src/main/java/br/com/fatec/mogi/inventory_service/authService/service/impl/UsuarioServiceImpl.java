@@ -23,6 +23,7 @@ import br.com.fatec.mogi.inventory_service.common.web.context.RequestContext;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UsuarioServiceImpl implements UsuarioService {
 
 	private final EmailService emailService;
@@ -95,7 +97,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public void alterarSenha(AlterarSenhaRequestDTO dto) {
 		var usuario = (Usuario) redisService.buscar(TipoCache.CODIGO_RESET_SENHA, dto.getCodigo());
 		Optional.ofNullable(usuario).orElseThrow(SolicitacaoExpiradaExpcetion::new);
-		if (BCrypt.checkpw(dto.getNovaSenha(), usuario.getSenha().getSenha())) {
+        if (BCrypt.checkpw(dto.getNovaSenha(), usuario.getSenha().getSenha())) {
+            log.info("Senhas iguais, lançando exceção");
 			throw new SenhaIgualException();
 		}
 		usuario.setSenha(new Senha(dto.getNovaSenha()));
