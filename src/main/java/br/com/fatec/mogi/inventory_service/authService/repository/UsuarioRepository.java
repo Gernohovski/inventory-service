@@ -36,13 +36,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				u.email.email,
 				u.ativo,
 				u.podeRealizarAuditoria,
-				CASE WHEN u.administradorVinculado IS NULL THEN ''
-                    ELSE u.administradorVinculado.nome
-                END
+				COALESCE(admin.nome, '')
 			)
 			FROM Usuario u
 			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
 			LEFT JOIN uf.funcao f
+			LEFT JOIN u.administradorVinculado admin
 			WHERE u.ativo = TRUE
 			  AND (:#{#dto.termoPesquisa} IS NULL OR
 			      UPPER(CONCAT(
@@ -62,12 +61,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				 u.email.email,
 				 u.ativo,
 				 u.podeRealizarAuditoria,
-				 CASE WHEN u.administradorVinculado IS NULL THEN ''
-                    ELSE u.administradorVinculado.nome
-                END
+				 COALESCE(admin.nome, '')
 			)
 			FROM Usuario u
 			JOIN UsuarioFuncao uf ON uf.usuario.id = u.id
+			LEFT JOIN u.administradorVinculado admin
 			WHERE uf.funcao.nome = 'ADMIN'
 			""")
 	List<UsuarioResponseDTO> findUsuariosAdministradores();
