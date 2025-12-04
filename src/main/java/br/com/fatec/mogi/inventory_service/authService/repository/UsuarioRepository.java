@@ -36,7 +36,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				u.email.email,
 				u.ativo,
 				u.podeRealizarAuditoria,
-				COALESCE(u.administradorVinculado.nome, '')
+				CASE WHEN u.administradorVinculado IS NULL THEN ''
+                    ELSE u.administradorVinculado.nome
+                END
 			)
 			FROM Usuario u
 			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
@@ -60,7 +62,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				 u.email.email,
 				 u.ativo,
 				 u.podeRealizarAuditoria,
-				 COALESCE(u.administradorVinculado.nome, '')
+				 CASE WHEN u.administradorVinculado IS NULL THEN ''
+                    ELSE u.administradorVinculado.nome
+                END
 			)
 			FROM Usuario u
 			JOIN UsuarioFuncao uf ON uf.usuario.id = u.id
