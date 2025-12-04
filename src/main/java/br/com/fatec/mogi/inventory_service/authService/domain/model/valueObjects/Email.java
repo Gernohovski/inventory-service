@@ -3,9 +3,11 @@ package br.com.fatec.mogi.inventory_service.authService.domain.model.valueObject
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.EmailInvalidoException;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @Embeddable
+@ToString
 public class Email {
 
 	private String email;

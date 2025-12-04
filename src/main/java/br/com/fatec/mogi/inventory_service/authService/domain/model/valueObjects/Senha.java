@@ -3,10 +3,12 @@ package br.com.fatec.mogi.inventory_service.authService.domain.model.valueObject
 import br.com.fatec.mogi.inventory_service.authService.domain.exception.SenhaInvalidaException;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.mindrot.jbcrypt.BCrypt;
 
 @NoArgsConstructor
 @Embeddable
+@ToString
 public class Senha {
 
 	private String senha;
