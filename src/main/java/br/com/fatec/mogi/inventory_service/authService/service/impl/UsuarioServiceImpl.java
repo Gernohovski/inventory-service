@@ -19,6 +19,7 @@ import br.com.fatec.mogi.inventory_service.authService.web.dto.mapper.UsuarioRes
 import br.com.fatec.mogi.inventory_service.authService.web.dto.request.*;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.LoginResponseDTO;
 import br.com.fatec.mogi.inventory_service.authService.web.dto.response.UsuarioResponseDTO;
+import br.com.fatec.mogi.inventory_service.common.web.context.RequestContext;
 import br.com.fatec.mogi.inventory_service.common.web.response.CustomPageResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -57,11 +58,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Funcao funcao = funcaoRepository.findById(dto.getFuncaoId())
 			.orElseThrow(() -> new FuncaoNaoEncontrada("Função não encontrada"));
 		Usuario usuario;
-		Usuario administradorVinculado = null;
-		if (dto.getAdministradorVinculado() != null) {
-			administradorVinculado = usuarioRepository.findById(dto.getAdministradorVinculado())
-				.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
-		}
+        Usuario administradorVinculado = null;
+        if (funcao.getNome().equals("OPERADOR")) {
+            administradorVinculado = RequestContext.getUsuario();
+        }
 		usuario = new Usuario(dto.getNome(), dto.getSenha(), dto.getEmail(), administradorVinculado);
 		usuarioRepository.findByEmail(usuario.getEmail()).ifPresent(u -> {
 			throw new EmailJaUtilizadoException("E-mail já utilizado.");

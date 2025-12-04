@@ -35,7 +35,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 				u.nome,
 				u.email.email,
 				u.ativo,
-				u.podeRealizarAuditoria
+				u.podeRealizarAuditoria,
+				COALESCE(u.administradorVinculado.nome, '')
 			)
 			FROM Usuario u
 			LEFT JOIN UsuarioFuncao uf ON uf.usuario = u
@@ -58,7 +59,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 			     u.nome,
 				 u.email.email,
 				 u.ativo,
-				 u.podeRealizarAuditoria
+				 u.podeRealizarAuditoria,
+				 COALESCE(u.administradorVinculado.nome, '')
 			)
 			FROM Usuario u
 			JOIN UsuarioFuncao uf ON uf.usuario.id = u.id
