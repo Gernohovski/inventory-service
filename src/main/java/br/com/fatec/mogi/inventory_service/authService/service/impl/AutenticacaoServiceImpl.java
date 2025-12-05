@@ -50,7 +50,7 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 	@Override
 	public LoginResponseDTO gerarAutenticacao(Usuario usuario) {
 		var accessToken = this.gerarToken(usuario);
-		var refreshToken = this.gerarRefreshToken(usuario.getEmail().getEmail());
+		var refreshToken = this.gerarRefreshToken(usuario.getEmail().getEmail(), accessToken);
 		var funcao = this.usuarioFuncaoRepository.findByUsuarioId(usuario.getId());
 		redisService.salvar(TipoCache.REFRESH_TOKEN, refreshToken, usuario, refreshExpiration);
 		redisService.salvar(TipoCache.SESSAO_USUARIO, accessToken, usuario, expiration);
@@ -64,8 +64,12 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 		if (usuario == null) {
 			throw new UsuarioNaoAutenticadoException();
 		}
+        var oldRefreshToken = dto.getRefreshToken();
+        var oldAccessToken = decodeJwt(dto.getRefreshToken()).getClaim("accessToken").asString();
 		var accessToken = this.gerarToken(usuario);
-		var refreshToken = this.gerarRefreshToken(usuario.getEmail().getEmail());
+		var refreshToken = this.gerarRefreshToken(usuario.getEmail().getEmail(), accessToken);
+        redisService.deletar(TipoCache.REFRESH_TOKEN, oldRefreshToken);
+        redisService.deletar(TipoCache.SESSAO_USUARIO, oldAccessToken);
 		redisService.salvar(TipoCache.REFRESH_TOKEN, refreshToken, usuario, refreshExpiration);
 		redisService.salvar(TipoCache.SESSAO_USUARIO, accessToken, usuario, expiration);
 		return new RefreshTokenResponseDTO(accessToken, refreshToken, expiration);
@@ -93,9 +97,10 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 			.sign(algorithm);
 	}
 
-	private String gerarRefreshToken(String email) {
+	private String gerarRefreshToken(String email, String accessToken) {
 		return JWT.create()
 			.withSubject(email)
+            .withClaim("accessToken", accessToken)
 			.withIssuedAt(new Date())
 			.withJWTId(UUID.randomUUID().toString())
 			.sign(algorithm);
